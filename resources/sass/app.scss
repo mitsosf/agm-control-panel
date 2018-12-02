@@ -5,13 +5,19 @@
 // Variables
 @import 'variables';
 
-// Bootstrap
-@import '~bootstrap/scss/bootstrap';
+/*// Bootstrap
+@import '~bootstrap/scss/bootstrap';*/
 
 .navbar-laravel {
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+//adminLTE
+@import "~admin-lte/bower_components/bootstrap/dist/css/bootstrap.min.css";
 
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+@import "~admin-lte/bower_components/Ionicons/css/ionicons.min.css";
+@import "~admin-lte/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css";
+
+@import "~admin-lte/dist/css/AdminLTE.css";
+@import "~admin-lte/dist/css/skins/_all-skins.css";

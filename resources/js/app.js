@@ -7,6 +7,17 @@
 
 require('./bootstrap');
 
+//adminLTE
+require('../../node_modules/admin-lte/bower_components/jquery/dist/jquery.min.js');
+require('../../node_modules/admin-lte/bower_components/datatables.net/js/jquery.dataTables.min.js');
+require('../../node_modules/admin-lte/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js');
+require('../../node_modules/admin-lte/bower_components/jquery-slimscroll/jquery.slimscroll.min.js');
+require('../../node_modules/chart.js');
+require('../../node_modules/admin-lte/bower_components/fastclick/lib/fastclick.js');
+require('../../node_modules/admin-lte/dist/js/adminlte.min.js');
+require('../../node_modules/admin-lte/dist/js/demo.js');
+
+
 window.Vue = require('vue');
 
 /**

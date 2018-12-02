@@ -27,6 +27,10 @@ Route::get('/account/charge', 'ParticipantController@charge')->name('participant
 Route::get('/account/afterCharge', 'ParticipantController@afterCharge')->name('participant.afterCharge');
 Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
 
+//OC
+Route::get('/godmode', 'OCController@index')->name('oc.home');
+Route::get('/godmode/logout', 'OCController@logout')->name('oc.logout');
+
 //Misc
 Route::get('/terms', 'MiscController@terms')->name('terms');
 
