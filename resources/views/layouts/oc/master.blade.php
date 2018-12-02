@@ -73,7 +73,7 @@ desired effect
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MENU</li>
-                <li><a href="#"><i class="fa fa-bar-chart"></i> <span>Statistics</span></a></li>
+                <li><a href="#"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
                 <li><a href="#"><i class="fa fa-bar-chart"></i> <span>Registrations</span></a></li>
                 <li><a href="#"><i class="fa fa-bed"></i> <span>Rooming</span></a></li>
                 <li class="treeview">
