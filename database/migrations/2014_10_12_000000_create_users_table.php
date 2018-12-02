@@ -35,7 +35,7 @@ class CreateUsersTable extends Migration
             $table->string('comments')->default("")->nullable();
             $table->string('fee')->default("0")->nullable();   //event fee payed
             $table->dateTime('feedate')->nullable();
-            $table->string('rooming')->default("No")->nullable();
+            $table->string('rooming')->default("0")->nullable();
             $table->string('roomingcomments')->default("")->nullable();
             $table->string('checkin')->default("0")->nullable();
             $table->string('spot_status')->default(null)->nullable();

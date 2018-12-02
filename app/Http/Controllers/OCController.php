@@ -47,6 +47,14 @@ class OCController extends Controller
         return view('oc.home', compact('totalUsers', 'approvedUsers', 'roomedUsers', 'funds', 'paidUsersCount','checkedInUsers'));
     }
 
+    public function approved(){
+
+        $users = User::where('spot_status','approved')->get();
+        
+
+        return view('oc.approved', compact('users'));
+    }
+
     public function logout()
     {
         Auth::logout();

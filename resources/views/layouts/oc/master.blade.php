@@ -6,7 +6,7 @@
     <title>Godmode | {{env('APP_NAME', 'AGM Control Panel')}}</title>
     <link rel="icon" href="{{route('home')}}/favicon.ico" type="image/x-icon"/>
     <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initi'layouts.lcs.masteral-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">

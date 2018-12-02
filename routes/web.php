@@ -29,6 +29,7 @@ Route::get('/account/logout', 'ParticipantController@logout')->name('participant
 
 //OC
 Route::get('/godmode', 'OCController@index')->name('oc.home');
+Route::get('/godmode/approved', 'OCController@approved')->name('oc.approved');
 Route::get('/godmode/logout', 'OCController@logout')->name('oc.logout');
 
 //Misc
