@@ -41,9 +41,9 @@ desired effect
         <!-- Logo -->
         <a href="{{route('oc.home')}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>AGM</b></span>
+            <span class="logo-mini"><b>CP</b></span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>{{env('APP_NAME')}}</b></span>
+            <span class="logo-lg"><b>AGM Control Panel</b></span>
         </a>
 
         <!-- Header Navbar -->
@@ -66,7 +66,7 @@ desired effect
                 </div>
                 <div class="pull-left info">
                     <p>{{Auth::user()->name.' '.Auth::user()->surname}}</p>
-                    <a href="#"><i class="fa fa-circle text-success"></i> Not plemb</a>
+                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                 </div>
             </div>
 
