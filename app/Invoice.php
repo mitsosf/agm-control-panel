@@ -15,4 +15,8 @@ class Invoice extends Model
     protected $fillable = [
         'path', 'user_id', 'section', 'esn_country'
     ];
+
+    public function user(){
+        return $this->belongsTo('App\Payment');
+    }
 }

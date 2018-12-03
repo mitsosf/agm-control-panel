@@ -15,6 +15,12 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id')->unsigned();
+            $table->string('type')->default('fee'); //TODO make dynamic, like roles and users
+            $table->string('amount');
+            $table->string('comments')->default(null)->nullable();
+            $table->boolean('approved')->default(true);
+            $table->string('proof')->default(null)->nullable(); //Path to possible proof of payment
             $table->timestamps();
         });
     }

@@ -1,7 +1,7 @@
 @extends('layouts.oc.master')
 
 @section('content')
-    <h2>Approved</h2>
+    <h2>Approved Participants</h2>
     <div class="container">
         <div class="box-body" style="background: white">
             <table id="example2" class="table table-bordered table-hover" >

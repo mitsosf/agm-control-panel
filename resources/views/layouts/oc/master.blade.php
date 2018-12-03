@@ -73,9 +73,25 @@ desired effect
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MENU</li>
-                <li><a href="#"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-                <li><a href="#"><i class="fa fa-bar-chart"></i> <span>Registrations</span></a></li>
-                <li><a href="#"><i class="fa fa-bed"></i> <span>Rooming</span></a></li>
+                <li><a href="{{route('oc.home')}}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+                <li><a href="{{route('oc.approved')}}"><i class="fa fa-bar-chart"></i> <span>Registrations</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-money"></i> <span>Cashflow</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('oc.cashflow')}}"><i class="fa fa-eur"></i> <span>All income</span></a></li>
+                        <li><a href="{{route('oc.cashflow.card')}}"><i class="fa fa-credit-card"></i> <span>Card income</span></a></li>
+                        <li><a href="{{route('oc.cashflow.bank')}}"><i class="fa fa-bank"></i> <span>Bank income - plemb</span></a></li>
+                    </ul>
+                </li>
+
+                {{--Hotels--}}
+                @php
+                    $hotels = App\Hotel::all();
+                @endphp
                 <li class="treeview">
                     <a href="#"><i class="fa fa-hotel"></i> <span>Check-in</span>
                         <span class="pull-right-container">
@@ -83,12 +99,27 @@ desired effect
               </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="#"><i class="fa fa-hotel"></i> <span>Check-in MariLena</span></a></li>
-                        <li><a href="#"><i class="fa fa-hotel"></i> <span>Check-in MariRena</span></a></li>
-                        <li><a href="#"><i class="fa fa-hotel"></i> <span>Check-in Heraklion</span></a></li>
+                        @if($hotels->isNotEmpty())
+                            @foreach($hotels as $hotel)
+                                <li><a href="#"><i class="fa fa-hotel"></i> <span>Check-in {{$hotel->name}}</span></a></li>
+                            @endforeach
+                        @else
+                            <li><a href="#"><span>No available hotels</span></a></li>
+                        @endif
                     </ul>
                 </li>
                 <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>Welcome Bags</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-gears"></i> <span>CRUD</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('oc.crud.hotels')}}"><i class="fa fa-gear"></i> <span>Hotels</span></a></li>
+                        <li><a href="{{route('oc.crud.rooms')}}"><i class="fa fa-gear"></i> <span>Rooms</span></a></li>
+                    </ul>
+                </li>
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->

@@ -46,18 +46,29 @@ class UnauthenticatedController extends Controller
             $user = $newUser;
         } else {
             $user = User::where('username', cas()->user())->first();
+            cas()->getAttributes();
+            $user->name = cas()->getAttribute('first');
+            $user->surname = cas()->getAttribute('last');
+            $user->esn_country= cas()->getAttribute('country');
+            $user->gender = cas()->getAttribute('gender');
+            $user->section = cas()->getAttribute('section');
+            $user->birthday= cas()->getAttribute('birthdate');
+            $user->email = cas()->getAttribute('mail');
+            $user->photo = cas()->getAttribute('picture');
+            $user->facebook = cas()->getAttribute('social-facebook');
+            $user->update();
         }
 
         //End cas session and start local one
         session_destroy(); //Destroy CAS cookie
         Auth::login($user);//Log the user into Laravel (natively)
 
-        $role = $user->role_id;
+        $role = $user->role()->first()->id;
         switch ($role) {
-            case "1":
+            case 1:
                 return redirect(route('participant.home'));
 
-            case "2":
+            case 2:
                 return redirect(route('oc.home'));
 
             default:
