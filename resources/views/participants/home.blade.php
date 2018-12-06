@@ -3,7 +3,7 @@
 @section('content')
     <div class="container" style="text-align: center;font-family: 'Lato'">
         <div style="text-align: center">
-            <img style=" max-width: 15%;" src="https://agmthessaloniki.org/logo_color.png" alt="AGM Thessaloniki 2019">
+            <img style=" max-width: 15%;" src="{{asset('images/logo.png')}}" alt="AGM Thessaloniki 2019">
         </div>
         <div class="row">
             <div class="col-md-4"></div>
@@ -27,7 +27,6 @@
                                 data-locale="en"
                                 data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
                                 data-sandbox="1">
-
                         </script>
                         @csrf
                     </form>

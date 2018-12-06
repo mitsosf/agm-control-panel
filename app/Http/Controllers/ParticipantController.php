@@ -106,6 +106,54 @@ class ParticipantController extends Controller
         return redirect(env('ERSEVENTURL'));
     }
 
+
+    //TODO test deposits by card
+    public function parseToken()
+    {
+        //Set up the private key
+        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
+
+        //Get token from submission
+        $token = $_POST['everypayToken'];
+
+        //Check if card is not Visa, MasterCard or Maestro
+        $token_details = Token::retrieve($token);
+        $type = $token_details->card->type;
+        if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
+            $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
+            $user = Auth::user();
+            return view('participants.home', compact('error', 'user'));
+        }
+        Session::put('token', $token);
+        return redirect(route('participant.deposit'));
+    }
+
+    public function deposit()
+    {
+        //Set up the private key
+        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
+
+        $token = Session::get('token');
+
+        //Charge card
+
+        $user = Auth::user();
+
+        //Format desc
+        $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
+
+        $payment = Payment::create(array(
+            "amount" => 22000, //Amount in cents
+            "currency" => "eur", //Currency
+            "token" => $token,
+            "description" => $description,
+            "capture" => 0
+        ));
+
+        Session::forget('token');
+        return view('participants.test', compact('payment'));
+    }
+
     public function logout()
     {
         Auth::logout();

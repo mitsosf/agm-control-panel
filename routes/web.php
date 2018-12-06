@@ -44,7 +44,8 @@ Route::get('/account/profile', 'ParticipantController@showProfile')->name('profi
 Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
 Route::post('/account/validateCard', 'ParticipantController@validateCard')->name('participant.validateCard');
 Route::get('/account/charge', 'ParticipantController@charge')->name('participant.charge');
-Route::get('/account/afterCharge', 'ParticipantController@afterCharge')->name('participant.afterCharge');
+Route::post('/account/parseToken', 'ParticipantController@parseToken')->name('participant.parseToken');
+Route::get('/account/deposit', 'ParticipantController@deposit')->name('participant.deposit');
 Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
 
 //OC

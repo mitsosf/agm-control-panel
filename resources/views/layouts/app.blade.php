@@ -72,7 +72,7 @@
 
     </style>
 </head>
-<body>
+<body @yield('background')>
 @include('partials.nav')
 <div class="container">
     @yield('content')
