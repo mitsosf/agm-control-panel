@@ -41,7 +41,7 @@ Route::get('/logout', 'UnauthenticatedController@logout')->name('cas.logout');
 //Participants
 Route::get('/account', 'ParticipantController@index')->name('participant.home');
 Route::get('/account/profile', 'ParticipantController@showProfile')->name('profile');
-Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
+Route::get('/account/payment', 'ParticipantController@payment')->name('participant.payment');
 Route::post('/account/validateCard', 'ParticipantController@validateCard')->name('participant.validateCard');
 Route::get('/account/charge', 'ParticipantController@charge')->name('participant.charge');
 Route::post('/account/parseToken', 'ParticipantController@parseToken')->name('participant.parseToken');

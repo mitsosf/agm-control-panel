@@ -24,8 +24,12 @@ class UnauthenticatedController extends Controller
         return view('home');
     }
 
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
     public function login()
     {
+        //cas()->setFixedServiceURL('https://event.agmthessaloniki.org/login');
         cas()->authenticate();
 
         $userCount = User::where('username', cas()->user())->count();
@@ -62,6 +66,18 @@ class UnauthenticatedController extends Controller
         //End cas session and start local one
         session_destroy(); //Destroy CAS cookie
         Auth::login($user);//Log the user into Laravel (natively)
+        $user->getErsStatus();
+
+        //TODO REMOVE THIS SHIT
+
+        if (cas()->user() === 'demo.everypay'){
+            $user->spot_status = 'approved';
+            $user->update();
+        }
+
+        //END TODO
+
+
 
         $role = $user->role()->first()->id;
         switch ($role) {

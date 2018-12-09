@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Ixudra\Curl\Facades\Curl;
+use function MongoDB\BSON\toJSON;
 
 class ParticipantController extends Controller
 {
@@ -32,10 +34,18 @@ class ParticipantController extends Controller
         return view('participants.home', compact('user', 'error'));
     }
 
+    public function payment(){
+        $user = Auth::user();
+        $error = null;
+
+        return view('participants.payment', compact('user', 'error'));
+    }
+
+
     public function validateCard()
     {
         //Set up the private key
-        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
         //Get token from submission
         $token = $_POST['everypayToken'];
@@ -46,7 +56,7 @@ class ParticipantController extends Controller
         if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
             $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
             $user = Auth::user();
-            return view('participants.home', compact('error', 'user'));
+            return view('participants.payment', compact('error', 'user'));
         }
         Session::put('token', $token);
         return redirect(route('participant.charge'));
@@ -80,7 +90,7 @@ class ParticipantController extends Controller
 
         //TODO Generate proof of payment & send email (queue)
 
-        //Generate invoice
+        /*//Generate invoice
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
 
@@ -100,18 +110,17 @@ class ParticipantController extends Controller
         $invoice->path = $path;
         $invoice->section = $user->section;
         $invoice->esn_country = $user->esn_country;
-        $invoice->save();
+        $invoice->save();*/
 
         //TODO Update ERS status
-        return redirect(env('ERSEVENTURL'));
+        return redirect(env('ERS_EVENT_REDIRECT_URL'));
     }
-
-
     //TODO test deposits by card
+
     public function parseToken()
     {
         //Set up the private key
-        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
         //Get token from submission
         $token = $_POST['everypayToken'];
@@ -152,6 +161,16 @@ class ParticipantController extends Controller
 
         Session::forget('token');
         return view('participants.test', compact('payment'));
+    }
+
+    public function test(){
+
+
+
+
+
+
+        return view('test', compact('response','part', 'invoice'));
     }
 
     public function logout()

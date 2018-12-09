@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Ixudra\Curl\Facades\Curl;
 
 /**
  * @property string username
@@ -17,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property mixed section
  * @property mixed gender
  * @property mixed facebook
+ * @property string spot_status
  */
 class User extends Authenticatable
 {
@@ -29,7 +31,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo','tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming'
+        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo','tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming', 'spot_status'
     ];
 
     /**
@@ -52,4 +54,46 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo('App\Role');
     }
+
+    public function esnCardStatus($card){
+
+        $response = Curl::to('https://esncard.org/services/1.0/card.json')
+            ->withData( array( 'code' => $card ) )
+            ->get();
+
+
+        if(strpos($response,'active')){
+            return 'active';
+        }elseif (strpos($response,'expired')){
+            return 'expired';
+        }elseif (strpos($response,'available')){
+            return 'available';
+        }else{
+            return 'invalid';
+        }
+    }
+
+    public function getErsStatus(){
+
+        $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
+            ->withData( array ( 'event' => env('ERS_PAYMENTS_API_EVENT_ID')))
+            ->get();
+
+        $status = 'Pending approval';
+
+        $ers_users = json_decode($json, TRUE);
+
+        foreach ($ers_users as $ers_user){
+            if ($ers_user['esn_accounts_username'] == $this->username){
+                $status = 'approved';
+            }
+        }
+
+        $this->spot_status = $status;
+        $this->update();
+
+        return $status;
+    }
+
+
 }
