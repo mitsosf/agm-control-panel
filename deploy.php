@@ -25,7 +25,7 @@ add('writable_dirs', []);
 host('40.112.90.230')
     ->user('deployer')
     ->identityFile('~/.ssh/deployerkey')
-    ->set('deploy_path', '/var/www/event.agmthessaloniki.org');
+    ->set('deploy_path', '/var/www/dev.agmthessaloniki.org');
     
 // Tasks
 
@@ -38,5 +38,5 @@ after('deploy:failed', 'deploy:unlock');
 
 // Migrate database before symlink new release.
 
-//before('deploy:symlink', 'artisan:migrate');
+before('deploy:symlink', 'artisan:migrate');
 

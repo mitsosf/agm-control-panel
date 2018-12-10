@@ -46,6 +46,7 @@ class ParticipantController extends Controller
     {
         //Set up the private key
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
         //Get token from submission
         $token = $_POST['everypayToken'];
