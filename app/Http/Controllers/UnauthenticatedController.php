@@ -29,7 +29,7 @@ class UnauthenticatedController extends Controller
      */
     public function login()
     {
-        cas()->setFixedServiceURL('https://dev.agmthessaloniki.org/login');
+        cas()->setFixedServiceURL(route('cas.login'));
         cas()->authenticate();
 
         $userCount = User::where('username', cas()->user())->count();
