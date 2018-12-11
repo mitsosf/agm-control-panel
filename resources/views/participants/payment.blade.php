@@ -52,7 +52,7 @@
                                                 <script type="text/javascript" class="everypay-script"
                                                         src="https://button.everypay.gr/js/button.js"
                                                         data-key="{{env('EVERYPAY_PUBLIC_KEY')}}"
-                                                        data-amount="22000"
+                                                        data-amount="22200"
                                                         data-locale="en"
                                                         data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
                                                         data-sandbox="1">

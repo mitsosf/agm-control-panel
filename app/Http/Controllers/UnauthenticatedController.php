@@ -32,6 +32,7 @@ class UnauthenticatedController extends Controller
         cas()->setFixedServiceURL(route('cas.login'));
         cas()->authenticate();
 
+        //TODO hande CAS no response case
         $userCount = User::where('username', cas()->user())->count();
         if ($userCount == 0) {
             $newUser = new User();
@@ -39,6 +40,7 @@ class UnauthenticatedController extends Controller
             cas()->getAttributes();
             $newUser->name = cas()->getAttribute('first');
             $newUser->surname = cas()->getAttribute('last');
+            $newUser->role_id = 1;
             $newUser->esn_country= cas()->getAttribute('country');
             $newUser->gender = cas()->getAttribute('gender');
             $newUser->section = cas()->getAttribute('section');
@@ -66,7 +68,7 @@ class UnauthenticatedController extends Controller
         //End cas session and start local one
         session_destroy(); //Destroy CAS cookie
         Auth::login($user);//Log the user into Laravel (natively)
-        $user->getErsStatus();
+        $user->refreshErsStatus();
 
         //TODO REMOVE THIS SHIT
 
@@ -78,13 +80,12 @@ class UnauthenticatedController extends Controller
         //END TODO
 
 
-
-        $role = $user->role()->first()->id;
+        $role = $user->role->name;
         switch ($role) {
-            case 1:
+            case 'Participant':
                 return redirect(route('participant.home'));
 
-            case 2:
+            case 'OC':
                 return redirect(route('oc.home'));
 
             default:

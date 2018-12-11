@@ -19,6 +19,7 @@ use Ixudra\Curl\Facades\Curl;
  * @property mixed gender
  * @property mixed facebook
  * @property string spot_status
+ * @property int role_id
  */
 class User extends Authenticatable
 {
@@ -31,7 +32,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo','tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming', 'spot_status'
+        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo', 'tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming', 'spot_status'
     ];
 
     /**
@@ -43,55 +44,70 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function payments(){
+    public function payments()
+    {
         return $this->hasMany('App\Payment');
     }
 
-    public function room(){
+    public function room()
+    {
         return $this->belongsTo('App\Room');
     }
 
-    public function role(){
+    public function role()
+    {
         return $this->belongsTo('App\Role');
     }
 
-    public function esnCardStatus($card){
+    public function esnCardStatus($card)
+    {
 
         $response = Curl::to('https://esncard.org/services/1.0/card.json')
-            ->withData( array( 'code' => $card ) )
+            ->withData(array('code' => $card))
             ->get();
 
 
-        if(strpos($response,'active')){
+        if (strpos($response, 'active')) {
             return 'active';
-        }elseif (strpos($response,'expired')){
+        } elseif (strpos($response, 'expired')) {
             return 'expired';
-        }elseif (strpos($response,'available')){
+        } elseif (strpos($response, 'available')) {
             return 'available';
-        }else{
+        } else {
             return 'invalid';
         }
     }
 
-    public function getErsStatus(){
+    public function refreshErsStatus()
+    {
 
-        $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
-            ->withData( array ( 'event' => env('ERS_PAYMENTS_API_EVENT_ID')))
-            ->get();
+        if ($this->spot_status === 'paid') {
+            $status = 'paid';
+        } else {
 
-        $status = 'Pending approval';
 
-        $ers_users = json_decode($json, TRUE);
+            $status = 'pending'; //Default status
+            //TODO handle error in case of no response
 
-        foreach ($ers_users as $ers_user){
-            if ($ers_user['esn_accounts_username'] == $this->username){
-                $status = 'approved';
-            }
+            /*$json = Curl::to(env('ERS_PAYMENTS_API_URL'))
+                ->withData( array ( 'event' => env('ERS_PAYMENTS_API_EVENT_ID')))
+                ->get();
+
+
+
+            $ers_users = json_decode($json, TRUE);
+
+
+
+            foreach ($ers_users as $ers_user){
+                if ($ers_user['esn_accounts_username'] == $this->username){
+                    $status = 'approved';
+                }
+            }*/
+
+            $this->spot_status = $status;
+            $this->update();
         }
-
-        $this->spot_status = $status;
-        $this->update();
-
         return $status;
     }
 

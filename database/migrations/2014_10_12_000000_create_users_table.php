@@ -34,10 +34,10 @@ class CreateUsersTable extends Migration
             $table->string('meal')->default("")->nullable();
             $table->string('comments')->default("")->nullable();
             $table->string('fee')->default("0")->nullable();   //Event fee payed
-            $table->dateTime('feedate')->nullable();
+            $table->dateTime('fee_date')->nullable();
             $table->boolean('rooming')->default(false);
             $table->integer('room_id')->unsigned()->nullable();
-            $table->string('roomingcomments')->default("")->nullable();
+            $table->string('rooming_comments')->default("")->nullable();
             $table->string('debt')->default("0");   //Money participant owes
             $table->string('checkin')->default("0")->nullable();
             $table->string('spot_status')->default(null)->nullable();

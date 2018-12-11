@@ -49,7 +49,7 @@ desired effect
     <header class="main-header">
 
         <!-- Logo -->
-        <a href="{{route('oc.home')}}" class="logo">
+        <a href="{{route('participant.home')}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>CP</b></span>
             <!-- logo for regular state and mobile devices -->
@@ -85,9 +85,9 @@ desired effect
                 <li class="header">MENU</li>
                 <li><a href="{{route('participant.home')}}"><i class="fa fa-user"></i> <span>My account</span></a></li>
                 <li><a href="{{route('participant.payment')}}"><i class="fa fa-credit-card"></i> <span>Fee Payment</span></a></li>
-                <li><a href="{{route('oc.approved')}}"><i class="fa fa-bed"></i> <span>Rooming</span></a></li>
+                {{--<li><a href="{{route('oc.approved')}}"><i class="fa fa-bed"></i> <span>Rooming</span></a></li>
                 <li><a href="{{route('oc.approved')}}"><i class="fa fa-question-circle"></i> <span>FAQ</span></a></li>
-                <li><a href="{{route('oc.approved')}}"><i class="fa fa-gear"></i> <span>Settings</span></a></li>
+                <li><a href="{{route('oc.approved')}}"><i class="fa fa-gear"></i> <span>Settings</span></a></li>--}}
                 <li><a href="{{route('participant.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->

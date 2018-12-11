@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
+use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
@@ -34,14 +35,16 @@ class ParticipantController extends Controller
         return view('participants.home', compact('user', 'error'));
     }
 
-    public function payment(){
+    public function payment()
+    {
         $user = Auth::user();
         $error = null;
 
         return view('participants.payment', compact('user', 'error'));
     }
 
-
+    //TODO log ALL errors
+    //TODO reassure the plembs that they have not been charged, if an error occurs
     public function validateCard()
     {
         //Set up the private key
@@ -49,72 +52,107 @@ class ParticipantController extends Controller
 
         //Get token from submission
         $token = $_POST['everypayToken'];
-
-        //Check if card is not Visa, MasterCard or Maestro
-        $token_details = Token::retrieve($token);
-        $type = $token_details->card->type;
-        if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
-            $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
-            $user = Auth::user();
-            return view('participants.payment', compact('error', 'user'));
+        $user = Auth::user();
+        if (isset($token)) {
+            //Check if card is not Visa, MasterCard or Maestro
+            $token_details = Token::retrieve($token);
+            if (isset($token_details->card)) {
+                $type = $token_details->card->type;
+                if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
+                    $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
+                    return view('participants.payment', compact('error', 'user'));
+                }
+                Session::put('token', $token);
+                //If all goes according to plan
+                return redirect(route('participant.charge'));
+            } else {
+                //If we don't receive the token_details
+                $error = "An error has occurred, please try again (Error 100)";
+                return view('participants.payment', compact('error', 'user'));
+            }
         }
-        Session::put('token', $token);
-        return redirect(route('participant.charge'));
+        //If we don't receive a token
+        $error = "An error has occurred, please try again (Error 101)";
+        return view('participants.payment', compact('error', 'user'));
     }
 
 
     public function charge()
     {
         //Set up the private key
-        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
-
-        $token = Session::get('token');
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+        $user = Auth::user();
+        $error = '';
 
         //Charge card
+        $token = Session::get('token');
+        if (isset($token)) {
 
-        $user = Auth::user();
+            //Format desc
+            $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
-        //Format desc
-        $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
-        $payment = Payment::create(array(
-            "amount" => 22000, //Amount in cents
-            "currency" => "eur", //Currency
-            "token" => $token,
-            "description" => $description
-        ));
+            $payment = Payment::create(array(
+                "amount" => 22200, //Amount in cents
+                "currency" => "eur", //Currency
+                "token" => $token,
+                "description" => $description,
+                "payee_email" => $user->email
+            ));
 
-        Session::forget('token');
-        //TODO Check if transaction is correct
-        //TODO Store in transactions table
+            Session::forget('token');
 
-        //TODO Generate proof of payment & send email (queue)
+            if (isset($payment->token)) {
+                //TODO Check if transaction is correct
 
-        /*//Generate invoice
-        $pdf = App::make('dompdf.wrapper');
-        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
+                //TODO update user
+                $user->fee = $payment->amount/100;
+                $user->fee_date = Carbon::now();
+                $user->spot_status = 'paid';
+                $user->update();
 
-        //Save invoice locally
-        $invID = $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
-        $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-        $pdf->save($path);
+                //TODO Store in transactions table
 
-        //Send invoice to participant
-        //TODO enable emails
-        //Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
+                //TODO Generate proof of payment & send email (queue)
 
-        //Save the whole transaction to the database
+                /*//Generate invoice
+                $pdf = App::make('dompdf.wrapper');
+                $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
 
-        $invoice = new Invoice();
-        $invoice->user_id = $user->id;
-        $invoice->path = $path;
-        $invoice->section = $user->section;
-        $invoice->esn_country = $user->esn_country;
-        $invoice->save();*/
+                //Save invoice locally
+                $invID = $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
+                $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
+                $pdf->save($path);
 
-        //TODO Update ERS status
-        return redirect(env('ERS_EVENT_REDIRECT_URL'));
+                //Send invoice to participant
+                //TODO enable emails
+                //Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
+
+                //Save the whole transaction to the database
+
+                $invoice = new Invoice();
+                $invoice->user_id = $user->id;
+                $invoice->path = $path;
+                $invoice->section = $user->section;
+                $invoice->esn_country = $user->esn_country;
+                $invoice->save();*/
+
+                //TODO Update ERS status
+
+                //If all goes well and user is charged
+                return view('participants.payment', compact('user', 'error'));
+            }
+            else{
+                $error = "An error has occurred, please try again (Error 103)";
+                return view('participants.payment', compact('user', 'error'));
+            }
+        } else {
+            //If validation succeeds but charging fails
+            $error = "An error has occurred, please try again (Error 102)";
+            return view('participants.payment', compact('user', 'error'));
+        }
     }
+
     //TODO test deposits by card
 
     public function parseToken()
@@ -163,14 +201,11 @@ class ParticipantController extends Controller
         return view('participants.test', compact('payment'));
     }
 
-    public function test(){
+    public function test()
+    {
 
 
-
-
-
-
-        return view('test', compact('response','part', 'invoice'));
+        return view('test', compact('response', 'part', 'invoice'));
     }
 
     public function logout()
