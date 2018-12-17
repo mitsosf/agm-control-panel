@@ -39,7 +39,7 @@
                                         @break
 
                                         @default
-                                        <b style="color: red">NR approval pending</b>
+                                        <b style="color: red">Spot approval pending</b>
                                     @endswitch
                                 </td>
                             </tr>
@@ -55,7 +55,7 @@
                                                         data-amount="22200"
                                                         data-locale="en"
                                                         data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
-                                                        data-sandbox="1">
+                                                >
                                                 </script>
                                                 @csrf
                                             </form>
@@ -81,7 +81,7 @@
 
         @if($user->spot_status === 'approved')
             <div class="row">
-                <h5 style="color: red;">Notice: Please do not pay if your position hasn't been approved by your NR</h5>
+                <h5 style="color: red;">Notice: Please do not pay if your spot hasn't been approved by your NR</h5>
             </div>
             <div>
                 <p style="color: grey">Encountering issues? <!-- Button trigger modal -->

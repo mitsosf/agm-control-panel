@@ -83,7 +83,7 @@ desired effect
             <!-- Sidebar Menu -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MENU</li>
-                <li><a href="{{route('participant.home')}}"><i class="fa fa-user"></i> <span>My account</span></a></li>
+                <li><a href="{{route('participant.home')}}"><i class="fa fa-user"></i> <span>Dashboard</span></a></li>
                 <li><a href="{{route('participant.payment')}}"><i class="fa fa-credit-card"></i> <span>Fee Payment</span></a></li>
                 {{--<li><a href="{{route('oc.approved')}}"><i class="fa fa-bed"></i> <span>Rooming</span></a></li>
                 <li><a href="{{route('oc.approved')}}"><i class="fa fa-question-circle"></i> <span>FAQ</span></a></li>
