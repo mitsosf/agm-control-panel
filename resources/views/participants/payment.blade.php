@@ -103,7 +103,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Please tranfer exactly 222€ to this account:</p>
+                    <p>Please transfer exactly <b>222€</b> to this account:</p>
 
                     <p>IBAN: GR9601722290005229093337111</p>
                     <p>BIC: PIRBGRAA</p>
