@@ -32,7 +32,10 @@ class UnauthenticatedController extends Controller
         cas()->setFixedServiceURL(route('cas.login'));
         cas()->authenticate();
 
-        //TODO hande CAS no response case
+        if (!cas()->isAuthenticated()) {
+            return redirect(route('home'));
+        }
+
         $userCount = User::where('username', cas()->user())->count();
         if ($userCount == 0) {
             $newUser = new User();
@@ -41,10 +44,10 @@ class UnauthenticatedController extends Controller
             $newUser->name = cas()->getAttribute('first');
             $newUser->surname = cas()->getAttribute('last');
             $newUser->role_id = 1;
-            $newUser->esn_country= cas()->getAttribute('country');
+            $newUser->esn_country = cas()->getAttribute('country');
             $newUser->gender = cas()->getAttribute('gender');
             $newUser->section = cas()->getAttribute('section');
-            $newUser->birthday= cas()->getAttribute('birthdate');
+            $newUser->birthday = cas()->getAttribute('birthdate');
             $newUser->email = cas()->getAttribute('mail');
             $newUser->photo = cas()->getAttribute('picture');
             $newUser->facebook = cas()->getAttribute('social-facebook');
@@ -55,10 +58,10 @@ class UnauthenticatedController extends Controller
             cas()->getAttributes();
             $user->name = cas()->getAttribute('first');
             $user->surname = cas()->getAttribute('last');
-            $user->esn_country= cas()->getAttribute('country');
+            $user->esn_country = cas()->getAttribute('country');
             $user->gender = cas()->getAttribute('gender');
             $user->section = cas()->getAttribute('section');
-            $user->birthday= cas()->getAttribute('birthdate');
+            $user->birthday = cas()->getAttribute('birthdate');
             $user->email = cas()->getAttribute('mail');
             $user->photo = cas()->getAttribute('picture');
             $user->facebook = cas()->getAttribute('social-facebook');
@@ -70,12 +73,10 @@ class UnauthenticatedController extends Controller
         Auth::login($user);//Log the user into Laravel (natively)
         $user->refreshErsStatus();
 
-        //TODO REMOVE THIS SHIT
+        //TODO REMOVE THIS WHEN ERS API IS OPERATIONAL
 
-        if (cas()->user() === 'demo.everypay'){
-            $user->spot_status = 'approved';
-            $user->update();
-        }
+        $user->spot_status = 'approved';
+        $user->update();
 
         //END TODO
 
@@ -91,7 +92,6 @@ class UnauthenticatedController extends Controller
             default:
                 return redirect(route('home'));
         }
-
 
 
     }

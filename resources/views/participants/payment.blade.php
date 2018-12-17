@@ -80,6 +80,9 @@
         @endif
 
         @if($user->spot_status === 'approved')
+            <div class="row">
+                <h5 style="color: red;">Notice: Please do not pay if your position hasn't been approved by your NR</h5>
+            </div>
             <div>
                 <p style="color: grey">Encountering issues? <!-- Button trigger modal -->
                     <button type="button" id="bank_acc" data-toggle="modal" data-target="#exampleModal">
