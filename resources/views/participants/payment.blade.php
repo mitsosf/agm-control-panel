@@ -103,11 +103,11 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Please tranfer exactly 220€ to this account:</p>
+                    <p>Please tranfer exactly 222€ to this account:</p>
 
                     <p>IBAN: GR9601722290005229093337111</p>
                     <p>BIC: PIRBGRAA</p>
-                    <p>Reference: {{$user->name. ' '.$user->surname}}</p>
+                    <p>Reference: <b style="color: red">Please check your ERS invoice for the reference.</b></p>
 
                     <p style="color: red">Make sure to cover all banking fees.</p>
                 </div>
