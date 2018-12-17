@@ -107,6 +107,7 @@
 
                     <p>IBAN: GR9601722290005229093337111</p>
                     <p>BIC: PIRBGRAA</p>
+                    <p>Beneficiary: FEDERATION OF ERASMUS STUDENT NETWORK - GREECE</p>
                     <p>Reference: <b style="color: red">Please check your ERS invoice for the reference.</b></p>
 
                     <p style="color: red">Make sure to cover all banking fees.</p>

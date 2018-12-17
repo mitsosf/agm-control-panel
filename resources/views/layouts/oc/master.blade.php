@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Godmode | {{env('APP_NAME', 'AGM Control Panel')}}</title>
-    <link rel="icon" href="{{route('home')}}/favicon.ico" type="image/x-icon"/>
+    <link rel="icon" href="{{asset('images/favicon.ico')}}" type="image/x-icon">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
