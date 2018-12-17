@@ -75,8 +75,10 @@ class UnauthenticatedController extends Controller
 
         //TODO REMOVE THIS WHEN ERS API IS OPERATIONAL
 
-        $user->spot_status = 'approved';
-        $user->update();
+        if ($user->spot_status === 'pending') {
+            $user->spot_status = 'approved';
+            $user->update();
+        }
 
         //END TODO
 
