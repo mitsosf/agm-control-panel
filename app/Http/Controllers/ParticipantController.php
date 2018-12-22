@@ -206,7 +206,7 @@ class ParticipantController extends Controller
     public function test()
     {
 
-        dispatch(new SendPaymentConfirmationEmail());
+        dispatch(new SendPaymentConfirmationEmail())->delay(Carbon::now()->addSeconds(3));
         return 'Alles pope';
     }
 
