@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Invoice;
+use App\Jobs\SendPaymentConfirmationEmail;
 use App\Mail\PaymentConfirmation;
 use Carbon\Carbon;
 use Everypay\Everypay;
@@ -126,6 +127,7 @@ class ParticipantController extends Controller
 
                 //Send invoice to participant
                 //TODO enable emails
+
                 //Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
 
                 //Save the whole transaction to the database
@@ -204,9 +206,10 @@ class ParticipantController extends Controller
     public function test()
     {
 
-
-        return view('test', compact('response', 'part', 'invoice'));
+        dispatch(new SendPaymentConfirmationEmail());
+        return 'Alles pope';
     }
+
 
     public function logout()
     {
