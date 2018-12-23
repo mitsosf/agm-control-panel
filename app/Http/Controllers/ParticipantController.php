@@ -101,7 +101,7 @@ class ParticipantController extends Controller
                 //TODO Check if transaction is correct
 
                 //TODO update user
-                $user->fee = $payment->amount/100;
+                $user->fee = $payment->amount / 100;
                 $user->fee_date = Carbon::now();
                 $user->spot_status = 'paid';
                 $user->update();
@@ -137,8 +137,7 @@ class ParticipantController extends Controller
 
                 //If all goes well and user is charged
                 return view('participants.payment', compact('user', 'error'));
-            }
-            else{
+            } else {
                 $error = "An error has occurred, please try again (Error 103)";
                 return view('participants.payment', compact('user', 'error'));
             }
@@ -202,7 +201,11 @@ class ParticipantController extends Controller
         //Test Events
         $user = Auth::user();
         event(new UserPaid($user));
-        Log::channel('slack')->info('User: ',['user' => $user]);
+        Log::channel('slack')->info('User: ',
+            [
+                'name' => $user->name,
+                'surname' => $user->surname
+            ]);
 
         //Test job queue
         //dispatch(new SendPaymentConfirmationEmail());
