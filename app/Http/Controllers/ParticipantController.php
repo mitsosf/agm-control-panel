@@ -203,24 +203,15 @@ class ParticipantController extends Controller
     {
         //Test Events
         $user = Auth::user();
-        /*event(new UserPaid($user));
+        event(new UserPaid($user));
         Log::channel('slack')->info('User: ',
             [
                 'name' => $user->name,
                 'surname' => $user->surname
-            ]);*/
+            ]);
 
         //Test job queue
         //dispatch(new SendPaymentConfirmationEmail());
-
-        //Test pdf generation
-        $pdf = App::make('dompdf.wrapper');
-        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
-
-        //Save invoice locally
-        $invID = $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
-        $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-        $pdf->save($path);
 
         return 'Alles pope';
     }
