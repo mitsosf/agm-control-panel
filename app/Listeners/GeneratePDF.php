@@ -28,5 +28,6 @@ class GeneratePDF
     public function handle(UserPaid $event)
     {
         Log::info('GeneratePDF', ['user' => $event->user]);
+
     }
 }

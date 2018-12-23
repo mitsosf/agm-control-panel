@@ -8,6 +8,7 @@ use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class ParticipantController extends Controller
@@ -201,6 +202,7 @@ class ParticipantController extends Controller
         //Test Events
         $user = Auth::user();
         event(new UserPaid($user));
+        Log::channel('slack')->info('User: ',['user' => $user]);
 
         //Test job queue
         //dispatch(new SendPaymentConfirmationEmail());
