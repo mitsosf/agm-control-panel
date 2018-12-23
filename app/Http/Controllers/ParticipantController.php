@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
+use App\Jobs\SendPaymentConfirmationEmail;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
