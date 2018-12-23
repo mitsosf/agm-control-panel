@@ -8,6 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
@@ -44,6 +45,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Send invoice to participant
 
         Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
+        Log::channel('slack')->info(exec('pwd'));
 
         //Save the whole transaction to the database
 
