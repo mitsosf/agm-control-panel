@@ -55,7 +55,7 @@
                                                         data-amount="22200"
                                                         data-locale="en"
                                                         data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
-                                                >
+                                                        data-sandbox="1"                                                >
                                                 </script>
                                                 @csrf
                                             </form>
