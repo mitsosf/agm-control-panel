@@ -29,8 +29,8 @@ class GeneratePDF implements ShouldQueue
      */
     public function handle(UserPaid $event)
     {
-        Log::channel('slack')->info('Listener',['User'=>exec('echo $USER')]);
-        /*//Generate PDF
+        Log::channel('slack')->info('Listener',['User'=>exec('whoami')]);
+        //Generate PDF
         $user = $event->user;
 
         $pdf = App::make('dompdf.wrapper');
@@ -39,7 +39,7 @@ class GeneratePDF implements ShouldQueue
         //Save invoice locally
         $invID = DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1;
         $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-        $pdf->save($path);*/
+        $pdf->save($path);
 
     }
 }
