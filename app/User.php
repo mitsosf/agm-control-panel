@@ -92,7 +92,7 @@ class User extends Authenticatable
                 ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
                 ->get();
 
-            if (!isset($json)){
+            if (empty($json)){
                 $this->spot_status = $status;
                 $this->update();
 
