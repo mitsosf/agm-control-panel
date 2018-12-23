@@ -3,10 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\UserPaid;
+use App\Mail\PaymentConfirmation;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
 {
@@ -39,7 +41,18 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $path = env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
         $pdf->save($path);
 
-        //Send mail
+        //Send invoice to participant
+
+        Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
+
+        //Save the whole transaction to the database
+
+        /*$invoice = new Invoice();
+        $invoice->user_id = $user->id;
+        $invoice->path = $path;
+        $invoice->section = $user->section;
+        $invoice->esn_country = $user->esn_country;
+        $invoice->save();*/
 
     }
 }

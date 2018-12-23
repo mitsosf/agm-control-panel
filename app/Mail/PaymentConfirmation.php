@@ -22,11 +22,11 @@ class PaymentConfirmation extends Mailable
     protected $name;
     protected $path;
 
-    public function __construct(User $user/*, $path*/)
+    public function __construct(User $user, $path)
     {
         $this->user = $user;
         $this->name = $user['name'] . ' ' . $user['surname'] . ' Proof of Payment';
-        /*$this->path = $path;*/
+        $this->path = $path;
     }
 
     /**
@@ -41,10 +41,10 @@ class PaymentConfirmation extends Mailable
         view('mails.paymentConfirmation')->
         with([
             'user' => $this->user,
-        ])/*->
+        ])->
         attach($this->path, [
             'as' => $this->name . '.pdf',
             'mime' => 'application/pdf',
-        ])*/;
+        ]);
     }
 }
