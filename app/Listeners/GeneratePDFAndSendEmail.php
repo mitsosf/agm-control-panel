@@ -45,7 +45,6 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Send invoice to participant
 
         Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
-        Log::channel('slack')->info(exec('pwd'));
 
         //Save the whole transaction to the database
 
