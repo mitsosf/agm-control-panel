@@ -214,14 +214,15 @@ class ParticipantController extends Controller
         //dispatch(new SendPaymentConfirmationEmail());
 
         //Test pdf generation
-        $pdf = App::make('dompdf.wrapper');
+        /*$pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
 
         //Save invoice locally
-        $invID = DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1;
+        $invID =  DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
         $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-        $pdf->save($path);
+        $pdf->save($path);*/
 
+        Log::channel('slack')->info('Controller',['User'=>exec('echo $USER')]);
         return 'Alles pope';
     }
 
