@@ -28,5 +28,6 @@ class SendEmail implements ShouldQueue
     public function handle(UserPaid $event)
     {
         Log::info('Send email', ['user' => $event->user]);
+
     }
 }

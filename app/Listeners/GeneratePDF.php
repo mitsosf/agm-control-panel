@@ -5,6 +5,8 @@ namespace App\Listeners;
 use App\Events\UserPaid;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class GeneratePDF implements ShouldQueue
@@ -27,7 +29,17 @@ class GeneratePDF implements ShouldQueue
      */
     public function handle(UserPaid $event)
     {
-        Log::info('GeneratePDF', ['user' => $event->user]);
+        //Log::info('GeneratePDF', ['user' => $event->user]);
+        //Generate PDF
+        $user = $event->user;
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
+
+        //Save invoice locally
+        $invID = $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
+        $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
+        $pdf->save($path);
 
     }
 }
