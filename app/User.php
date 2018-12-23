@@ -87,24 +87,27 @@ class User extends Authenticatable
 
 
             $status = 'pending'; //Default status
-            //TODO handle error in case of no response
 
             $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
                 ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
                 ->get();
 
+            if (!isset($json)){
+                $this->spot_status = $status;
+                $this->update();
+
+                return $status;
+            }
 
             $ers_users = json_decode($json, TRUE);
-            \Illuminate\Support\Facades\Log::debug(env('CAS_HOSTNAME', 'test'));
 
-            /*
             foreach ($ers_users as $ers_user) {
                 if ($ers_user['esn_accounts_username'] == $this->username) {
                     $status = 'approved';
                 }
-            }*/
+            }
 
-            $this->spot_status = $ers_users[0];//$status;
+            $this->spot_status = $status;
             $this->update();
         }
         return $status;

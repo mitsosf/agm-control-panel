@@ -73,15 +73,6 @@ class UnauthenticatedController extends Controller
         Auth::login($user);//Log the user into Laravel (natively)
         $user->refreshErsStatus();
 
-        //TODO REMOVE THIS WHEN ERS API IS OPERATIONAL
-
-        if ($user->spot_status === 'pending') {
-            $user->spot_status = 'approved';
-            $user->update();
-        }
-
-        //END TODO
-
 
         $role = $user->role->name;
         switch ($role) {
