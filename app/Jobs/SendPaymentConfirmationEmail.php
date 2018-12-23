@@ -32,6 +32,7 @@ class SendPaymentConfirmationEmail implements ShouldQueue
      */
     public function handle()
     {
+
         $user = User::find(1);
         Mail::to('dimitris@frangiadakis.com')->send(new PaymentConfirmation($user));
     }

@@ -2,20 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Invoice;
-use App\Jobs\SendPaymentConfirmationEmail;
-use App\Mail\PaymentConfirmation;
+use App\Events\UserPaid;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
-use Ixudra\Curl\Facades\Curl;
-use function MongoDB\BSON\toJSON;
 
 class ParticipantController extends Controller
 {
@@ -205,8 +198,12 @@ class ParticipantController extends Controller
 
     public function test()
     {
+        //Test Events
+        $user = Auth::user();
+        event(new UserPaid($user));
 
-        dispatch(new SendPaymentConfirmationEmail());
+        //Test job queue
+        //dispatch(new SendPaymentConfirmationEmail());
         return 'Alles pope';
     }
 
