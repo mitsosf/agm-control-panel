@@ -204,11 +204,6 @@ class ParticipantController extends Controller
         //Test Events
         $user = Auth::user();
         event(new UserPaid($user));
-        Log::channel('slack')->info('User: ',
-            [
-                'name' => $user->name,
-                'surname' => $user->surname
-            ]);
 
         //Test job queue
         //dispatch(new SendPaymentConfirmationEmail());
