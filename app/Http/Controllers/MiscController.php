@@ -14,8 +14,9 @@ class MiscController extends Controller
 
     public function newPaymentToSlack()
     {
+        Log::info('Entered slack notification');
         $input = @file_get_contents("php://input");
-
+        Log::info('Got the contents');
         $payload = json_decode($input);
 
         Log::channel('slack')->info('New payment', ['data' => $payload]);
