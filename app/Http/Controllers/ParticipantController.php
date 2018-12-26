@@ -205,9 +205,6 @@ class ParticipantController extends Controller
         $user = Auth::user();
         event(new UserPaid($user));
 
-        //Test job queue
-        //dispatch(new SendPaymentConfirmationEmail());
-
         return 'Alles pope';
     }
 

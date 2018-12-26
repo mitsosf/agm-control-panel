@@ -46,7 +46,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Send invoice to participant
 
-        Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
+        Mail::to($user->email)->send(new PaymentConfirmation($user, env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path));
 
         //Save the whole transaction to the database
 
