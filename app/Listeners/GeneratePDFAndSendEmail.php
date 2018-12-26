@@ -6,11 +6,9 @@ use App\Events\UserPaid;
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
 use App\Payment;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue

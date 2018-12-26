@@ -3,15 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
-use App\Jobs\SendPaymentConfirmationEmail;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class ParticipantController extends Controller
@@ -94,8 +90,7 @@ class ParticipantController extends Controller
                 "amount" => 22200, //Amount in cents
                 "currency" => "eur", //Currency
                 "token" => $token,
-                "description" => $description,
-                "payee_email" => $user->email
+                "description" => $description
             ));
 
             Session::forget('token');
@@ -103,38 +98,14 @@ class ParticipantController extends Controller
             if (isset($payment->token)) {
                 //TODO Check if transaction is correct
 
-                //TODO update user
+                //Update user info
                 $user->fee = $payment->amount / 100;
                 $user->fee_date = Carbon::now();
                 $user->spot_status = 'paid';
                 $user->update();
 
-                //TODO Store in transactions table
-
-                //TODO Generate proof of payment & send email (queue)
-
-                /*//Generate invoice
-                $pdf = App::make('dompdf.wrapper');
-                $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
-
-                //Save invoice locally
-                $invID =6 $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
-                $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-                $pdf->save($path);
-
-                //Send invoice to participant
-                //TODO enable emails
-
-                //Mail::to($user->email)->send(new PaymentConfirmation($user, $path));
-
-                //Save the whole transaction to the database
-
-                $invoice = new Invoice();
-                $invoice->user_id = $user->id;
-                $invoice->path = $path;
-                $invoice->section = $user->section;
-                $invoice->esn_country = $user->esn_country;
-                $invoice->save();*/
+                //Generate PDF invoice, send it to the user and update DB
+                event(new UserPaid($user));
 
                 //TODO Update ERS status
 
@@ -201,11 +172,7 @@ class ParticipantController extends Controller
 
     public function test()
     {
-        //Test Events
-        $user = Auth::user();
-        event(new UserPaid($user));
-
-        return 'Alles pope';
+       //
     }
 
 
