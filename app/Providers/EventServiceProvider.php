@@ -16,7 +16,8 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'App\Events\UserPaid' => [
-            'App\Listeners\GeneratePDFAndSendEmail'
+            'App\Listeners\GeneratePDFAndSendEmail',
+            'App\Listeners\SendPaymentReminder'
         ]
     ];
 
