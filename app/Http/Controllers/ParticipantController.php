@@ -118,7 +118,7 @@ class ParticipantController extends Controller
                 $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
 
                 //Save invoice locally
-                $invID = $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
+                $invID =6 $user->esn_country . (DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1);
                 $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
                 $pdf->save($path);
 

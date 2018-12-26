@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Ixudra\Curl\Facades\Curl;
 
 /**
+ * @property mixed id
  * @property string username
  * @property mixed email
  * @property mixed photo
@@ -20,6 +21,7 @@ use Ixudra\Curl\Facades\Curl;
  * @property mixed facebook
  * @property string spot_status
  * @property int role_id
+ * @property mixed fee
  */
 class User extends Authenticatable
 {

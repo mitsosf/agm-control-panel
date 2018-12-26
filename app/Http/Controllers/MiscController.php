@@ -19,6 +19,6 @@ class MiscController extends Controller
         Log::info('Got the contents');
         $payload = json_decode($input);
 
-        Log::channel('slack')->info('New payment', ['data' => $payload]);
+        Log::channel('slack')->info('New payment', ['data' => $input]);
     }
 }

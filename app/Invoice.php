@@ -16,7 +16,7 @@ class Invoice extends Model
         'path', 'user_id', 'section', 'esn_country'
     ];
 
-    public function user(){
+    public function payment(){
         return $this->belongsTo('App\Payment');
     }
 }

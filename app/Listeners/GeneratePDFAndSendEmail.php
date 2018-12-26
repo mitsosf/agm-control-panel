@@ -3,7 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\UserPaid;
+use App\Invoice;
 use App\Mail\PaymentConfirmation;
+use App\Payment;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
@@ -39,8 +41,8 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save invoice locally
         $invID = DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1;
-        $path = env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
-        $pdf->save($path);
+        $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
+        $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path);
 
         //Send invoice to participant
 
@@ -48,12 +50,21 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
-        /*$invoice = new Invoice();
-        $invoice->user_id = $user->id;
-        $invoice->path = $path;
-        $invoice->section = $user->section;
-        $invoice->esn_country = $user->esn_country;
-        $invoice->save();*/
+        //Create payment
+        $payment = new Payment();
+        $payment->user()->associate($user);
+        $payment->amount = $user->fee;
+        $payment->comments = null;
+        $payment->approved = true;
+        $payment->proof = '';
+        $payment->save();
 
+        //Create invoice and attach to payment
+        $invoice = new Invoice();
+        $invoice->path = $path;
+        $invoice->esn_country = $user->esn_country;
+        $invoice->section = $user->section;
+        $invoice->payment()->associate($payment);
+        $invoice->save();
     }
 }
