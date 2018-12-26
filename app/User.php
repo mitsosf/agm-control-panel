@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Ixudra\Curl\Facades\Curl;
 
 /**
+ * @property mixed id
  * @property string username
  * @property mixed email
  * @property mixed photo
@@ -20,6 +21,7 @@ use Ixudra\Curl\Facades\Curl;
  * @property mixed facebook
  * @property string spot_status
  * @property int role_id
+ * @property mixed fee
  */
 class User extends Authenticatable
 {
@@ -87,29 +89,30 @@ class User extends Authenticatable
 
 
             $status = 'pending'; //Default status
-            //TODO handle error in case of no response
 
-            /*$json = Curl::to(env('ERS_PAYMENTS_API_URL'))
-                ->withData( array ( 'event' => env('ERS_PAYMENTS_API_EVENT_ID')))
+            $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
+                ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
                 ->get();
 
+            if (empty($json)){
+                $this->spot_status = $status;
+                $this->update();
 
+                return $status;
+            }
 
             $ers_users = json_decode($json, TRUE);
 
-
-
-            foreach ($ers_users as $ers_user){
-                if ($ers_user['esn_accounts_username'] == $this->username){
+            foreach ($ers_users as $ers_user) {
+                if ($ers_user['esn_accounts_username'] == $this->username) {
                     $status = 'approved';
                 }
-            }*/
+            }
 
             $this->spot_status = $status;
             $this->update();
         }
         return $status;
+
     }
-
-
 }

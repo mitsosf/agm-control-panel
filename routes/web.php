@@ -69,6 +69,7 @@ Route::get('/oc/logout', 'OCController@logout')->name('oc.logout');
 //Misc
 Route::get('/terms', 'MiscController@terms')->name('terms');
 
+
 //Test
 Route::get('/test', 'ParticipantController@test')->name('participant.test');
 
