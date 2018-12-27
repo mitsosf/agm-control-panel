@@ -111,7 +111,7 @@ class ParticipantController extends Controller
                 //TODO Update ERS status
 
                 //If all goes well and user is charged
-                return view('participants.payment', compact('user', 'error'));
+                return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
                 return view('participants.payment', compact('user', 'error'));
