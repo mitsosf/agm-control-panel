@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
+use App\Invoice;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -172,7 +173,7 @@ class ParticipantController extends Controller
 
     public function test()
     {
-        //
+        return Invoice::all()->count();
     }
 
 

@@ -8,7 +8,6 @@ use App\Mail\PaymentConfirmation;
 use App\Payment;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
@@ -40,7 +39,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $pdf->loadHTML(view('mails.paymentConfirmation', compact('user', 'invID')));
 
         //Save invoice locally
-        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
+        $path = 'invoices/' . $invID . '-' . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
         $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path);
 
         //Send invoice to participant
