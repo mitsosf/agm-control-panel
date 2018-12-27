@@ -38,7 +38,7 @@ class PaymentConfirmation extends Mailable
     {
         return $this->subject('Welcome to AGM Thessaloniki experience!')->
         from('noreply@agmthessaloniki.org', 'AGM Thessaloniki 2019 - Payment System')->
-        view('mails.paymentConfirmation')->
+        view('mails.sendPaymentConfirmation')->
         with([
             'user' => $this->user,
         ])->
