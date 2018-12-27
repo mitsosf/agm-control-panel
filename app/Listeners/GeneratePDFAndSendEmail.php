@@ -36,7 +36,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $pdf = App::make('dompdf.wrapper');
         $invID = Invoice::all()->count()+1;
 
-        $pdf->loadHTML(view('mails.paymentConfirmation',compact('invID', 'user')));
+        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
 
         //Save invoice locally
         $path = 'invoices/' . $invID . '-' . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
