@@ -10,7 +10,7 @@
 <p>&nbsp;</p>
 <p><span style="font-weight: 400;">Next step? Join the </span><a
             href="https://t.me/participantsTheCreteTrip2018"><strong>private Telegram Channel</strong></a><span
-            style="font-weight: 400;"> of </span><strong>AGM Thessaoniki 2019</strong><span style="font-weight: 400;"> which is </span><strong>ONLY</strong><span
+            style="font-weight: 400;"> of </span><strong>AGM Thessaloniki 2019</strong><span style="font-weight: 400;"> which is </span><strong>ONLY</strong><span
             style="font-weight: 400;"> for the </span><strong>OFFICIAL PARTICIPANTS</strong><span
             style="font-weight: 400;">!</span><span style="font-weight: 400;"><br/><br/></span></p>
 <p><span style="font-weight: 400;">There you will receive important info such as the</span><strong> group

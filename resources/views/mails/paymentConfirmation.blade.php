@@ -38,10 +38,22 @@
     <img src="{{asset('images/ESN-white.png')}}" height="50px" alt="" style="float: right;margin-right: 20px; margin-top: 1%;margin-bottom: 1%">
 </div>
 
-<div class="row">
+<div class="row" style="margin-top: 6%">
+    <img src="{{asset('images/logo.png')}}" height="150px" alt="">
+
+</div>
+
+<div class="row" style="">
     <div class="column left">
-        <img src="{{asset('images/logo.png')}}" height="250px" alt="">
+        <h4 style="color: #2E3192">Federation Of Erasmus Student Network - Greece</h4>
+        <p><b>Address:</b> Patision 42, 10682, Athens, Greece</p>
+        <p><b>Tax Ref. no:</b> 997166220</p>
+        <p><b>Tax Office:</b> D' Athinon</p>
+        <br>
+        <p><b>#:</b> AGM-{{$invID}}/2019</p>
     </div>
+
+
     <div class="column right" style="margin-right: 3%">
         <h3 style="color: #2E3192"><u>Payment by:</u></h3>
         <p>Name: <b>{{$user->name}}</b></p>
@@ -52,8 +64,9 @@
         <p>Date/Time: <b>{{\Carbon\Carbon::now()}}</b></p>
     </div>
 </div>
+
 <div class="row" style="margin-top: 5%">
-    <h2 style="color: #2E3192;text-align: center"><u>PAYMENT CONFIRMATION</u></h2>
+    <h2 style="color: #2E3192;text-align: center"><u>PROOF OF PAYMENT</u></h2>
 </div>
 <div class="row">
     <table class="table" border="1" width="100%">
@@ -66,15 +79,15 @@
         </thead>
         <tbody>
         <tr style="border-color: #2E3192">
-            <td style="border-color: #2E3192;text-align: center"><h4>Participant’s Fee AGM Thessaloniki 2019</h4>
+            <td style="border-color: #2E3192;text-align: center"><h4>Participation Fee - AGM Thessaloniki 2019</h4>
             </td>
             <td style="text-align: center">1</td>
-            <td style="text-align: center">220</td>
+            <td style="text-align: center">220€</td>
         </tr>
         <tr>
             <td></td>
             <td><h3 style="text-align: center">Total:</h3></td>
-            <td><h3 style="text-align: center">220</h3></td>
+            <td><h3 style="text-align: center">220€</h3></td>
         </tr>
         </tbody>
     </table>
