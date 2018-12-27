@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
-use App\Invoice;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ParticipantController extends Controller
@@ -175,16 +172,7 @@ class ParticipantController extends Controller
 
     public function test()
     {
-
-        $user = Auth::user();
-        //Generate invoice
-        $pdf = App::make('dompdf.wrapper');
-
-        $invID = Invoice::all()->count()+1;
-
-        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user', 'invID')));
-
-        return $pdf->stream();
+        //
     }
 
 

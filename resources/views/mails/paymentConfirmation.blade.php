@@ -46,8 +46,10 @@
 <div class="row" style="">
     <div class="column left">
         <h4 style="color: #2E3192">Federation Of Erasmus Student Network - Greece</h4>
-        <p><b>VAT:</b> 997166220</p>
         <p><b>Address:</b> Patision 42, 10682, Athens, Greece</p>
+        <p><b>Tax Ref. no:</b> 997166220</p>
+        <p><b>Tax Office:</b> D' Athinon</p>
+        <br>
         <p><b>#:</b> AGM-{{$invID}}/2019</p>
     </div>
 
@@ -64,7 +66,7 @@
 </div>
 
 <div class="row" style="margin-top: 5%">
-    <h2 style="color: #2E3192;text-align: center"><u>PAYMENT CONFIRMATION</u></h2>
+    <h2 style="color: #2E3192;text-align: center"><u>PROOF OF PAYMENT</u></h2>
 </div>
 <div class="row">
     <table class="table" border="1" width="100%">
@@ -77,7 +79,7 @@
         </thead>
         <tbody>
         <tr style="border-color: #2E3192">
-            <td style="border-color: #2E3192;text-align: center"><h4>Participant’s Fee AGM Thessaloniki 2019</h4>
+            <td style="border-color: #2E3192;text-align: center"><h4>Participation Fee - AGM Thessaloniki 2019</h4>
             </td>
             <td style="text-align: center">1</td>
             <td style="text-align: center">220€</td>
