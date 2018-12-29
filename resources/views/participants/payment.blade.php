@@ -35,7 +35,7 @@
                                         @break
 
                                         @case('paid')
-                                        <b style="color: green">Paid</b>
+                                        <b style="color: green">Paid <a target="_blank" href="{{route('participant.generateProof')}}">(Proof)</a></b>
                                         @break
 
                                         @default

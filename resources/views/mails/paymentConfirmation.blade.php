@@ -48,7 +48,7 @@
         <h4 style="color: #2E3192">Federation Of Erasmus Student Network - Greece</h4>
         <p><b>Address:</b> Patision 42, 10682, Athens, Greece</p>
         <p><b>Tax Ref. no:</b> 997166220</p>
-        <p><b>Tax Office:</b> D' Athinon</p>
+        <p><b>Tax Office:</b> D' Athens</p>
         <br>
         <p><b>#:</b> AGM-{{$invID}}/2019</p>
     </div>

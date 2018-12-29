@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\App;
 use Ixudra\Curl\Facades\Curl;
 
 /**
@@ -114,5 +115,29 @@ class User extends Authenticatable
         }
         return $status;
 
+    }
+
+    public function generateProof(){
+
+        $user = $this;
+
+        $payments = $user->payments->where('type', 'fee');
+
+        $invoice = null;
+        if ($payments->count() > 0) {
+            $invoice = $payments->first()->invoice;
+        }else{
+            return "Invoice is being processed, please check again later";
+        }
+
+        $invID = $invoice->id;
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
+
+
+        //Save invoice locally
+        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
+        return $pdf->stream();
     }
 }
