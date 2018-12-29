@@ -74,7 +74,7 @@ class ParticipantController extends Controller
         }
         //If we don't receive a token
         $error = "An error has occurred, please try again (Error 101)";
-        return view('participants.payment', compact('error', 'user'));
+        return $token; //view('participants.payment', compact('error', 'user'));
     }
 
 
