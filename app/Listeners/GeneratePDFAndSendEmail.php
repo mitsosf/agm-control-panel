@@ -63,7 +63,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $invoice->path = $path;
         $invoice->esn_country = $user->esn_country;
         $invoice->section = $user->section;
-        $invoice->transaction()->associate($transaction);
+        $invoice->transaction->associate($transaction);
         $invoice->save();
     }
 }
