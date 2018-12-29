@@ -74,7 +74,7 @@ class ParticipantController extends Controller
         }
         //If we don't receive a token
         $error = "An error has occurred, please try again (Error 101)";
-        return view('participants.test',compact('token')); //view('participants.payment', compact('error', 'user'));
+        return view('participants.payment', compact('error', 'user'));
     }
 
 
@@ -125,7 +125,7 @@ class ParticipantController extends Controller
         } else {
             //If validation succeeds but charging fails
             $error = "An error has occurred, please try again (Error 102)";
-            return view('participants.payment', compact('user', 'error'));
+            return view('participants.test',compact('token'));//return view('participants.payment', compact('user', 'error'));
         }
     }
 
