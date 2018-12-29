@@ -120,12 +120,12 @@ class ParticipantController extends Controller
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
-                return view('participants.payment', compact('user', 'error'));
+                return view('participants.test',compact('token'));//return view('participants.payment', compact('user', 'error'));
             }
         } else {
             //If validation succeeds but charging fails
             $error = "An error has occurred, please try again (Error 102)";
-            return view('participants.test',compact('token'));//return view('participants.payment', compact('user', 'error'));
+            return view('participants.payment', compact('user', 'error'));
         }
     }
 
