@@ -8,9 +8,12 @@
             <a href="{{route('participant.payment')}}">
                 <div class="small-box bg-aqua">
                     <div class="inner">
-                        <h3>Payment</h3>
-
-                        <p>Pay AGM Thessaloniki 2019 participation fee</p>
+                        <h3>Fee</h3>
+                        @if($user->spot_status === 'paid')
+                            <p>You have successfully paid the fee</p>
+                        @else
+                            <p>Pay AGM Thessaloniki 2019 participation fee</p>
+                        @endif
                     </div>
                     <div class="icon">
                         <i class="fa fa-eur"></i>

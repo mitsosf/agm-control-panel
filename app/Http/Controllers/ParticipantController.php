@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
 use App\Invoice;
+use App\User;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -35,7 +36,13 @@ class ParticipantController extends Controller
         $user = Auth::user();
         $error = null;
 
-        return view('participants.payment', compact('user', 'error'));
+        $payments = $user->payments->where('type', 'fee');
+
+        $invoice = null;
+        if ($payments->count() > 0) {
+            $invoice = $payments->first()->invoice;
+        }
+        return view('participants.payment', compact('user', 'error', 'invoice'));
     }
 
     //TODO log ALL errors
@@ -169,6 +176,10 @@ class ParticipantController extends Controller
 
         Session::forget('token');
         return view('participants.test', compact('payment'));
+    }
+
+    public function generateProof(){
+       return Auth::user()->generateProof();
     }
 
     public function test()
