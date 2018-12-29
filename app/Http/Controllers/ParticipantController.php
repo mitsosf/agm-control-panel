@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
 use App\Invoice;
-use App\User;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -36,11 +35,11 @@ class ParticipantController extends Controller
         $user = Auth::user();
         $error = null;
 
-        $payments = $user->payments->where('type', 'fee');
+        $transactions = $user->transactions->where('type', 'fee');
 
         $invoice = null;
-        if ($payments->count() > 0) {
-            $invoice = $payments->first()->invoice;
+        if ($transactions->count() > 0) {
+            $invoice = $transactions->first()->invoice;
         }
         return view('participants.payment', compact('user', 'error', 'invoice'));
     }
@@ -97,7 +96,7 @@ class ParticipantController extends Controller
             $payment = Payment::create(array(
                 "amount" => 22200, //Amount in cents
                 "currency" => "eur", //Currency
-                "token" => $token,
+                "proof" => $token,
                 "description" => $description
             ));
 
@@ -167,13 +166,14 @@ class ParticipantController extends Controller
         $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
         $payment = Payment::create(array(
-            "amount" => 22000, //Amount in cents
+            "fee" => "deposit",
+            "amount" => 500, //Amount in cents
             "currency" => "eur", //Currency
             "token" => $token,
             "description" => $description,
             "capture" => 0
         ));
-
+        //TODO validation etc
         Session::forget('token');
         return view('participants.test', compact('payment'));
     }
