@@ -96,7 +96,7 @@ class ParticipantController extends Controller
             $payment = Payment::create(array(
                 "amount" => 22200, //Amount in cents
                 "currency" => "eur", //Currency
-                "proof" => $token,
+                "token" => $token,
                 "description" => $description
             ));
 
@@ -120,7 +120,7 @@ class ParticipantController extends Controller
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
-                return view('participants.test',compact('payment'));//return view('participants.payment', compact('user', 'error'));
+                return view('participants.payment', compact('user', 'error'));
             }
         } else {
             //If validation succeeds but charging fails
@@ -166,7 +166,6 @@ class ParticipantController extends Controller
         $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
         $payment = Payment::create(array(
-            "fee" => "deposit",
             "amount" => 500, //Amount in cents
             "currency" => "eur", //Currency
             "token" => $token,
