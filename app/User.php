@@ -24,6 +24,7 @@ use Ixudra\Curl\Facades\Curl;
  * @property int role_id
  * @property mixed fee
  * @property mixed transactions
+ * @property mixed rooming_comments
  */
 class User extends Authenticatable
 {
