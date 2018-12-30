@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Invoice extends Model
 {
     protected $fillable = [
-        'path', 'user_id', 'section', 'esn_country'
+        'path', 'section', 'esn_country'
     ];
 
     public function transaction(){

@@ -61,7 +61,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $transaction->comments = null;
         $transaction->approved = true;
         $transaction->proof = '';
-        $transaction->invoice()->associate($invoice);
         $transaction->save();
+        $transaction->invoice()->associate($invoice);
     }
 }
