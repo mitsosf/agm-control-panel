@@ -108,7 +108,6 @@ desired effect
                         @endif
                     </ul>
                 </li>
-                <li><a href="#"><i class="fa fa-shopping-bag"></i> <span>Welcome Bags</span></a></li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-gears"></i> <span>CRUD</span>
                         <span class="pull-right-container">
