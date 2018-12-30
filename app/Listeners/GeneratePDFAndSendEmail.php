@@ -57,11 +57,11 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Create transaction
         $transaction = new Transaction();
         $transaction->user()->associate($user);
+        $transaction->invoice()->associate($invoice);
         $transaction->amount = $user->fee;
         $transaction->comments = null;
         $transaction->approved = true;
         $transaction->proof = '';
         $transaction->save();
-        $transaction->invoice()->associate($invoice);
     }
 }
