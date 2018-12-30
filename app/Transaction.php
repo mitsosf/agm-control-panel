@@ -26,7 +26,7 @@ class Transaction extends Model
     ];
 
     public function invoice(){
-        return $this->belongsTo('App\Invoice');
+        return $this->hasOne('App\Invoice');
     }
 
     public function user(){
