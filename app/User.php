@@ -123,7 +123,7 @@ class User extends Authenticatable
 
         $user = $this;
 
-        $transactions = $user->transactions()->where('type', 'fee')->with('invoices')->get();
+        $transactions = $user->transactions()->where('type', 'fee')->with('invoice')->get();
 
         $invoice = null;
         if ($transactions->count() > 0) {
