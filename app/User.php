@@ -123,11 +123,11 @@ class User extends Authenticatable
 
         $user = $this;
 
-        $transactions = $user->transactions->where('type', 'fee');
+        $transactions = $user->transactions()->where('type', 'fee');
 
         $invoice = null;
         if ($transactions->count() > 0) {
-            $invoice = $transactions->first()->invoice();
+            $invoice = $transactions->first()->invoice;
         }else{
             return "Invoice is being processed, please check again later";
         }
