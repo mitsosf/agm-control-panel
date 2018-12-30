@@ -82,12 +82,12 @@
             <td style="border-color: #2E3192;text-align: center"><h4>Participation Fee - AGM Thessaloniki 2019</h4>
             </td>
             <td style="text-align: center">1</td>
-            <td style="text-align: center">{{$user->fee}}</td>
+            <td style="text-align: center">{{$user->fee}}€</td>
         </tr>
         <tr>
             <td></td>
             <td><h3 style="text-align: center">Total:</h3></td>
-            <td><h3 style="text-align: center">{{$user->fee}}</h3></td>
+            <td><h3 style="text-align: center">{{$user->fee}}€</h3></td>
         </tr>
         </tbody>
     </table>
