@@ -140,6 +140,6 @@ class User extends Authenticatable
 
         //Save invoice locally
         $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
-        return view('participants.test', compact('transactions'));//$pdf->stream();
+        return view('participants.test', compact('invoice'));//$pdf->stream();
     }
 }
