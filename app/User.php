@@ -23,6 +23,8 @@ use Ixudra\Curl\Facades\Curl;
  * @property string spot_status
  * @property int role_id
  * @property mixed fee
+ * @property mixed transactions
+ * @property mixed rooming_comments
  */
 class User extends Authenticatable
 {
@@ -47,9 +49,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function payments()
+    public function transactions()
     {
-        return $this->hasMany('App\Payment');
+        return $this->hasMany('App\Transaction');
     }
 
     public function room()
@@ -121,11 +123,11 @@ class User extends Authenticatable
 
         $user = $this;
 
-        $payments = $user->payments->where('type', 'fee');
+        $transactions = $user->transactions()->where('type', 'fee')->with('invoice')->get();
 
         $invoice = null;
-        if ($payments->count() > 0) {
-            $invoice = $payments->first()->invoice;
+        if ($transactions->count() > 0) {
+            $invoice = $transactions->first()->invoice;
         }else{
             return "Invoice is being processed, please check again later";
         }
@@ -135,9 +137,6 @@ class User extends Authenticatable
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
 
-
-        //Save invoice locally
-        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
         return $pdf->stream();
     }
 }

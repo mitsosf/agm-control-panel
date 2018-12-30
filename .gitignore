@@ -1,5 +1,5 @@
 /node_modules
-/public/hot
+/public/invoices
 /storage/*.key
 /vendor
 /.idea

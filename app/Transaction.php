@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string approved
  * @property string proof
  */
-class Payment extends Model
-{
 
+class Transaction extends Model
+{
     /**
      * The attributes that are mass assignable.
      *

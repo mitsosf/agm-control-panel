@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\UserPaid;
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
-use App\Payment;
+use App\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
@@ -35,7 +35,6 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         $pdf = App::make('dompdf.wrapper');
         $invID = Invoice::all()->count()+1;
-
         $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
 
         //Save invoice locally
@@ -48,21 +47,21 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
-        //Create payment
-        $payment = new Payment();
-        $payment->user()->associate($user);
-        $payment->amount = $user->fee;
-        $payment->comments = null;
-        $payment->approved = true;
-        $payment->proof = '';
-        $payment->save();
+        //Create transaction
+        $transaction = new Transaction();
+        $transaction->user()->associate($user);
+        $transaction->amount = $user->fee;
+        $transaction->comments = null;
+        $transaction->approved = true;
+        $transaction->proof = '';
+        $transaction->save();
 
-        //Create invoice and attach to payment
+        //Create invoice and attach to transaction
         $invoice = new Invoice();
         $invoice->path = $path;
         $invoice->esn_country = $user->esn_country;
         $invoice->section = $user->section;
-        $invoice->payment()->associate($payment);
+        $invoice->transaction()->associate($transaction);
         $invoice->save();
     }
 }
