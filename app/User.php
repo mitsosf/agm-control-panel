@@ -127,7 +127,7 @@ class User extends Authenticatable
 
         $invoice = null;
         if ($transactions->count() > 0) {
-            $invoice = $transactions->first()->invoice;
+            $invoice = $transactions->first();
         }else{
             return "Invoice is being processed, please check again later";
         }
