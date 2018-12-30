@@ -132,7 +132,7 @@ class User extends Authenticatable
             return "Invoice is being processed, please check again later";
         }
 
-        $invID = $invoice->id;
+        $invID = 0;//$invoice->id;
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
