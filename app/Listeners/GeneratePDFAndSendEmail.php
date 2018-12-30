@@ -47,6 +47,13 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
+        //Create invoice and attach to transaction
+        $invoice = new Invoice();
+        $invoice->path = $path;
+        $invoice->esn_country = $user->esn_country;
+        $invoice->section = $user->section;
+        $invoice->save();
+
         //Create transaction
         $transaction = new Transaction();
         $transaction->user()->associate($user);
@@ -54,14 +61,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $transaction->comments = null;
         $transaction->approved = true;
         $transaction->proof = '';
+        $transaction->invoice()->associate($invoice);
         $transaction->save();
-
-        //Create invoice and attach to transaction
-        $invoice = new Invoice();
-        $invoice->path = $path;
-        $invoice->esn_country = $user->esn_country;
-        $invoice->section = $user->section;
-        $invoice->transaction()->associate($transaction);
-        $invoice->save();
     }
 }
