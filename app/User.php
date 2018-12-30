@@ -127,19 +127,16 @@ class User extends Authenticatable
 
         $invoice = null;
         if ($transactions->count() > 0) {
-            $invoice = $transactions->first();//->invoice;
+            $invoice = $transactions->first()->invoice;
         }else{
             return "Invoice is being processed, please check again later";
         }
 
-        $invID = 0;//$invoice->id;
+        $invID = $invoice->id;
 
         $pdf = App::make('dompdf.wrapper');
         $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
 
-
-        //Save invoice locally
-        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
-        return view('participants.test', compact('invoice'));//return $pdf->stream();
+        return $pdf->stream();
     }
 }
