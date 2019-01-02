@@ -54,8 +54,7 @@
                                                         data-key="{{env('EVERYPAY_PUBLIC_KEY')}}"
                                                         data-amount="22200"
                                                         data-locale="en"
-                                                        data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
-                                                        data-sandbox="1">
+                                                        data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee">
                                                 </script>
                                                 @csrf
                                             </form>
