@@ -94,7 +94,7 @@ class ParticipantController extends Controller
 
 
             $payment = Payment::create(array(
-                "amount" => 22200, //Amount in cents
+                "amount" => 2, //Amount in cents
                 "currency" => "eur", //Currency
                 "token" => $token,
                 "description" => $description
