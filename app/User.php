@@ -91,7 +91,9 @@ class User extends Authenticatable
         } else {
 
 
-            $status = 'pending'; //Default status
+            $status = 'approved'; //Default status TODO change to pending after we have working ERS API
+
+
 
             $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
                 ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
