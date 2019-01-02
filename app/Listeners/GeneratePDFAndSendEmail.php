@@ -5,10 +5,9 @@ namespace App\Listeners;
 use App\Events\UserPaid;
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
-use App\Payment;
+use App\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
@@ -35,11 +34,11 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $user = $event->user;
 
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user')));
+        $invID = Invoice::all()->count()+1;
+        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
 
         //Save invoice locally
-        $invID = DB::table('invoices')->where('esn_country', $user->esn_country)->get()->count() + 1;
-        $path = 'invoices/' . $user->esn_country . '/' . $invID . $user->name . $user->surname . 'Fee.pdf';
+        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
         $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path);
 
         //Send invoice to participant
@@ -48,21 +47,21 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
-        //Create payment
-        $payment = new Payment();
-        $payment->user()->associate($user);
-        $payment->amount = $user->fee;
-        $payment->comments = null;
-        $payment->approved = true;
-        $payment->proof = '';
-        $payment->save();
+        //Create transaction
+        $transaction = new Transaction();
+        $transaction->user()->associate($user);
+        $transaction->amount = $user->fee;
+        $transaction->comments = null;
+        $transaction->approved = true;
+        $transaction->proof = '';
+        $transaction->save();
 
-        //Create invoice and attach to payment
+        //Create invoice and attach to transaction
         $invoice = new Invoice();
         $invoice->path = $path;
         $invoice->esn_country = $user->esn_country;
         $invoice->section = $user->section;
-        $invoice->payment()->associate($payment);
+        $invoice->transaction()->associate($transaction);
         $invoice->save();
     }
 }

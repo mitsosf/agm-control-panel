@@ -35,7 +35,7 @@
                                         @break
 
                                         @case('paid')
-                                        <b style="color: green">Paid</b>
+                                        <b style="color: green">Paid <a target="_blank" href="{{route('participant.generateProof')}}">(Proof)</a></b>
                                         @break
 
                                         @default
@@ -55,7 +55,7 @@
                                                         data-amount="22200"
                                                         data-locale="en"
                                                         data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
-                                                        data-sandbox="1"                                                >
+                                                        data-sandbox="1">
                                                 </script>
                                                 @csrf
                                             </form>

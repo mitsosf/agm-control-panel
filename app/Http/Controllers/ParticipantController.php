@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
+use App\Invoice;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -34,7 +35,13 @@ class ParticipantController extends Controller
         $user = Auth::user();
         $error = null;
 
-        return view('participants.payment', compact('user', 'error'));
+        $transactions = $user->transactions->where('type', 'fee');
+
+        $invoice = null;
+        if ($transactions->count() > 0) {
+            $invoice = $transactions->first()->invoice;
+        }
+        return view('participants.payment', compact('user', 'error', 'invoice'));
     }
 
     //TODO log ALL errors
@@ -110,7 +117,7 @@ class ParticipantController extends Controller
                 //TODO Update ERS status
 
                 //If all goes well and user is charged
-                return view('participants.payment', compact('user', 'error'));
+                return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
                 return view('participants.payment', compact('user', 'error'));
@@ -159,20 +166,24 @@ class ParticipantController extends Controller
         $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
         $payment = Payment::create(array(
-            "amount" => 22000, //Amount in cents
+            "amount" => 500, //Amount in cents
             "currency" => "eur", //Currency
             "token" => $token,
             "description" => $description,
             "capture" => 0
         ));
-
+        //TODO validation etc
         Session::forget('token');
         return view('participants.test', compact('payment'));
     }
 
+    public function generateProof(){
+       return Auth::user()->generateProof();
+    }
+
     public function test()
     {
-       //
+        return Invoice::all()->count();
     }
 
 

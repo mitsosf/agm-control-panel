@@ -46,6 +46,7 @@ Route::post('/account/validateCard', 'ParticipantController@validateCard')->name
 Route::get('/account/charge', 'ParticipantController@charge')->name('participant.charge');
 Route::post('/account/parseToken', 'ParticipantController@parseToken')->name('participant.parseToken');
 Route::get('/account/deposit', 'ParticipantController@deposit')->name('participant.deposit');
+Route::get('/account/proof', 'ParticipantController@generateProof')->name('participant.generateProof');
 Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
 
 //OC

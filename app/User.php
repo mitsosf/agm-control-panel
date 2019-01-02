@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\App;
 use Ixudra\Curl\Facades\Curl;
 
 /**
@@ -22,6 +23,8 @@ use Ixudra\Curl\Facades\Curl;
  * @property string spot_status
  * @property int role_id
  * @property mixed fee
+ * @property mixed transactions
+ * @property mixed rooming_comments
  */
 class User extends Authenticatable
 {
@@ -46,9 +49,9 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function payments()
+    public function transactions()
     {
-        return $this->hasMany('App\Payment');
+        return $this->hasMany('App\Transaction');
     }
 
     public function room()
@@ -88,7 +91,9 @@ class User extends Authenticatable
         } else {
 
 
-            $status = 'pending'; //Default status
+            $status = 'approved'; //Default status TODO change to pending after we have working ERS API
+
+
 
             $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
                 ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
@@ -114,5 +119,26 @@ class User extends Authenticatable
         }
         return $status;
 
+    }
+
+    public function generateProof(){
+
+        $user = $this;
+
+        $transactions = $user->transactions()->where('type', 'fee')->with('invoice')->get();
+
+        $invoice = null;
+        if ($transactions->count() > 0) {
+            $invoice = $transactions->first()->invoice;
+        }else{
+            return "Invoice is being processed, please check again later";
+        }
+
+        $invID = $invoice->id;
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
+
+        return $pdf->stream();
     }
 }
