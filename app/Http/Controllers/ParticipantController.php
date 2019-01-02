@@ -183,7 +183,7 @@ class ParticipantController extends Controller
 
     public function test()
     {
-        return Invoice::all()->count();
+        
     }
 
 
