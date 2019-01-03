@@ -1,7 +1,7 @@
 @extends('layouts.participant.master')
 
 @section('content')
-    <h4>Dashboard: {{env('MAIL_USERNAME')}}</h4>
+    <h4>Dashboard:</h4>
     <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
             <!-- small box -->

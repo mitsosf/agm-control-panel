@@ -92,37 +92,35 @@ class ParticipantController extends Controller
             //Format desc
             $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
-            //TODO uncomment block
-            /*$payment = Payment::create(array(
-                "amount" => 2, //Amount in cents
+            $payment = Payment::create(array(
+                "amount" => 22200, //Amount in cents
                 "currency" => "eur", //Currency
                 "token" => $token,
                 "description" => $description
-            ));*/
+            ));
 
             Session::forget('token');
 
-            //if (isset($payment->token)) { //TODO uncomment
-            //TODO Check if transaction is correct
+            if (isset($payment->token)) {
+                //TODO Check if transaction is correct
 
-            //TODO uncomment block
-            /*//Update user info
-            $user->fee = $payment->amount / 100;
-            $user->fee_date = Carbon::now();
-            $user->spot_status = 'paid';
-            $user->update();*/
+                //Update user info
+                $user->fee = $payment->amount / 100;
+                $user->fee_date = Carbon::now();
+                $user->spot_status = 'paid';
+                $user->update();
 
-            //Generate PDF invoice, send it to the user and update DB
-            event(new UserPaid($user));
+                //Generate PDF invoice, send it to the user and update DB
+                event(new UserPaid($user));
 
-            //TODO Update ERS status
+                //TODO Update ERS status
 
-            //If all goes well and user is charged
-            return redirect(route('participant.home'));
-            /*} else {
+                //If all goes well and user is charged
+                return redirect(route('participant.home'));
+            } else {
                 $error = "An error has occurred, please try again (Error 103)";
                 return view('participants.payment', compact('user', 'error'));
-            }*/
+            }
         } else {
             //If validation succeeds but charging fails
             $error = "An error has occurred, please try again (Error 102)";
