@@ -94,8 +94,8 @@ class User extends Authenticatable
             $status = 'approved'; //Default status TODO change to pending after we have working ERS API
 
 
-
-            $json = Curl::to(env('ERS_PAYMENTS_API_URL'))
+            //TODO uncomment block when ERS API is ready
+            /*$json = Curl::to(env('ERS_PAYMENTS_API_URL'))
                 ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
                 ->get();
 
@@ -112,7 +112,7 @@ class User extends Authenticatable
                 if ($ers_user['esn_accounts_username'] == $this->username) {
                     $status = 'approved';
                 }
-            }
+            }*/
 
             $this->spot_status = $status;
             $this->update();
