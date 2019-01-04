@@ -1,28 +1,26 @@
-<p><span style="font-weight: 400;">Dear {{$user->name}},</span></p>
-<p><span style="font-weight: 400;"><br/></span><strong>Welcome</strong><span style="font-weight: 400;"> to the world of AGM Thessaloniki! You are officially a </span><span
-            style="font-weight: 400;">confirmed</span><span style="font-weight: 400;"> participant of </span><strong>#AGMThessaloniki2019! </strong><span
-            style="font-weight: 400;">&nbsp;Attached you will find the </span><strong>Proof of
-        payment</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"> Now that your place is secured, let us </span><strong>warn
-        you</strong><span style="font-weight: 400;"> that we intend to leave you</span><strong> speechless</strong><span
-            style="font-weight: 400;"> while delivering you </span><strong>THE BEST </strong><span
-            style="font-weight: 400;">possible</span><strong> experience</strong><span
-            style="font-weight: 400;">! </span><span style="font-weight: 400;">🔥</span></p>
-<p>&nbsp;</p>
-<p><span style="font-weight: 400;">Next step? Join the </span><a
-            href="https://t.me/participantsTheCreteTrip2018"><strong>private Telegram Channel</strong></a><span
-            style="font-weight: 400;"> of </span><strong>AGM Thessaloniki 2019</strong><span style="font-weight: 400;"> which is </span><strong>ONLY</strong><span
-            style="font-weight: 400;"> for the </span><strong>OFFICIAL PARTICIPANTS</strong><span
-            style="font-weight: 400;">!</span><span style="font-weight: 400;"><br/><br/></span></p>
-<p><span style="font-weight: 400;">There you will receive important info such as the</span><strong> group
-        Transportation</strong><span style="font-weight: 400;">, </span><strong>Rooming</strong><span
-            style="font-weight: 400;">, </span><strong>Survival Guide</strong><span
-            style="font-weight: 400;"> and most important - </span><strong>direct
-        updates from the Organizers during the event</strong><span style="font-weight: 400;">!</span><span
-            style="font-weight: 400;"><br/></span><span style="font-weight: 400;"><br/></span><span
-            style="font-weight: 400;">We are </span><strong>super-excited</strong><span style="font-weight: 400;"> to eat bugatsa</span><strong>#meTiri</strong><span
-            style="font-weight: 400;"> with you!</span><span style="font-weight: 400;">🌊</span><span
-            style="font-weight: 400;">🍹</span><span style="font-weight: 400;">😎</span></p>
-<p>&nbsp;</p>
-<p><span style="font-weight: 400;">Best Regards, </span></p>
-<p>&nbsp;</p>
-<p><span style="font-weight: 400;">The organisers of AGM Thessaloniki 2019</span></p>
+<p>Dear {{$user->name}},</p>
+
+<p>Congratulations! You are an officially confirmed participant of <b>AGM Thessaloniki 2019</b>! Attached you will find your Proof of Payment. </p>
+
+<p>You are on track to embark upon one of the biggest, most exciting ESN adventures, one that will give you plenty of moments and memories to cherish for years to come!</p>
+
+<p>It feels great, doesn't it?</p>
+
+<p>Now that your place is secured, let us invite you to join the exclusive Telegram Channel of AGM Thessaloniki 2019 which is ONLY for the <b>OFFICIAL PARTICIPANTS!</b></p>
+
+<p>
+<ol>
+    <li>Download the Telegram app: <a href="https://telegram.org">https://telegram.org</a></li>
+    <li>Join the AGM Thessaloniki 2019 Channel: <a href="https://t.me/AGMthessaloniki">https://t.me/AGMthessaloniki</a></li>
+</ol>
+</p>
+
+<p>Through our Channel, you will receive important information about Rooming, the Survival Guide and - most importantly - direct updates from the OC during the event!</p>
+
+<p>More news and joy will follow soon. Until then, let us extend to you once again our warmest welcome to our AGM, to <b>your</b> very own AGM.</p>
+
+<p>We are <b>excited</b> and <b>honored</b> to be sailing with you! 🚢</p>
+
+<p>Love, </p>
+<p>The OC of AGM Thessaloniki 2019</p>
+<p>#AGMthessaloniki</p>
