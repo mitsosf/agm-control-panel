@@ -27,5 +27,12 @@ class RolesTableSeeder extends Seeder
         $role->created_at = Carbon::now();
         $role->save();
 
+        //NR
+        $role = new Role();
+        $role->name = 'NR';
+        $role->description = 'National Representative';
+        $role->created_at = Carbon::now();
+        $role->save();
+
     }
 }
