@@ -55,6 +55,8 @@ Route::get('/oc/approved', 'OCController@approved')->name('oc.approved');
 Route::get('/oc/cashflow/all', 'OCController@cashflow')->name('oc.cashflow');
 Route::get('/oc/cashflow/card', 'OCController@cashflowCard')->name('oc.cashflow.card');
 Route::get('/oc/cashflow/bank', 'OCController@cashflowBank')->name('oc.cashflow.bank');
+Route::get('/oc/transaction/{transaction}', 'OCController@transaction')->name('oc.transaction.show');
+Route::get('/oc/user/{user}', 'OCController@user')->name('oc.user.show');
 Route::get('/oc/crud/hotels', 'OCController@crudHotels')->name('oc.crud.hotels');
 Route::get('/oc/crud/hotels/edit/{hotel}', 'OCController@showEditHotel')->name('oc.crud.hotels.edit.show');
 Route::post('/oc/crud/hotels/doEdit', 'OCController@editHotel')->name('oc.crud.hotels.edit');
