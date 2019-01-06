@@ -50,7 +50,7 @@ class OCController extends Controller
     public function approved()
     {
 
-        $users = User::where('spot_status', 'approved')->get();
+        $users = User::where('spot_status', 'approved')->orWhere('spot_status', 'paid')->get();
 
 
         return view('oc.approved', compact('users'));
