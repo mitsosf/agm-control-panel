@@ -15,28 +15,32 @@
             <!-- /.info-box -->
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box">
-                <span class="info-box-icon bg-green"><i class="fa fa-credit-card"></i></span>
+            <a href="{{route('oc.cashflow.card')}}">
+                <div class="info-box">
+                    <span class="info-box-icon bg-green"><i class="fa fa-credit-card"></i></span>
 
-                <div class="info-box-content" style="text-align: center">
+                    <div class="info-box-content" style="text-align: center">
 
-                    <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$card_income}}<small>€  ({{$card_count}})</small></span>
+                        <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$card_income}}<small>€  ({{$card_count}})</small></span>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
+                <!-- /.info-box -->
+            </a>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box">
-                <span class="info-box-icon bg-fuchsia"><i class="fa fa-money"></i></span>
+            <a href="{{route('oc.cashflow.bank')}}">
+                <div class="info-box">
+                    <span class="info-box-icon bg-fuchsia"><i class="fa fa-money"></i></span>
 
-                <div class="info-box-content" style="text-align: center">
+                    <div class="info-box-content" style="text-align: center">
 
-                    <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$cash_income}}<small>€  ({{$cash_count}})</small></span>
+                        <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$cash_income}}<small>€  ({{$cash_count}})</small></span>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
+                <!-- /.info-box -->
+            </a>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="info-box">

@@ -97,7 +97,7 @@ class OCController extends Controller
 
     public function cashflowCard()
     {
-        $transactions = Transaction::where('type', 'fee')->where('comments', '!=', 'bank')->get();
+        $transactions = Transaction::where('type', 'fee')->whereNull('comments')->get();
 
         $card_count = $transactions->count();
 

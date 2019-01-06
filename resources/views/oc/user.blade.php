@@ -93,7 +93,7 @@
                         <td>{{$user->debt}}€</td>
                     </tr>
                     <tr>
-                        <td>Roming</td>{{--TODO insert column actual into rooms table--}}
+                        <td>Rooming</td>{{--TODO insert column actual into rooms table--}}
                         @if($user->rooming == 0)
                             <td>No</td>
                         @else
