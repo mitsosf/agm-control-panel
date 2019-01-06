@@ -18,7 +18,7 @@
                 <tbody>
                 @foreach($users as $user)
                     <tr>
-                        <td>{{$user->name." ".$user->surname}}</td>
+                        <td><a href="{{route('oc.user.show',$user)}}">{{$user->name." ".$user->surname}}</a></td>
                         <td>{{$user->esn_country}}</td>
                         @if($user->fee == 0)
                             <td style="text-align: center"><span class="label label-danger">No</span></td>
