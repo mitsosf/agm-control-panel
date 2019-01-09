@@ -110,10 +110,9 @@ class ParticipantController extends Controller
                 $user->spot_status = 'paid';
                 $user->update();
 
-                //Generate PDF invoice, send it to the user and update DB
-                event(new UserPaid($user));
 
-                //TODO Update ERS status
+                //Generate PDF invoice, send it to the user and update DB
+                event(new UserPaid($user, NULL));
 
                 //If all goes well and user is charged
                 return redirect(route('participant.home'));

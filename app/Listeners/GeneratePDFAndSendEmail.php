@@ -25,7 +25,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  UserPaid  $event
+     * @param  UserPaid $event
      * @return void
      */
     public function handle(UserPaid $event)
@@ -34,27 +34,27 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $user = $event->user;
 
         $pdf = App::make('dompdf.wrapper');
-        $invID = Invoice::all()->count()+1;
-        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
+        $invID = Invoice::all()->count() + 1;
+        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user', 'invID')));
 
         //Save invoice locally
-        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country .'Fee.pdf';
-        $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path);
-
-        //Send invoice to participant
-
-        Mail::to($user->email)->send(new PaymentConfirmation($user, env('APPLICATION_DEPLOYMENT_PATH_PUBLIC').$path));
+        $path = 'invoices/' . $invID . $user->name . $user->surname . $user->esn_country . 'Fee.pdf';
+        $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC') . $path);
 
         //Save the whole transaction to the database
 
-        //Create transaction
-        $transaction = new Transaction();
-        $transaction->user()->associate($user);
-        $transaction->amount = $user->fee;
-        $transaction->comments = null;
-        $transaction->approved = true;
-        $transaction->proof = '';
-        $transaction->save();
+        if (is_null($event->transaction)) { //If transaction doesn't exist
+            //Create transaction
+            $transaction = new Transaction();
+            $transaction->user()->associate($user);
+            $transaction->amount = $user->fee;
+            $transaction->comments = null;
+            $transaction->approved = true;
+            $transaction->proof = '';
+            $transaction->save();
+        }else{ //If we have an existing transaction
+            $transaction = $event->transaction;
+        }
 
         //Create invoice and attach to transaction
         $invoice = new Invoice();
@@ -63,5 +63,11 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $invoice->section = $user->section;
         $invoice->transaction()->associate($transaction);
         $invoice->save();
+
+
+        //Send invoice to participant
+        Mail::to($user->email)->send(new PaymentConfirmation($user, env('APPLICATION_DEPLOYMENT_PATH_PUBLIC') . $path));
+
+        //TODO update ERS status
     }
 }

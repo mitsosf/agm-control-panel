@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserPaid;
 use App\Hotel;
 use App\Room;
 use App\Transaction;
@@ -91,7 +92,7 @@ class OCController extends Controller
         }
 
 
-        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count','cash_count', 'card_count'));
+        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count', 'cash_count', 'card_count'));
     }
 
 
@@ -112,23 +113,73 @@ class OCController extends Controller
 
     public function cashflowBank()
     {
-        $transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->get();
+        //Get pending bank transaction data
+        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',0)->get();
 
-        $cash_count = $transactions->count();
+        $pending_cash_count = $pending_transactions->count();
 
-        $cash_income = 0;
-        foreach ($transactions as $transaction) {
-            $cash_income += $transaction->amount;
+        $pending_cash_income = 0;
+        foreach ($pending_transactions as $transaction) {
+            $pending_cash_income += $transaction->amount;
         }
 
-        return view('oc.cashflowBank', compact('transactions', 'cash_income', 'cash_count'));
+        //Get confirmed bank transaction data
+        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',1)->get();
+
+        $confirmed_cash_count = $confirmed_transactions->count();
+
+        $confirmed_cash_income = 0;
+        foreach ($confirmed_transactions as $transaction) {
+            $confirmed_cash_income += $transaction->amount;
+        }
+
+        //Get Debt
+        $debt_transactions = Transaction::where('type','debt')->where('approved', 0)->get();
+
+        $debt_count = $debt_transactions->count();
+
+        $debt_amount = 0;
+        foreach ($debt_transactions as $transaction){
+            $debt_amount += $transaction->amount;
+        }
+
+
+        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count'));
     }
 
-    public function transaction(Transaction $transaction){
+    public function cashflowBankSync()
+    {
+
+        //TODO sync with ERS
+
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function transaction(Transaction $transaction)
+    {
         return view('oc.transaction', compact('transaction'));
     }
 
-    public function user(User $user){
+    public function approveTransaction(Transaction $transaction)
+    {
+        $transaction->approved = 1;
+        $transaction->update();
+
+        $user = $transaction->user;
+
+        event(new UserPaid($user, $transaction));
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function deleteTransaction(Transaction $transaction)
+    {
+        $transaction->delete();
+        //TODO Reject on ERS
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function user(User $user)
+    {
         return view('oc.user', compact('user'));
     }
 
