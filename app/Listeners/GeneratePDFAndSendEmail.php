@@ -75,8 +75,12 @@ class GeneratePDFAndSendEmail implements ShouldQueue
     public function failed(UserPaid $event, $exception)
     {
         $user = $event->user;
-        $transaction = $event->transaction;
+        $transaction_id = $event->transaction_id;
 
-        Log::channel('slack')->alert('User: ' . $user . '\nTransaction: ' . $transaction. '\nException: '. $exception);
+        $message = "'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname 
+            . '\"\n\"Transaction ID: ' . $transaction_id
+            . '\"\n\"Exception: '. $exception";
+
+        Log::channel('slack')->alert($message);
     }
 }
