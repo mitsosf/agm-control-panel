@@ -112,7 +112,7 @@ class ParticipantController extends Controller
                 $user->update();
 
                 //Generate PDF invoice, send it to the user and update DB
-                event(new UserPaid($user, 0));
+                event(new UserPaid($user, $payment->token));
 
                 //If all goes well and user is charged
                 return redirect(route('participant.home'));
