@@ -85,6 +85,7 @@ desired effect
                         <li><a href="{{route('oc.cashflow')}}"><i class="fa fa-eur"></i> <span>All income</span></a></li>
                         <li><a href="{{route('oc.cashflow.card')}}"><i class="fa fa-credit-card"></i> <span>Card income</span></a></li>
                         <li><a href="{{route('oc.cashflow.bank')}}"><i class="fa fa-bank"></i> <span>Bank income - plemb</span></a></li>
+                        <li><a href="{{route('oc.cashflow.debts')}}"><i class="fa fa-gavel"></i> <span>Debts</span></a></li>
                     </ul>
                 </li>
 

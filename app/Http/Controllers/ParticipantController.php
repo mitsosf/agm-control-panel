@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
 use App\Invoice;
+use App\Transaction;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -111,11 +112,10 @@ class ParticipantController extends Controller
                 $user->update();
 
                 //Generate PDF invoice, send it to the user and update DB
-                event(new UserPaid($user));
-
-                //TODO Update ERS status
+                event(new UserPaid($user, $payment->token));
 
                 //If all goes well and user is charged
+                Session::flash('paid_fee',1);
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";

@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserPaid;
 use App\Hotel;
 use App\Room;
 use App\Transaction;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class OCController extends Controller
 {
@@ -91,7 +94,7 @@ class OCController extends Controller
         }
 
 
-        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count','cash_count', 'card_count'));
+        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count', 'cash_count', 'card_count'));
     }
 
 
@@ -101,10 +104,7 @@ class OCController extends Controller
 
         $card_count = $transactions->count();
 
-        $card_income = 0;
-        foreach ($transactions as $transaction) {
-            $card_income += $transaction->amount;
-        }
+        $card_income = $transactions->sum('amount');
 
         return view('oc.cashflowCard', compact('transactions', 'card_income', 'card_count'));
     }
@@ -112,23 +112,104 @@ class OCController extends Controller
 
     public function cashflowBank()
     {
-        $transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->get();
+        //Get pending bank transaction data
 
-        $cash_count = $transactions->count();
+        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',0)->get();
 
-        $cash_income = 0;
-        foreach ($transactions as $transaction) {
-            $cash_income += $transaction->amount;
-        }
+        //TODO Delete and fix view when API works
+        $pending_users = User::where('spot_status','!=','paid')->get();
 
-        return view('oc.cashflowBank', compact('transactions', 'cash_income', 'cash_count'));
+        $pending_cash_count = $pending_transactions->count();
+
+        $pending_cash_income = $pending_transactions->sum('amount');
+
+        //Get confirmed bank transaction data
+        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',1)->get();
+
+        $confirmed_cash_count = $confirmed_transactions->count();
+
+        $confirmed_cash_income = $confirmed_transactions->sum('amount');
+
+        //Get Debt
+        $debt_transactions = Transaction::where('type','debt')->where('approved', 0)->get();
+
+        $debt_count = $debt_transactions->count();
+
+        $debt_amount = $debt_transactions->sum('amount');
+
+        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
     }
 
-    public function transaction(Transaction $transaction){
+    public function cashflowDebts(){
+        $debts = Transaction::where('type', 'debt')->get();
+
+        $debt_amount = $debts->sum('amount');
+        $debt_count = $debts->count();
+
+        return view('oc.cashflowDebts', compact('debts','debt_amount', 'debt_count'));
+    }
+
+    public function cashflowBankSync()
+    {
+
+        //TODO sync with ERS
+
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function transaction(Transaction $transaction)
+    {
         return view('oc.transaction', compact('transaction'));
     }
 
-    public function user(User $user){
+    public function approveTransactionShow(User $user){
+
+        $transaction = $user->transactions->where('comments','bank')->first();
+        return view('oc.createTransaction', compact('user','transaction'));
+    }
+
+    public function approveTransaction(Request $request)
+    {
+
+        //Validate request
+        $this->validate($request, [
+            'debt' => 'required|max:255',
+            'user' => 'required'
+        ]);
+
+        $user = User::find($request['user']);
+
+        $transaction = $user->transactions->where('comments','bank')->first();
+        $transaction->approved = 1;
+        $transaction->update();
+
+        //Update user info
+        $user->fee = env('EVENT_FEE',222);
+        $user->fee_date = Carbon::now();
+        $user->spot_status = 'paid';
+        $user->update();
+
+        event(new UserPaid($user, null));
+
+        //Save debt
+        $debt = new Transaction();
+        $debt->amount = $request['debt'];
+        $debt->type = 'debt';
+        $debt->user_id = $user->id;
+        $debt->approved = 0;
+        $debt->save();
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function deleteTransaction(Transaction $transaction)
+    {
+        $transaction->delete();
+        //TODO Reject on ERS
+        return redirect(route('oc.cashflow.bank'));
+    }
+
+    public function user(User $user)
+    {
         return view('oc.user', compact('user'));
     }
 

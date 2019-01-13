@@ -12,15 +12,17 @@ class UserPaid
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
 
-    public  $user;
+    public  $user, $token;
 
     /**
      * Create a new event instance.
      *
      * @param User $user
+     * @param string $token
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $token)
     {
         $this->user = $user;
+        $this->token = $token;
     }
 }
