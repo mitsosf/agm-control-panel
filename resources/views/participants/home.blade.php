@@ -5,7 +5,7 @@
     @if(Session::get('paid_fee') == 1)
     <div class="box box-success">
         <div class="box-header with-border">
-            <h3 class="box-title">Success!</h3>
+            <h3 class="box-title">You have successfully paid the event fee!!</h3>
 
             <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
@@ -14,7 +14,7 @@
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-            You have successfully paid the fee!
+            You will soon receive an email with the proof of payment attached!
         </div>
         <!-- /.box-body -->
     </div>
