@@ -173,7 +173,7 @@ class OCController extends Controller
 
         //Validate request
         $this->validate($request, [
-            'debt' => 'required|max:255',
+            'debt' => 'required|numeric|max:255',
             'user' => 'required'
         ]);
 
