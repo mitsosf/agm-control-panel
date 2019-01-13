@@ -55,7 +55,10 @@
                                                         data-amount="22200"
                                                         data-locale="en"
                                                         data-description="{{Auth::user()->name.' '.Auth::user()->surname}} - AGM Thessaloniki 2019 - Participation fee"
-                                                        data-sandbox="1">
+                                                        @if(env('APP_ENV','production') === 'local')
+                                                        data-sandbox="1"
+                                                        @endif
+                                                >
                                                 </script>
                                                 @csrf
                                             </form>
