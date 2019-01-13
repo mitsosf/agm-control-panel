@@ -22,10 +22,9 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
     public $user, $transaction_id;
 
-    public function __construct(UserPaid $event)
+    public function __construct()
     {
-        $this->user = $event->user;
-        $this->transaction_id = $event->transaction_id;
+        //
     }
 
     /**
@@ -77,10 +76,10 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //TODO update ERS status
     }
 
-    public function failed($exception)
+    public function failed(UserPaid $event, $exception)
     {
-        $user = $this->user;
-        $transaction_id = $this->transaction_id;
+        $user = $event->user;
+        $transaction_id = $event->transaction_id;
 
         $message = "'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname 
             . '\"\n\"Transaction ID: ' . $transaction_id

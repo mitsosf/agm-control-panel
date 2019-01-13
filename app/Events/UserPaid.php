@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Transaction;
 use App\User;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -19,7 +18,7 @@ class UserPaid
      * Create a new event instance.
      *
      * @param User $user
-     * @param Transaction $transaction
+     * @param $transaction_id
      */
     public function __construct(User $user, $transaction_id)
     {
