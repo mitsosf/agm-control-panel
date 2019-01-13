@@ -47,18 +47,19 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $pdf->save(env('APPLICATION_DEPLOYMENT_PATH_PUBLIC') . $path);
 
         //Save the whole transaction to the database
+        $token = $event->token;
 
-        if ($event->transaction_id == 0) { //If transaction is null, 0 symbolises null transaction
+        if (!is_null($token)) { //If token is not null, we have a new card transaction
             //Create transaction
             $transaction = new Transaction();
             $transaction->user()->associate($user);
             $transaction->amount = $user->fee;
             $transaction->comments = null;
             $transaction->approved = true;
-            $transaction->proof = '';
+            $transaction->proof = $token;
             $transaction->save();
         }else{ //If we have an existing transaction
-            $transaction = Transaction::find($event->transaction_id);
+            $transaction = $user->transactions->where('comments','bank')->first();
         }
 
         //Create invoice and attach to transaction
@@ -79,10 +80,10 @@ class GeneratePDFAndSendEmail implements ShouldQueue
     public function failed(UserPaid $event, $exception)
     {
         $user = $event->user;
-        $transaction_id = $event->transaction_id;
+        $token = $event->token;
 
         $message = "'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname 
-            . '\"\n\"Transaction ID: ' . $transaction_id
+            . '\"\n\"Token: ' . $token
             . '\"\n\"Exception: '. $exception";
 
         Log::channel('slack')->alert($message);
