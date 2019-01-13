@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
 use App\Invoice;
+use App\Transaction;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -111,8 +112,11 @@ class ParticipantController extends Controller
                 $user->update();
 
 
+                $empty_transaction = new Transaction();
+                $empty_transaction->id = 0;
+
                 //Generate PDF invoice, send it to the user and update DB
-                event(new UserPaid($user, NULL));
+                event(new UserPaid($user, $empty_transaction));
 
                 //If all goes well and user is charged
                 return redirect(route('participant.home'));

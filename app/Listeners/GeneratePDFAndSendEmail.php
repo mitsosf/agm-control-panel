@@ -8,6 +8,7 @@ use App\Mail\PaymentConfirmation;
 use App\Transaction;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
@@ -43,7 +44,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
-        if (is_null($event->transaction)) { //If transaction doesn't exist
+        if ($event->transaction->id == 0) { //If transaction is empty, 0 symbolises empty transaction
             //Create transaction
             $transaction = new Transaction();
             $transaction->user()->associate($user);
@@ -69,5 +70,13 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         Mail::to($user->email)->send(new PaymentConfirmation($user, env('APPLICATION_DEPLOYMENT_PATH_PUBLIC') . $path));
 
         //TODO update ERS status
+    }
+
+    public function failed(UserPaid $event, $exception)
+    {
+        $user = $event->user;
+        $transaction = $event->transaction;
+
+        Log::channel('slack')->alert('User: ' . $user . '\nTransaction: ' . $transaction. '\nException: '. $exception);
     }
 }

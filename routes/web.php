@@ -57,7 +57,8 @@ Route::get('/oc/cashflow/card', 'OCController@cashflowCard')->name('oc.cashflow.
 Route::get('/oc/cashflow/bank', 'OCController@cashflowBank')->name('oc.cashflow.bank');
 Route::get('/oc/cashflow/bank/sync', 'OCController@cashflowBankSync')->name('oc.cashflow.bank.sync');
 Route::get('/oc/transaction/{transaction}', 'OCController@transaction')->name('oc.transaction.show');
-Route::put('/oc/transaction/{transaction}', 'OCController@approveTransaction')->name('oc.transaction.approve');
+Route::get('/oc/transaction/create/{user}', 'OCController@approveTransactionShow')->name('oc.transaction.create');
+Route::put('/oc/transaction/approve', 'OCController@approveTransaction')->name('oc.transaction.approve');
 Route::delete('/oc/transaction/{transaction}', 'OCController@deleteTransaction')->name('oc.transaction.delete');
 Route::get('/oc/user/{user}', 'OCController@user')->name('oc.user.show');
 Route::get('/oc/crud/hotels', 'OCController@crudHotels')->name('oc.crud.hotels');

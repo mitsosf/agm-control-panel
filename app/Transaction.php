@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string comments
  * @property string approved
  * @property string proof
+ * @property int id
+ * @property mixed user
  */
 
 class Transaction extends Model

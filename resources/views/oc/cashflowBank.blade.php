@@ -70,7 +70,28 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($pending_transactions as $transaction)
+                    {{--TODO Delete and replace with foreach below when API ready--}}
+                    @foreach($pending_users as $user)
+                        <tr style="text-align: center">
+                            <td><a href="{{route('oc.user.show',$user->id)}}">{{$loop->index + 1}}</a></td>
+                            <td><a class="btn btn-info" href="#" target="_blank">Proof</a></td>
+                            @if($user->fee > 0)
+                                <td style="text-align: center"><span class="label label-success">{{env('EVENT_FEE')}}</span></td>
+                            @else
+                                <td style="text-align: center"><span class="label label-danger">Contact me!</span></td>
+                            @endif
+                            <td class="hidden-xs"><a href="{{route('oc.user.show',$user)}}">{{$user->name.' '.$user->surname}}</a></td>
+                            <td class="hidden-xs">{{$user->esn_country}}</td>
+                            <td class="hidden-xs">{{$user->created_at->format('d/m/Y')}}</td>
+                            <td>
+                                <div class="row" style="text-align: center">
+                                    <div class="col-md-4"><a class="btn btn-warning" href="{{route('oc.user.show',$user)}}"><i class="fa fa-eye"></i></a></div>
+                                    <div class="col-md-4"><a class="btn btn-success" href="{{route('oc.transaction.create',$user)}}"><i class="fa fa-check"></i></a></div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    {{--@foreach($pending_transactions as $transaction)
                         <tr style="text-align: center">
                             <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
                             <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
@@ -102,7 +123,7 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @endforeach--}}
                     </tbody>
                     <tfoot>
                     <tr>

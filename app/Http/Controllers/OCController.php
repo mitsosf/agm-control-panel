@@ -7,8 +7,10 @@ use App\Hotel;
 use App\Room;
 use App\Transaction;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class OCController extends Controller
 {
@@ -114,7 +116,11 @@ class OCController extends Controller
     public function cashflowBank()
     {
         //Get pending bank transaction data
+
         $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',0)->get();
+
+        //TODO Delete and fix view when API works
+        $pending_users = User::where('spot_status','!=','paid')->get();
 
         $pending_cash_count = $pending_transactions->count();
 
@@ -144,7 +150,7 @@ class OCController extends Controller
         }
 
 
-        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count'));
+        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
     }
 
     public function cashflowBankSync()
@@ -160,14 +166,42 @@ class OCController extends Controller
         return view('oc.transaction', compact('transaction'));
     }
 
-    public function approveTransaction(Transaction $transaction)
+    public function approveTransactionShow(User $user){
+
+        $transaction = $user->transactions->where('comments','bank')->first();
+        return view('oc.createTransaction', compact('user','transaction'));
+    }
+
+    public function approveTransaction(Request $request)
     {
+
+        //Validate request
+        $this->validate($request, [
+            'debt' => 'required|max:255',
+            'user' => 'required'
+        ]);
+
+        $user = User::find($request['user']);
+
+        $transaction = $user->transactions->where('comments','bank')->first();
         $transaction->approved = 1;
         $transaction->update();
 
-        $user = $transaction->user;
+        //Update user info
+        $user->fee = env('EVENT_FEE',222);
+        $user->fee_date = Carbon::now();
+        $user->spot_status = 'paid';
+        $user->update();
 
         event(new UserPaid($user, $transaction));
+
+        //Save debt
+        $debt = new Transaction();
+        $debt->amount = $request['debt'];
+        $debt->type = 'debt';
+        $debt->user_id = $user->id;
+        $debt->approved = 0;
+        $debt->save();
         return redirect(route('oc.cashflow.bank'));
     }
 
