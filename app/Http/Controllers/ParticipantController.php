@@ -115,7 +115,7 @@ class ParticipantController extends Controller
                 event(new UserPaid($user, $payment->token));
 
                 //If all goes well and user is charged
-                Session::put('paid_fee',1);
+                Session::flash('paid_fee',1);
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
