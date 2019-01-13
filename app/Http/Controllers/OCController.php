@@ -104,10 +104,7 @@ class OCController extends Controller
 
         $card_count = $transactions->count();
 
-        $card_income = 0;
-        foreach ($transactions as $transaction) {
-            $card_income += $transaction->amount;
-        }
+        $card_income = $transactions->sum('amount');
 
         return view('oc.cashflowCard', compact('transactions', 'card_income', 'card_count'));
     }
@@ -124,33 +121,32 @@ class OCController extends Controller
 
         $pending_cash_count = $pending_transactions->count();
 
-        $pending_cash_income = 0;
-        foreach ($pending_transactions as $transaction) {
-            $pending_cash_income += $transaction->amount;
-        }
+        $pending_cash_income = $pending_transactions->sum('amount');
 
         //Get confirmed bank transaction data
         $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',1)->get();
 
         $confirmed_cash_count = $confirmed_transactions->count();
 
-        $confirmed_cash_income = 0;
-        foreach ($confirmed_transactions as $transaction) {
-            $confirmed_cash_income += $transaction->amount;
-        }
+        $confirmed_cash_income = $confirmed_transactions->sum('amount');
 
         //Get Debt
         $debt_transactions = Transaction::where('type','debt')->where('approved', 0)->get();
 
         $debt_count = $debt_transactions->count();
 
-        $debt_amount = 0;
-        foreach ($debt_transactions as $transaction){
-            $debt_amount += $transaction->amount;
-        }
-
+        $debt_amount = $debt_transactions->sum('amount');
 
         return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
+    }
+
+    public function cashflowDebts(){
+        $debts = Transaction::where('type', 'debt')->get();
+
+        $debt_amount = $debts->sum('amount');
+        $debt_count = $debts->count();
+
+        return view('oc.cashflowDebts', compact('debts','debt_amount', 'debt_count'));
     }
 
     public function cashflowBankSync()

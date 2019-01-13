@@ -43,16 +43,18 @@
             </a>
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <div class="info-box">
-                <span class="info-box-icon bg-yellow"><i class="fa fa-unlock-alt"></i></span>
+            <a href="{{route('oc.cashflow.debts')}}">
+                <div class="info-box">
+                    <span class="info-box-icon bg-red"><i class="fa fa-gavel"></i></span>
 
-                <div class="info-box-content" style="text-align: center">
+                    <div class="info-box-content" style="text-align: center">
 
-                    <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$deposit_count}}<small> ({{$deposit_amount}}€)</small></span>
+                        <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$deposit_count}}<small> ({{$deposit_amount}}€)</small></span>
+                    </div>
+                    <!-- /.info-box-content -->
                 </div>
-                <!-- /.info-box-content -->
-            </div>
-            <!-- /.info-box -->
+                <!-- /.info-box -->
+            </a>
         </div>
     </div>
     <div class="row">
