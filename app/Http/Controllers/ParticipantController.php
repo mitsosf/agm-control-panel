@@ -111,12 +111,8 @@ class ParticipantController extends Controller
                 $user->spot_status = 'paid';
                 $user->update();
 
-
-                $empty_transaction = new Transaction();
-                $empty_transaction->id = 0;
-
                 //Generate PDF invoice, send it to the user and update DB
-                event(new UserPaid($user, $empty_transaction));
+                event(new UserPaid($user, 0));
 
                 //If all goes well and user is charged
                 return redirect(route('participant.home'));

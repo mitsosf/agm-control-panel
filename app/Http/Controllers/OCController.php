@@ -193,7 +193,7 @@ class OCController extends Controller
         $user->spot_status = 'paid';
         $user->update();
 
-        event(new UserPaid($user, $transaction));
+        event(new UserPaid($user, $transaction->id));
 
         //Save debt
         $debt = new Transaction();

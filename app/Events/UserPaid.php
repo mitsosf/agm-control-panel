@@ -13,7 +13,7 @@ class UserPaid
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
 
-    public  $user, $transaction;
+    public  $user, $transaction_id;
 
     /**
      * Create a new event instance.
@@ -21,9 +21,9 @@ class UserPaid
      * @param User $user
      * @param Transaction $transaction
      */
-    public function __construct(User $user, Transaction $transaction)
+    public function __construct(User $user, $transaction_id)
     {
         $this->user = $user;
-        $this->transaction = $transaction;
+        $this->transaction_id = $transaction_id;
     }
 }

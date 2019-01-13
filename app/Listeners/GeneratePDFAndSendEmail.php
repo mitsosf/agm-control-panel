@@ -6,6 +6,7 @@ use App\Events\UserPaid;
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
 use App\Transaction;
+use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -16,11 +17,10 @@ class GeneratePDFAndSendEmail implements ShouldQueue
     /**
      * Create the event listener.
      *
-     * @return void
+     * @param UserPaid $event
      */
-    public function __construct()
+    public function __construct(UserPaid $event)
     {
-        //
     }
 
     /**
@@ -44,7 +44,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
 
         //Save the whole transaction to the database
 
-        if ($event->transaction->id == 0) { //If transaction is empty, 0 symbolises empty transaction
+        if ($event->transaction_id == 0) { //If transaction is null, 0 symbolises null transaction
             //Create transaction
             $transaction = new Transaction();
             $transaction->user()->associate($user);
@@ -54,7 +54,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
             $transaction->proof = '';
             $transaction->save();
         }else{ //If we have an existing transaction
-            $transaction = $event->transaction;
+            $transaction = Transaction::find($event->transaction_id);
         }
 
         //Create invoice and attach to transaction
