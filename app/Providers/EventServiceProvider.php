@@ -17,6 +17,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         'App\Events\UserPaid' => [
             'App\Listeners\GeneratePDFAndSendEmail'
+        ],
+        'App\Events\UserPaidDeposit' => [
+            'App\Listeners\SendDepositMailConfirmation'
         ]
     ];
 
