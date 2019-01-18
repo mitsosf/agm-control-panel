@@ -44,8 +44,9 @@ Route::get('/account/profile', 'ParticipantController@showProfile')->name('profi
 Route::get('/account/payment', 'ParticipantController@payment')->name('participant.payment');
 Route::post('/account/validateCard', 'ParticipantController@validateCard')->name('participant.validateCard');
 Route::get('/account/charge', 'ParticipantController@charge')->name('participant.charge');
-Route::post('/account/parseToken', 'ParticipantController@parseToken')->name('participant.parseToken');
 Route::get('/account/deposit', 'ParticipantController@deposit')->name('participant.deposit');
+Route::post('/account/parseToken', 'ParticipantController@parseToken')->name('participant.parseToken');
+Route::get('/account/chargeDeposit', 'ParticipantController@chargeDeposit')->name('participant.deposit.charge');
 Route::get('/account/proof', 'ParticipantController@generateProof')->name('participant.generateProof');
 Route::get('/account/logout', 'ParticipantController@logout')->name('participant.logout');
 
@@ -56,9 +57,12 @@ Route::get('/oc/cashflow/all', 'OCController@cashflow')->name('oc.cashflow');
 Route::get('/oc/cashflow/card', 'OCController@cashflowCard')->name('oc.cashflow.card');
 Route::get('/oc/cashflow/bank', 'OCController@cashflowBank')->name('oc.cashflow.bank');
 Route::get('/oc/cashflow/debts', 'OCController@cashflowDebts')->name('oc.cashflow.debts');
+Route::get('/oc/cashflow/deposits', 'OCController@cashflowDeposits')->name('oc.cashflow.deposits');
+Route::put('/oc/cashflow/deposits/acquire/{transaction}', 'OCController@acquireDeposit')->name('oc.deposits.acquire');
+Route::delete('/oc/cashflow/deposits/refund/{transaction}', 'OCController@refundDeposit')->name('oc.deposits.refund');
 Route::get('/oc/cashflow/bank/sync', 'OCController@cashflowBankSync')->name('oc.cashflow.bank.sync');
 Route::get('/oc/transaction/{transaction}', 'OCController@transaction')->name('oc.transaction.show');
-Route::get('/oc/transaction/create/{user}', 'OCController@approveTransactionShow')->name('oc.transaction.create');
+Route::get('/oc/transaction/approve/{transaction}', 'OCController@approveTransactionShow')->name('oc.transaction.approve.show');
 Route::put('/oc/transaction/approve', 'OCController@approveTransaction')->name('oc.transaction.approve');
 Route::delete('/oc/transaction/{transaction}', 'OCController@deleteTransaction')->name('oc.transaction.delete');
 Route::get('/oc/user/{user}', 'OCController@user')->name('oc.user.show');

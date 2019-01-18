@@ -73,7 +73,7 @@
                     </thead>
                     <tbody>
                     {{--TODO Delete and replace with foreach below when API ready--}}
-                    @foreach($pending_users as $user)
+                    {{--@foreach($pending_users as $user)
                         <tr style="text-align: center">
                             <td><a href="{{route('oc.user.show',$user->id)}}">{{$loop->index + 1}}</a></td>
                             <td><a class="btn btn-info" href="#" target="_blank">Proof</a></td>
@@ -92,8 +92,8 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
-                    {{--@foreach($pending_transactions as $transaction)
+                    @endforeach--}}
+                    @foreach($pending_transactions as $transaction)
                         <tr style="text-align: center">
                             <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
                             <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
@@ -109,23 +109,20 @@
                                 <div class="row" style="text-align: center">
                                     <div class="col-md-4"><a class="btn btn-warning" href="{{route('oc.transaction.show',$transaction->id)}}"><i class="fa fa-eye"></i></a></div>
                                     <div class="col-md-4">
-                                        <form action="{{route('oc.transaction.approve',$transaction->id)}}" method="POST">
-                                            @method('PUT')
-                                            @csrf
-                                            <button class="btn btn-success" type="submit" onclick="return confirm('Are you sure you want to APPROVE this transaction?');"><i class="fa fa-check"></i></button>
-                                        </form>
+                                        <a class="btn btn-success" href="{{route('oc.transaction.approve.show', $transaction)}}"><i class="fa fa-check"></i></a>
                                     </div>
                                     <div class="col-md-4">
                                         <form action="{{route('oc.transaction.delete',$transaction->id)}}" method="POST">
                                             @method('DELETE')
                                             @csrf
-                                            <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to DELETE this transaction?');"><i class="fa fa-remove"></i></button>
+                                            <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to DELETE this transaction?');"><i class="fa fa-remove"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach--}}
+                    @endforeach
                     </tbody>
                     <tfoot>
                     <tr>

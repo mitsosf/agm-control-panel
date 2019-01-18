@@ -6,7 +6,6 @@ use App\Events\UserPaid;
 use App\Invoice;
 use App\Mail\PaymentConfirmation;
 use App\Transaction;
-use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;

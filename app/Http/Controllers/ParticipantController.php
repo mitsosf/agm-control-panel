@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
+use App\Events\UserPaidDeposit;
 use App\Invoice;
 use App\Transaction;
+use App\User;
 use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
@@ -28,7 +30,10 @@ class ParticipantController extends Controller
     {
         $user = Auth::user();
         $error = null;
-        return view('participants.home', compact('user', 'error'));
+
+        $debt = $user->transactions->where('type', 'debt')->where('approved',0)->first();
+
+        return view('participants.home', compact('user', 'error', 'debt'));
     }
 
     public function payment()
@@ -115,7 +120,7 @@ class ParticipantController extends Controller
                 event(new UserPaid($user, $payment->token));
 
                 //If all goes well and user is charged
-                Session::flash('paid_fee',1);
+                Session::flash('paid_fee', 1);
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
@@ -129,6 +134,25 @@ class ParticipantController extends Controller
     }
 
     //TODO test deposits by card
+
+    public function deposit()
+    {
+        $user = Auth::user();
+        $error = null;
+
+        /* Check if user has already paid the deposit
+         * Paid = 1
+         * Not paid = 0
+         * Something weird = Whatever
+        */
+        //DO NOT DISTURB, the beast will eat you alive
+        $deposit_check = $user->withCount(
+            ['transactions' => function ($query) {
+                $query->where('type', 'deposit');
+            }])->get()[0]->transactions_count;
+
+        return view('participants.deposit', compact('user', 'error', 'deposit_check'));
+    }
 
     public function parseToken()
     {
@@ -147,33 +171,61 @@ class ParticipantController extends Controller
             return view('participants.home', compact('error', 'user'));
         }
         Session::put('token', $token);
-        return redirect(route('participant.deposit'));
+        return redirect(route('participant.deposit.charge'));
     }
 
-    public function deposit()
+    public function chargeDeposit()
     {
         //Set up the private key
-        Everypay::setApiKey(env('EVERYPAYSECRETKEY'));
-
-        $token = Session::get('token');
-
-        //Charge card
-
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
         $user = Auth::user();
+        $error = '';
 
-        //Format desc
-        $description = $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
+        //Pre-charge card
+        $token = Session::get('token');
+        if (isset($token)) {
 
-        $payment = Payment::create(array(
-            "amount" => 500, //Amount in cents
-            "currency" => "eur", //Currency
-            "token" => $token,
-            "description" => $description,
-            "capture" => 0
-        ));
-        //TODO validation etc
-        Session::forget('token');
-        return view('participants.test', compact('payment'));
+            //Format desc
+            $description = 'Deposit--'.$user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
+
+            $payment = Payment::create(array(
+                "amount" => 5000, //Amount in cents
+                "currency" => "eur", //Currency
+                "token" => $token,
+                "description" => $description,
+                "capture" => 0  //Authorize card only
+            ));
+            Session::forget('token');
+
+            if (isset($payment->token)) {
+                //TODO Check if transaction is correct
+
+                //Send mail to the user
+
+                //If all goes well and user is charged
+                //Save deposit to db
+                $deposit = new Transaction();
+                $deposit->type = 'deposit';
+                $deposit->amount = $payment->amount/100;
+                $deposit->approved = 0;
+                $deposit->proof = $payment->token;
+                $deposit->user()->associate($user);
+                $deposit->save();
+
+                event(new UserPaidDeposit($user));
+
+                //Display success message on homepage
+                Session::flash('paid_deposit', 1);
+                return redirect(route('participant.home'));
+            } else {
+                $error = "An error has occurred, please try again (Error 103)";
+                return view('participants.deposit', compact('user', 'error'));
+            }
+        } else {
+            //If validation succeeds but pre-charging fails
+            $error = "An error has occurred, please try again (Error 102)";
+            return view('participants.deposit', compact('user', 'error'));
+        }
     }
 
     public function generateProof()
@@ -181,12 +233,11 @@ class ParticipantController extends Controller
         return Auth::user()->generateProof();
     }
 
+
     public function test()
     {
 
     }
-
-
     public function logout()
     {
         Auth::logout();

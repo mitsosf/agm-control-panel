@@ -7,8 +7,8 @@
         <h4>Name: <a href="{{route('oc.user.show',$user)}}">{{$user->name. " ". $user->surname}}</a></h4>
         <h4>Country: {{$user->esn_country}}</h4>
         <h4>Section: {{$user->section}}</h4>
-        <h4>Price: {{env('EVENT_FEE',222)}}</h4>
-        <a class="btn btn-info disabled" style="margin-bottom: 2%" href="{{$transaction->proof}}" target="_blank" >Show proof (soon...)</a>
+        <h4>Price: {{$transaction->amount}}</h4>
+        <a class="btn btn-info" style="margin-bottom: 2%" href="{{$transaction->proof}}" target="_blank" >Show proof</a>
         <form action="{{route('oc.transaction.approve')}}" method="POST">
             @method('PUT')
             <label for="debt">Debt:</label>
@@ -16,7 +16,7 @@
                 <span class="help-block"><strong style="color: red;">{{ $errors->first('debt') }}</strong></span>
             @endif
             <input id="debt" name="debt" type="text" placeholder="eg. 4"><br>
-            <input id="user" name="user" type="hidden" value="{{$user->id}}">
+            <input id="transaction" name="transaction" type="hidden" value="{{$transaction->id}}">
             @csrf <br>
             <input class="btn btn-success" type="submit" value="Approve">
             <a class="btn btn-danger" href="{{route('oc.cashflow.bank')}}">Cancel</a>

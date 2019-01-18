@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
+use App\Events\UserPaidDeposit;
 use App\Hotel;
 use App\Room;
 use App\Transaction;
@@ -11,6 +12,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Everypay\Everypay;
+use Everypay\Payment;
+use Everypay\Token;
+use Ixudra\Curl\Facades\Curl;
 
 class OCController extends Controller
 {
@@ -114,45 +119,149 @@ class OCController extends Controller
     {
         //Get pending bank transaction data
 
-        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',0)->get();
-
-        //TODO Delete and fix view when API works
-        $pending_users = User::where('spot_status','!=','paid')->get();
+        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 0)->get();
 
         $pending_cash_count = $pending_transactions->count();
 
         $pending_cash_income = $pending_transactions->sum('amount');
 
         //Get confirmed bank transaction data
-        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved',1)->get();
+        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 1)->get();
 
         $confirmed_cash_count = $confirmed_transactions->count();
 
         $confirmed_cash_income = $confirmed_transactions->sum('amount');
 
         //Get Debt
-        $debt_transactions = Transaction::where('type','debt')->where('approved', 0)->get();
+        $debt_transactions = Transaction::where('type', 'debt')->where('approved', 0)->get();
 
         $debt_count = $debt_transactions->count();
 
         $debt_amount = $debt_transactions->sum('amount');
 
-        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count','confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
+        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count', 'confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
     }
 
-    public function cashflowDebts(){
+    public function cashflowDebts()
+    {
         $debts = Transaction::where('type', 'debt')->get();
 
         $debt_amount = $debts->sum('amount');
         $debt_count = $debts->count();
 
-        return view('oc.cashflowDebts', compact('debts','debt_amount', 'debt_count'));
+        return view('oc.cashflowDebts', compact('debts', 'debt_amount', 'debt_count'));
+    }
+
+    public function cashflowDeposits()
+    {
+        $deposits = Transaction::where('type', 'deposit')->get();
+
+        $deposit_amount = $deposits->sum('amount');
+        $deposit_count = $deposits->count();
+
+        return view('oc.cashflowDeposits', compact('deposits', 'deposit_amount', 'deposit_count'));
+    }
+
+    public function acquireDeposit(Transaction $transaction)
+    {
+
+        //If transaction isn't a deposit
+        if ($transaction->type !== 'deposit') {
+            return redirect(route('oc.cashflow.deposits'));
+        }
+
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+
+        $payment = Payment::capture($transaction->proof);
+
+        if (isset($payment->token)) { //If payment is successful
+
+            $transaction->approved = 1;
+            $transaction->comments = 'Acquired by' . Auth::user()->surname;
+            $transaction->update();
+            $transaction->delete();
+
+            return redirect(route('oc.cashflow.deposits'));
+        }
+        return dd($payment);
+    }
+
+    public function refundDeposit(Transaction $transaction)
+    {
+
+        //If transaction isn't a deposit
+        if ($transaction->type !== 'deposit') {
+            return redirect(route('oc.cashflow.deposits'));
+        }
+
+        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+
+        $payment = Payment::refund($transaction->proof);
+
+        if (isset($payment->token)) { //If payment is successful
+
+            $transaction->delete();
+
+            return redirect(route('oc.cashflow.deposits'));
+        }
+
+        return dd($payment);
     }
 
     public function cashflowBankSync()
     {
 
-        //TODO sync with ERS
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: '.env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+        $bank_payments = array();
+
+        foreach ($applications_json as $application) {
+            if (!is_array($application->proof_of_payment) && $application->spot_status === "Not Paid ") { //Careful of the extra space after the word "Paid"!
+                // If it is an array, there is no proof of payment uploaded and if paid, we don't want to see it as pending
+                array_push($bank_payments, $application);
+            }
+        }
+
+        foreach ($bank_payments as $application) {
+            //Check if user already has an account
+            $user = User::where('username', $application->cas_name)->first();
+            if (is_null($user)) {
+                //Create user if new
+                $new_user = new User();
+                $new_user->username = $application->cas_name;
+                $new_user->role_id = 1;
+                $new_user->setCreatedAt(Carbon::now());
+                $new_user->setUpdatedAt(Carbon::now());
+                $new_user->save();
+                $user = $new_user;
+            }
+
+            //Check if transaction already exists for this user
+            if ($user->transactions->isNotEmpty()) {
+                if ($user->transactions->where('type', 'fee')->where('comments', 'bank')->count() > 0) {
+
+                    continue;
+                }
+            }
+
+            //If old user and no transaction, create unapproved bank transaction and associate with user
+            $transaction = new Transaction();
+            $transaction->user()->associate($user);
+            $transaction->type = "fee";
+            $transaction->amount = $application->price;
+            $transaction->comments = "bank";
+            $transaction->approved = 0;
+            $transaction->proof = $application->proof_of_payment;  //Get proof of payment from ERS
+            $transaction->save();
+        }
 
         return redirect(route('oc.cashflow.bank'));
     }
@@ -162,10 +271,10 @@ class OCController extends Controller
         return view('oc.transaction', compact('transaction'));
     }
 
-    public function approveTransactionShow(User $user){
-
-        $transaction = $user->transactions->where('comments','bank')->first();
-        return view('oc.createTransaction', compact('user','transaction'));
+    public function approveTransactionShow(Transaction $transaction)
+    {
+        $user = $transaction->user;
+        return view('oc.approveTransaction', compact('transaction', 'user'));
     }
 
     public function approveTransaction(Request $request)
@@ -173,31 +282,36 @@ class OCController extends Controller
 
         //Validate request
         $this->validate($request, [
-            'debt' => 'required|numeric|max:255',
-            'user' => 'required'
+            'debt' => 'required|numeric',
+            'transaction' => 'required'
         ]);
 
-        $user = User::find($request['user']);
+        $transaction = Transaction::find($request['transaction']);
+        $user = $transaction->user;
 
-        $transaction = $user->transactions->where('comments','bank')->first();
         $transaction->approved = 1;
         $transaction->update();
 
         //Update user info
-        $user->fee = env('EVENT_FEE',222);
+        $user->fee = $transaction->amount;
         $user->fee_date = Carbon::now();
         $user->spot_status = 'paid';
         $user->update();
 
         event(new UserPaid($user, null));
 
-        //Save debt
-        $debt = new Transaction();
-        $debt->amount = $request['debt'];
-        $debt->type = 'debt';
-        $debt->user_id = $user->id;
-        $debt->approved = 0;
-        $debt->save();
+        //Check if we had any debt
+        $debt = $request['debt'];
+        if ($debt != '0') {
+            //Save debt
+            $debt = new Transaction();
+            $debt->amount = $request['debt'];
+            $debt->type = 'debt';
+            $debt->user_id = $user->id;
+            $debt->approved = 0;
+            $debt->save();
+        }
+
         return redirect(route('oc.cashflow.bank'));
     }
 

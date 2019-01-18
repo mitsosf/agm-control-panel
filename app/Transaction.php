@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property mixed user_id
@@ -17,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    use SoftDeletes;
+
     /**
      * The attributes that are mass assignable.
      *
