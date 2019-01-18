@@ -351,10 +351,18 @@ class OCController extends Controller
         return redirect(route('oc.cashflow.debts'));
     }
 
-
     public function user(User $user)
     {
         return view('oc.user', compact('user'));
+    }
+
+    public function editUserComment(Request $request)
+    {
+        $user = User::find($request['user']);
+        $user->comment = $request['comment'];
+        $user->update();
+
+        return redirect(route('oc.user.show',$user));
     }
 
     public function crudHotels()

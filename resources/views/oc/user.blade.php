@@ -78,7 +78,18 @@
                     </tr>
                     <tr>
                         <td>OC comments</td>
-                        <td>{{$user->comments}}</td>
+                        <td>
+                            <form action="{{route('oc.comment.edit')}}" method="POST">
+                                @method('PUT')
+                                @if ($errors->has('debt'))
+                                    <span class="help-block"><strong style="color: red;">{{ $errors->first('comment') }}</strong></span>
+                                @endif
+                                <textarea id="comment" name="comment" type="text">{{$user->comment}}</textarea>
+                                <input id="user" name="user" type="hidden" value="{{$user->id}}">
+                                @csrf
+                                <input class="btn btn-success" type="submit" value="Update">
+                            </form>
+                        </td>
                     </tr>
                     <tr>
                         <td>Fee</td>
