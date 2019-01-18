@@ -79,7 +79,7 @@
                     <tr>
                         <td>OC comments</td>
                         <td>
-                            <form action="{{route('oc.comment.edit')}}" method="POST">
+                            <form action="{{route('oc.comments.edit')}}" method="POST">
                                 @method('PUT')
                                 @if ($errors->has('debt'))
                                     <span class="help-block"><strong style="color: red;">{{ $errors->first('comment') }}</strong></span>
