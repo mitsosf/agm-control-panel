@@ -29,6 +29,7 @@
                         <th>Amount</th>
                         <th>User</th>
                         <th class="hidden-xs">Date</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -43,6 +44,19 @@
                             @endif
                             <td><a href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
                             <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
+                            <td>
+                                <div class="row" style="text-align: center">
+                                    <div class="col-md-6"><a class="btn btn-info" href="{{route('oc.debt.edit.show',$transaction->id)}}"><i class="fa fa-edit"></i></a></div>
+                                    <div class="col-md-6">
+                                        <form action="{{route('oc.debt.delete',$transaction)}}" method="POST">
+                                            @method('DELETE')
+                                            @csrf
+                                            <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to DELETE this debt?');"><i class="fa fa-remove"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -53,6 +67,7 @@
                         <th>Amount</th>
                         <th>User</th>
                         <th class="hidden-xs">Date</th>
+                        <th>Actions</th>
                     </tr>
                     </tfoot>
                 </table>
