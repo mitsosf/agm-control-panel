@@ -212,7 +212,7 @@ class OCController extends Controller
     {
 
         $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
-            ->withHeader('Event-API-key: '.env('ERS_API_KEY'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
             ->returnResponseObject()
             ->get();
 
@@ -321,6 +321,36 @@ class OCController extends Controller
         //TODO Reject on ERS
         return redirect(route('oc.cashflow.bank'));
     }
+
+    public function editDebtShow(Transaction $transaction)
+    {
+        $user = $transaction->user;
+        return view('oc.editDebt', compact('transaction', 'user'));
+    }
+
+    public function editDebt(Request $request)
+    {
+        //Validate request
+        $this->validate($request, [
+            'debt' => 'required|numeric',
+            'transaction' => 'required'
+        ]);
+
+        $transaction = Transaction::find($request['transaction']);
+
+        $transaction->amount = $request['debt'];
+        $transaction->update();
+
+        return redirect(route('oc.cashflow.debts'));
+    }
+
+    public function deleteDebt(Transaction $transaction)
+    {
+        $transaction->delete();
+
+        return redirect(route('oc.cashflow.debts'));
+    }
+
 
     public function user(User $user)
     {
