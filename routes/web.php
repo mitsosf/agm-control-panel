@@ -69,7 +69,7 @@ Route::get('/oc/debt/edit/{transaction}', 'OCController@editDebtShow')->name('oc
 Route::put('/oc/debt/edit', 'OCController@editDebt')->name('oc.debt.edit');
 Route::delete('oc/debt/{transaction}','OCController@deleteDebt')->name('oc.debt.delete');
 Route::get('/oc/user/{user}', 'OCController@user')->name('oc.user.show');
-Route::put('/oc/comment/edit', 'OCController@editUserComment')->name('oc.comment.edit');
+Route::put('/oc/comments/edit', 'OCController@editUserComments')->name('oc.comments.edit');
 Route::get('/oc/crud/hotels', 'OCController@crudHotels')->name('oc.crud.hotels');
 Route::get('/oc/crud/hotels/edit/{hotel}', 'OCController@showEditHotel')->name('oc.crud.hotels.edit.show');
 Route::post('/oc/crud/hotels/doEdit', 'OCController@editHotel')->name('oc.crud.hotels.edit');

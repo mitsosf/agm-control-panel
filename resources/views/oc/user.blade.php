@@ -84,7 +84,7 @@
                                 @if ($errors->has('debt'))
                                     <span class="help-block"><strong style="color: red;">{{ $errors->first('comment') }}</strong></span>
                                 @endif
-                                <textarea id="comment" name="comment" type="text">{{$user->comment}}</textarea>
+                                <textarea id="comments" name="comments" type="text">{{$user->comments}}</textarea>
                                 <input id="user" name="user" type="hidden" value="{{$user->id}}">
                                 @csrf
                                 <input class="btn btn-success" type="submit" value="Update">

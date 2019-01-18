@@ -356,10 +356,10 @@ class OCController extends Controller
         return view('oc.user', compact('user'));
     }
 
-    public function editUserComment(Request $request)
+    public function editUserComments(Request $request)
     {
         $user = User::find($request['user']);
-        $user->comment = $request['comment'];
+        $user->comments = $request['comments'];
         $user->update();
 
         return redirect(route('oc.user.show',$user));
