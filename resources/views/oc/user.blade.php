@@ -80,14 +80,20 @@
                         <td>OC comments</td>
                         <td>
                             <form action="{{route('oc.comments.edit')}}" method="POST">
-                                @method('PUT')
-                                @if ($errors->has('debt'))
-                                    <span class="help-block"><strong style="color: red;">{{ $errors->first('comment') }}</strong></span>
-                                @endif
-                                <textarea id="comments" name="comments" type="text">{{$user->comments}}</textarea>
-                                <input id="user" name="user" type="hidden" value="{{$user->id}}">
-                                @csrf
-                                <input class="btn btn-success" type="submit" value="Update">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        @method('PUT')
+                                        @if ($errors->has('debt'))
+                                            <span class="help-block"><strong style="color: red;">{{ $errors->first('comment') }}</strong></span>
+                                        @endif
+                                        <textarea id="comments" name="comments" type="text">{{$user->comments}}</textarea>
+                                        <input id="user" name="user" type="hidden" value="{{$user->id}}">
+                                        @csrf
+                                    </div>
+                                    <div class="col-md-6">
+                                        <input class="btn btn-success" type="submit" value="Update">
+                                    </div>
+                                </div>
                             </form>
                         </td>
                     </tr>
@@ -118,7 +124,7 @@
                     <tr>
                         <td>Checked-in</td>
                         @if($user->checkin == 1)
-                            <td >Yes</td>
+                            <td>Yes</td>
                         @else
                             <td>No</td>
                         @endif
