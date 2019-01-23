@@ -19,7 +19,7 @@
     </div>
     <div class="row">
         <div class="container">
-            <h4>Deposits:</h4>
+            <h4>Card deposits:</h4>
             <div class="box-body" style="background: white">
                 <table id="example2" class="table table-bordered table-hover">
                     <thead>
@@ -34,16 +34,16 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($deposits as $transaction)
+                    @foreach($card_deposits as $transaction)
                         <tr style="text-align: center">
-                            <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
+                            <td><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
                             <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
                             @if($transaction->amount > 0)
                                 <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @else
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
-                            <td class="hidden-xs"><a href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td class="hidden-xs"><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
                             <td class="hidden-xs">{{$transaction->user->esn_country}}</td>
                             @if(\Carbon\Carbon::now()->diffInHours(\Carbon\Carbon::createFromTimeString($transaction->created_at)->addDays(7), false) >= 0)
                                 <td class="hidden-xs">{{\Carbon\Carbon::now()->diffInHours(\Carbon\Carbon::createFromTimeString($transaction->created_at)->addDays(7), false)}} hrs</td>
@@ -89,12 +89,69 @@
             </div>
         </div>
     </div>
+    <div class="row" style="margin-top: 3%">
+        <div class="container">
+            <h4>Cash deposits:</h4>
+            <div class="box-body" style="background: white">
+                <table id="example3" class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Amount</th>
+                        <th>User</th>
+                        <th class="hidden-xs">Country</th>
+                        <th class="hidden-xs">Checked-in by</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($cash_deposits as $transaction)
+                        @php
+                            $checkiner = App\User::find($transaction->proof)
+                        @endphp
+                        <tr style="text-align: center">
+                            <td><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
+
+                            @if($transaction->amount > 0)
+                                <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
+                            @else
+                                <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
+                            @endif
+                            <td class="hidden-xs"><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td class="hidden-xs">{{$transaction->user->esn_country}}</td>
+                            <td><a href="{{route('oc.user.show',$checkiner)}}" target="_blank">{{$checkiner->name.' '.$checkiner->surname}}</a></td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>#</th>
+                        <th>Amount</th>
+                        <th>User</th>
+                        <th class="hidden-xs">Country</th>
+                        <th class="hidden-xs">Checked-in by</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js')
     <script>
         $(document).ready($(function () {
             $('#example2').DataTable({
+                'paging': true,
+                'lengthChange': true,
+                'searching': true,
+                'ordering': true,
+                'info': true,
+                'autoWidth': true
+            })
+        }));
+
+        $(document).ready($(function () {
+            $('#example3').DataTable({
                 'paging': true,
                 'lengthChange': true,
                 'searching': true,

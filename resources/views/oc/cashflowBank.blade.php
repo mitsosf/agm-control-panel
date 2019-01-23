@@ -68,41 +68,20 @@
                         <th class="hidden-xs">User</th>
                         <th class="hidden-xs">Country</th>
                         <th class="hidden-xs">Date</th>
-                        <th>Approval</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {{--TODO Delete and replace with foreach below when API ready--}}
-                    {{--@foreach($pending_users as $user)
-                        <tr style="text-align: center">
-                            <td><a href="{{route('oc.user.show',$user->id)}}">{{$loop->index + 1}}</a></td>
-                            <td><a class="btn btn-info" href="#" target="_blank">Proof</a></td>
-                            @if($user->fee > 0)
-                                <td style="text-align: center"><span class="label label-success">{{env('EVENT_FEE')}}</span></td>
-                            @else
-                                <td style="text-align: center"><span class="label label-danger">Contact me!</span></td>
-                            @endif
-                            <td class="hidden-xs"><a href="{{route('oc.user.show',$user)}}">{{$user->name.' '.$user->surname}}</a></td>
-                            <td class="hidden-xs">{{$user->esn_country}}</td>
-                            <td class="hidden-xs">{{$user->created_at->format('d/m/Y')}}</td>
-                            <td>
-                                <div class="row" style="text-align: center">
-                                    <div class="col-md-4"><a class="btn btn-warning" href="{{route('oc.user.show',$user)}}"><i class="fa fa-eye"></i></a></div>
-                                    <div class="col-md-4"><a class="btn btn-success" href="{{route('oc.transaction.create',$user)}}"><i class="fa fa-check"></i></a></div>
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach--}}
                     @foreach($pending_transactions as $transaction)
                         <tr style="text-align: center">
-                            <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
+                            <td><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
                             <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
                             @if($transaction->amount > 0)
                                 <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @else
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
-                            <td class="hidden-xs"><a href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td class="hidden-xs"><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
                             <td class="hidden-xs">{{$transaction->user->esn_country}}</td>
                             <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
                             <td>
@@ -132,7 +111,7 @@
                         <th class="hidden-xs">User</th>
                         <th class="hidden-xs">Country</th>
                         <th class="hidden-xs">Date</th>
-                        <th>Approval</th>
+                        <th>Actions</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -147,23 +126,23 @@
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
+                        <th>Country</th>
                         <th class="hidden-xs">Date</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach($confirmed_transactions as $transaction)
                         <tr style="text-align: center">
-                            <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
-                            <td>{{$transaction->type}}</td>
+                            <td><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
                             @if($transaction->amount > 0)
                                 <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @else
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
-                            <td><a href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td>{{$transaction->user->esn_country}}</td>
                             <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
                         </tr>
                     @endforeach
@@ -171,9 +150,9 @@
                     <tfoot>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
+                        <th>Country</th>
                         <th class="hidden-xs">Date</th>
                     </tr>
                     </tfoot>

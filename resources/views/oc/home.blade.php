@@ -29,7 +29,7 @@
                         <p>({{$approvedUsers?($paidUsersCount/$approvedUsers)*100:'0'}}%)</p>
                     </div>
                     <div class="icon">
-                        <i class="fa fa-credit-card"></i>
+                        <i class="fa fa-eur"></i>
                     </div>
                     <div class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></div>
                 </div>

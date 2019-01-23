@@ -65,23 +65,30 @@
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
+                        <th>Country</th>
                         <th class="hidden-xs">Date</th>
                     </tr>
                     </thead>
                     <tbody>
                     @foreach($transactions as $transaction)
                         <tr style="text-align: center">
-                            <td><a href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
-                            <td>{{$transaction->type}}</td>
+                            <td><a href="{{route('oc.transaction.show',$transaction->id)}}" target="_blank">{{$loop->index + 1}}</a></td>
                             @if($transaction->amount > 0)
-                                <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
+                                <td style="text-align: center">
+                                    <span class="label label-success">{{$transaction->amount}}</span>
+                                    @if(is_null($transaction->comments))
+                                        <span class="label label-info"><i class="fa fa-credit-card"></i></span>
+                                    @else
+                                        <span class="label label-default"><i class="fa fa-money"></i></span>
+                                    @endif
+                                </td>
                             @else
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
-                            <td><a href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td><a href="{{route('oc.user.show',$transaction->user)}}" target="_blank">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
+                            <td>{{$transaction->user->esn_country}}</td>
                             <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
                         </tr>
                     @endforeach
@@ -89,9 +96,9 @@
                     <tfoot>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
+                        <th>Country</th>
                         <th class="hidden-xs">Date</th>
                     </tr>
                     </tfoot>
