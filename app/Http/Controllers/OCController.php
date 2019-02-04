@@ -118,7 +118,7 @@ class OCController extends Controller
                 $user->document = $application->idnumber;
                 $user->phone = isset($application->phone) ? $application->phone : '';
                 $user->allergies = $application->allergies;
-                if ($user->spot_status != "pending"){
+                if ($user->spot_status != "pending") {
                     $user->update();
                     continue;
                 }
@@ -429,10 +429,16 @@ class OCController extends Controller
                 $new_user->section = $application->section_name;
                 $new_user->esn_country = $application->country;
                 $new_user->role_id = 1;
+                $new_user->spot_status = 'approved';
                 $new_user->setCreatedAt(Carbon::now());
                 $new_user->setUpdatedAt(Carbon::now());
                 $new_user->save();
                 $user = $new_user;
+            } else {
+                if ($user->spot_status == 'pending' || is_null($user->spot_status)) {
+                    $user->spot_status = 'approved';
+                    $user->update();
+                }
             }
 
             //Check if transaction already exists for this user
