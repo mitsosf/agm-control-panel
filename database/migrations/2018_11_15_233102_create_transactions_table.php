@@ -20,7 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->string('amount');
             $table->string('comments')->default(null)->nullable();
             $table->boolean('approved')->default(true);
-            $table->string('proof')->default(null)->nullable(); //Path to possible proof of payment
+            $table->string('proof',1000)->default(null)->nullable(); //Path to possible proof of payment
             $table->timestamps();
         });
     }

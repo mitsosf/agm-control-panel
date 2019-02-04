@@ -32,13 +32,17 @@
         border: 1px solid #2E3192;
         border-collapse: collapse;
     }
+
+    #address {
+        margin-top: -2%;
+    }
 </style>
 
-<div class="row" style="margin-top: 2%;background: #2E3192">
+<div class="row" style="background: #2E3192">
     <img src="{{asset('images/ESN-white.png')}}" height="50px" alt="" style="float: right;margin-right: 20px; margin-top: 1%;margin-bottom: 1%">
 </div>
 
-<div class="row" style="margin-top: 6%">
+<div class="row" style="margin-top: 2%">
     <img src="{{asset('images/logo.png')}}" height="150px" alt="">
 
 </div>
@@ -56,16 +60,19 @@
 
     <div class="column right" style="margin-right: 3%">
         <h3 style="color: #2E3192"><u>Payment by:</u></h3>
-        <p>Name: <b>{{$user->name}}</b></p>
-        <p>Surname: <b>{{$user->surname}}</b></p>
-        <p>Email: <b>{{$user->email}}</b></p>
-        <p>ESN Section: <b>{{$user->section}}</b></p>
-        <p>ESN Country: <b>{{$user->esn_country}}</b></p>
-        <p>Date/Time: <b>{{\Carbon\Carbon::now()}}</b></p>
+        <p><b>Name:</b> {{$user->name}}</p>
+        <p><b>Surname:</b> {{$user->surname}}</p>
+        <p><b>Email:</b> {{$user->email}}</p>
+        <p><b>Address:</b>
+        <div id="address"> {!!$user->invoice_address!!}</div>
+        </p>
+        <p><b>ESN Section:</b> {{$user->section}}</p>
+        <p><b>ESN Country:</b> {{$user->esn_country}}</p>
+        <p><b>Date/Time:</b> {{\Carbon\Carbon::now()}}</p>
     </div>
 </div>
 
-<div class="row" style="margin-top: 5%">
+<div class="row" style="margin-top: 2%">
     <h2 style="color: #2E3192;text-align: center"><u>PROOF OF PAYMENT</u></h2>
 </div>
 <div class="row">

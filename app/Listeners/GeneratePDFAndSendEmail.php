@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Ixudra\Curl\Facades\Curl;
 
 class GeneratePDFAndSendEmail implements ShouldQueue
 {
@@ -34,8 +35,11 @@ class GeneratePDFAndSendEmail implements ShouldQueue
      */
     public function handle(UserPaid $event)
     {
-        //Generate PDF
         $user = $event->user;
+        //Get latest invoice_address
+        $user->getLatestInvoiceNumberAndAddress();
+
+        //Generate PDF
 
         $pdf = App::make('dompdf.wrapper');
         $invID = Invoice::all()->count() + 1;
@@ -48,6 +52,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Save the whole transaction to the database
         $token = $event->token;
 
+
         if (!is_null($token)) { //If token is not null, we have a new card transaction
             //Create transaction
             $transaction = new Transaction();
@@ -57,8 +62,8 @@ class GeneratePDFAndSendEmail implements ShouldQueue
             $transaction->approved = true;
             $transaction->proof = $token;
             $transaction->save();
-        }else{ //If we have an existing transaction
-            $transaction = $user->transactions->where('comments','bank')->first();
+        } else { //If we have an existing transaction
+            $transaction = $user->transactions->where('comments', 'bank')->first();
         }
 
         //Create invoice and attach to transaction
@@ -73,7 +78,12 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Send invoice to participant
         Mail::to($user->email)->send(new PaymentConfirmation($user, env('APPLICATION_DEPLOYMENT_PATH_PUBLIC') . $path));
 
-        //TODO update ERS status
+        //Update ERS Status
+        Curl::to(env('ERS_SPOT_UPDATE_API_URL') . $user->invoice_number)
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->withData(array('paid' => 'yes'))
+            ->asJson()
+            ->put();
     }
 
     public function failed(UserPaid $event, $exception)

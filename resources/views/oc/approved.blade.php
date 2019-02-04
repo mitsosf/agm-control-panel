@@ -1,10 +1,10 @@
 @extends('layouts.oc.master')
 
 @section('content')
-    <h2>Approved Participants</h2>
     <div class="container">
+        <h4>Approved ESNers: <a class="btn btn-warning" href="{{route('oc.approved.sync')}}">ERS <i class="fa fa-refresh"></i></a></h4>
         <div class="box-body" style="background: white">
-            <table id="example2" class="table table-bordered table-hover" >
+            <table id="example2" class="table table-bordered table-hover">
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -17,13 +17,20 @@
                 </thead>
                 <tbody>
                 @foreach($users as $user)
+                    @php
+                        $transaction = $user->transactions->where('type','fee')->first();
+                    @endphp
                     <tr>
                         <td><a href="{{route('oc.user.show',$user)}}">{{$user->name." ".$user->surname}}</a></td>
                         <td>{{$user->esn_country}}</td>
-                        @if($user->fee == 0)
-                            <td style="text-align: center"><span class="label label-danger">No</span></td>
+                        @if(isset($transaction))
+                            @if($transaction->approved == 0)
+                                <td style="text-align: center"><span class="label label-danger">No</span></td>
+                            @else
+                                <td style="text-align: center"><span class="label label-success">{{$transaction->amount}} €</span></td>
+                            @endif
                         @else
-                            <td style="text-align: center"><span class="label label-success">{{$user->fee}} €</span></td>
+                            <td style="text-align: center"><span class="label label-danger">No</span></td>
                         @endif
                         @if($user->rooming == 0)
                             <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span></td>

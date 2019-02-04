@@ -72,7 +72,14 @@ class UnauthenticatedController extends Controller
         session_destroy(); //Destroy CAS cookie
         Auth::login($user);//Log the user into Laravel (natively)
         $user->refreshErsStatus();
+        $user->getLatestInvoiceNumberAndAddress();
 
+        //return cas()->getAttribute('roles');
+        //Check if NR
+        if (in_array('National.nationalRepresentative', cas()->getAttribute('roles'))) {
+            $user->comments = "NR";
+            $user->update();
+        }
 
         $role = $user->role->name;
         switch ($role) {

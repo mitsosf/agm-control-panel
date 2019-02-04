@@ -41,6 +41,7 @@ Route::get('/logout', 'UnauthenticatedController@logout')->name('cas.logout');
 //Participants
 Route::get('/account', 'ParticipantController@index')->name('participant.home');
 Route::get('/account/profile', 'ParticipantController@showProfile')->name('profile');
+Route::get('/nr/delegation', 'ParticipantController@delegation')->name('participant.delegation');
 Route::get('/account/payment', 'ParticipantController@payment')->name('participant.payment');
 Route::post('/account/validateCard', 'ParticipantController@validateCard')->name('participant.validateCard');
 Route::get('/account/charge', 'ParticipantController@charge')->name('participant.charge');
@@ -52,7 +53,13 @@ Route::get('/account/logout', 'ParticipantController@logout')->name('participant
 
 //OC
 Route::get('/oc', 'OCController@index')->name('oc.home');
+Route::get('/oc/final', 'OCController@final')->name('oc.final');
 Route::get('/oc/approved', 'OCController@approved')->name('oc.approved');
+Route::get('/oc/approved/sync', 'OCController@approvedSync')->name('oc.approved.sync');
+Route::get('/oc/namechanges', 'OCController@namechanges')->name('oc.namechanges');
+Route::get('/oc/namechanges/sync', 'OCController@namechangesSync')->name('oc.namechanges.sync');
+Route::get('/oc/namechanges/match/{user}', 'OCController@namechangesMatchShow')->name('oc.namechanges.match.show');
+Route::post('/oc/namechanges/match', 'OCController@namechangesMatch')->name('oc.namechanges.match');
 Route::get('/oc/cashflow/all', 'OCController@cashflow')->name('oc.cashflow');
 Route::get('/oc/cashflow/card', 'OCController@cashflowCard')->name('oc.cashflow.card');
 Route::get('/oc/cashflow/bank', 'OCController@cashflowBank')->name('oc.cashflow.bank');
@@ -78,8 +85,6 @@ Route::get('/oc/crud/rooms', 'OCController@crudRooms')->name('oc.crud.rooms');
 Route::get('/oc/crud/rooms/edit/{room}', 'OCController@showEditRoom')->name('oc.crud.rooms.edit.show');
 Route::post('/oc/crud/rooms/doEdit', 'OCController@editRoom')->name('oc.crud.rooms.edit');
 Route::get('/oc/crud/rooms/delete/{room}', 'OCController@deleteRoom')->name('oc.crud.rooms.delete');
-
-
 Route::get('/oc/logout', 'OCController@logout')->name('oc.logout');
 
 //Misc

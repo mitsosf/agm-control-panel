@@ -30,7 +30,7 @@
                     </tr>
                     <tr>
                         <td>Username</td>
-                        <td><a href="https://accounts.esn.org/user/{{str_replace('.', '', $user->username)}}" target="_blank">{{$user->username}}</a></td>
+                        <td><a href="https://accounts.esn.org/user/{{str_replace(' ', '-', str_replace('.', '', $user->username))}}" target="_blank">{{$user->username}}</a></td>
                     </tr>
                     <tr>
                         <td>Section</td>
@@ -107,7 +107,7 @@
                     </tr>
                     <tr>
                         <td>Debt</td>
-                        <td>{{$user->debt}}€</td>
+                        <td>{{$debt}}€</td>
                     </tr>
                     <tr>
                         <td>Rooming</td>{{--TODO insert column actual into rooms table--}}
