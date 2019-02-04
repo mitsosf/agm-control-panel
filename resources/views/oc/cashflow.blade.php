@@ -49,7 +49,7 @@
 
                     <div class="info-box-content" style="text-align: center">
 
-                        <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$deposit_count}}<small> ({{$deposit_amount}}€)</small></span>
+                        <span class="info-box-number" style="height: 80px; line-height: 80px; text-align: center;">{{$debt_amount}}€<small> ({{$debt_count}})</small></span>
                     </div>
                     <!-- /.info-box-content -->
                 </div>

@@ -56,18 +56,203 @@ class OCController extends Controller
         return view('oc.home', compact('totalUsers', 'approvedUsers', 'roomedUsers', 'funds', 'paidUsersCount', 'checkedInUsers'));
     }
 
+    public function final()
+    {
+        $users = User::where('spot_status', 'paid')->get();
+
+        return view('oc.final', compact('users'));
+    }
+
     public function approved()
     {
-
         $users = User::where('spot_status', 'approved')->orWhere('spot_status', 'paid')->get();
-
 
         return view('oc.approved', compact('users'));
     }
 
+    public function approvedSync()
+    {
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+        $approved_users = array();
+
+        foreach ($applications_json as $application) {
+            if (isset($application->spot_status)) {
+                if ($application->spot_status === "Not Paid " || $application->spot_status === "Paid " || $application->spot_status === "Granted ") { //Careful of the extra space after the word "Paid"!
+                    array_push($approved_users, $application);
+                }
+            }
+        }
+
+        foreach ($approved_users as $application) {
+            //Check if user already has an account
+            $user = User::where('username', $application->cas_name)->first();
+            if (is_null($user)) {
+                //Create user if new
+                $new_user = new User();
+                $new_user->email = $application->email;
+                $new_user->username = $application->cas_name;
+                $new_user->role_id = 1;
+                $new_user->name = $application->first_name;
+                $new_user->surname = $application->last_name;
+                $new_user->esn_country = $application->country;
+                $new_user->document = $application->idnumber;
+                $new_user->phone = isset($application->phone) ? $application->phone : '';
+                $new_user->section = $application->section_name;
+                $new_user->gender = $application->gender;
+                $new_user->birthday = Carbon::createFromTimestamp($application->date_of_birth)->format("d/m/Y");
+                $new_user->spot_status = "approved";
+                $new_user->allergies = $application->allergies;
+                $new_user->setCreatedAt(Carbon::now());
+                $new_user->setUpdatedAt(Carbon::now());
+                $new_user->save();
+            } else {
+                $user->document = $application->idnumber;
+                $user->phone = isset($application->phone) ? $application->phone : '';
+                $user->allergies = $application->allergies;
+                if ($user->spot_status != "pending"){
+                    $user->update();
+                    continue;
+                }
+                $user->spot_status = "approved";
+                $user->update();
+            }
+        }
+
+        return redirect(route('oc.approved'));
+    }
+
+    public function namechanges()
+    {
+
+        $users = User::where('spot_status', 'granted')->get();
+        $completed_namechanges = User::where('spot_status', 'namechange')->get();
+        return view('oc.namechanges', compact('users', 'completed_namechanges'));
+    }
+
+
+    public function namechangesSync()
+    {
+
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+        $granted_users = array();
+
+        foreach ($applications_json as $application) {
+            if (isset($application->spot_status)) {
+                if (strpos($application->spot_status, 'Granted')) { //Careful of the extra space after the word "Paid"!
+                    array_push($granted_users, $application);
+                }
+            }
+        }
+
+        foreach ($granted_users as $application) {
+            //Check if user already has an account
+            $user = User::where('username', $application->cas_name)->first();
+            if (is_null($user)) {
+                //Create user if new
+                $new_user = new User();
+                $new_user->email = $application->email;
+                $new_user->username = $application->cas_name;
+                $new_user->role_id = 1;
+                $new_user->name = $application->first_name;
+                $new_user->surname = $application->last_name;
+                $new_user->esn_country = $application->country;
+                $new_user->document = $application->idnumber;
+                $new_user->phone = isset($application->phone) ? $application->phone : '';
+                $new_user->section = $application->section_name;
+                $new_user->gender = $application->gender;
+                $new_user->birthday = Carbon::createFromTimestamp($application->date_of_birth)->format("d/m/Y");
+                $new_user->spot_status = "granted";
+                $new_user->allergies = $application->allergies;
+                $new_user->setCreatedAt(Carbon::now());
+                $new_user->setUpdatedAt(Carbon::now());
+                $new_user->save();
+            } else {
+                //Make sure hasn't already been namechanged
+                if ($user->spot_status == "namechange") {
+                    continue;
+                }
+                $user->document = $application->idnumber;
+                $user->phone = isset($application->phone) ? $application->phone : '';
+                $user->allergies = $application->allergies;
+                $user->spot_status = "granted";
+                $user->update();
+            }
+        }
+
+        return redirect(route('oc.namechanges'));
+    }
+
+    public function namechangesMatchShow(User $user)
+    {
+        $matchable_users = User::where('spot_status', 'approved')->get();
+
+        return view('oc.namechangesMatch', compact('user', 'matchable_users'));
+    }
+
+    public function namechangesMatch(Request $request)
+    {
+
+        $giver = User::find($request['giver']);
+        $taker = User::find($request['taker']);
+
+        //Check if giver owes muniez
+        $debt = $giver->transactions->where('type', 'debt')->first();
+        if (isset($debt)) {
+            $new_debt = new Transaction();
+            $new_debt->user()->associate($taker);
+            $new_debt->type = 'debt';
+            $new_debt->amount = $debt->amount;
+            $new_debt->approved = false;
+            $new_debt->save();
+
+            $debt->delete();
+        }
+
+        //Change taker's user entry
+        $taker->fee = $giver->fee;
+        $taker->comments = 'Namechange - Taker - ' . $giver->id;
+        $taker->spot_status = 'paid';
+        $taker->fee_date = Carbon::now();
+        $taker->update();
+
+        //Create new user payment, reference who gave the spot in the comments
+        event(new UserPaid($taker, 'namechange'));
+
+        //TODO Cancel giver's invoice
+
+        //Change giver's user entry
+        $giver->comments = 'Namechange - Giver - ' . $taker->id;
+        $giver->fee = 0;
+        $giver->spot_status = 'namechange';
+        $giver->update();
+
+        //Cancel giver transaction
+        $giver->transactions->where('type', 'fee')->first()->delete();
+
+        return redirect(route('oc.namechanges'));
+    }
+
     public function cashflow()
     {
-        $transactions = Transaction::where('type', 'fee')->get();
+        $transactions = Transaction::where('type', 'fee')->where('approved', '1')->orderBy('created_at', 'desc')->get();
 
         $transactions_count = $transactions->count();
         //Get income
@@ -90,22 +275,18 @@ class OCController extends Controller
 
         $income = $cash_income + $card_income;
 
-        $deposits = Transaction::where('type', 'deposit')->get();
-
-        $deposit_count = $deposits->count();
-        $deposit_amount = 0;
-        foreach ($deposits as $deposit) {
-            $deposit_amount += $deposit->amount;
-        }
+        $debt_transactions = Transaction::where('type', 'debt')->orderBy('created_at', 'desc')->get();
+        $debt_count = $debt_transactions->count();
+        $debt_amount = $debt_transactions->sum("amount");
 
 
-        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count', 'cash_count', 'card_count'));
+        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count', 'cash_count', 'card_count', 'debt_amount', 'debt_count'));
     }
 
 
     public function cashflowCard()
     {
-        $transactions = Transaction::where('type', 'fee')->whereNull('comments')->get();
+        $transactions = Transaction::where('type', 'fee')->whereNull('comments')->orderBy('created_at', 'desc')->get();
 
         $card_count = $transactions->count();
 
@@ -121,19 +302,19 @@ class OCController extends Controller
 
         $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 0)->get();
 
-        $pending_cash_count = $pending_transactions->count();
+        $pending_cash_count = $pending_transactions->where('proof', '!=', 'No proof')->count();
 
-        $pending_cash_income = $pending_transactions->sum('amount');
+        $pending_cash_income = $pending_transactions->where('proof', '!=', 'No proof')->sum('amount');
 
         //Get confirmed bank transaction data
-        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 1)->get();
+        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 1)->orderBy('created_at', 'desc')->get();
 
         $confirmed_cash_count = $confirmed_transactions->count();
 
         $confirmed_cash_income = $confirmed_transactions->sum('amount');
 
         //Get Debt
-        $debt_transactions = Transaction::where('type', 'debt')->where('approved', 0)->get();
+        $debt_transactions = Transaction::where('type', 'debt')->where('approved', 0)->orderBy('created_at', 'desc')->get();
 
         $debt_count = $debt_transactions->count();
 
@@ -144,7 +325,7 @@ class OCController extends Controller
 
     public function cashflowDebts()
     {
-        $debts = Transaction::where('type', 'debt')->get();
+        $debts = Transaction::where('type', 'debt')->orderBy('updated_at', 'desc')->get();
 
         $debt_amount = $debts->sum('amount');
         $debt_count = $debts->count();
@@ -154,15 +335,15 @@ class OCController extends Controller
 
     public function cashflowDeposits()
     {
-        $deposits = Transaction::where('type', 'deposit')->where('comments','card')->get();
+        $deposits = Transaction::where('type', 'deposit')->where('comments', 'card')->get();
 
         $deposit_amount = $deposits->sum('amount');
         $deposit_count = $deposits->count();
 
 
-        $card_deposits = Transaction::where('type', 'deposit')->where('comments','card')->get();
-        $cash_deposits = Transaction::where('type', 'deposit')->where('comments','cash')->get();
-        return view('oc.cashflowDeposits', compact('deposits', 'deposit_amount', 'deposit_count','cash_deposits', 'card_deposits'));
+        $card_deposits = Transaction::where('type', 'deposit')->where('comments', 'card')->get();
+        $cash_deposits = Transaction::where('type', 'deposit')->where('comments', 'cash')->get();
+        return view('oc.cashflowDeposits', compact('deposits', 'deposit_amount', 'deposit_count', 'cash_deposits', 'card_deposits'));
     }
 
     public function acquireDeposit(Transaction $transaction)
@@ -227,9 +408,11 @@ class OCController extends Controller
         $bank_payments = array();
 
         foreach ($applications_json as $application) {
-            if (!is_array($application->proof_of_payment) && $application->spot_status === "Not Paid ") { //Careful of the extra space after the word "Paid"!
-                // If it is an array, there is no proof of payment uploaded and if paid, we don't want to see it as pending
-                array_push($bank_payments, $application);
+            if (isset($application->spot_status)) {
+                if ($application->spot_status === "Not Paid " || $application->spot_status === "Paid ") { //Careful of the extra space after the word "Paid"!
+                    // If it is an array, there is no proof of payment uploaded and if paid, we don't want to see it as pending
+                    array_push($bank_payments, $application);
+                }
             }
         }
 
@@ -240,6 +423,11 @@ class OCController extends Controller
                 //Create user if new
                 $new_user = new User();
                 $new_user->username = $application->cas_name;
+                $new_user->name = $application->first_name;
+                $new_user->surname = $application->last_name;
+                $new_user->email = $application->email;
+                $new_user->section = $application->section_name;
+                $new_user->esn_country = $application->country;
                 $new_user->role_id = 1;
                 $new_user->setCreatedAt(Carbon::now());
                 $new_user->setUpdatedAt(Carbon::now());
@@ -249,8 +437,11 @@ class OCController extends Controller
 
             //Check if transaction already exists for this user
             if ($user->transactions->isNotEmpty()) {
-                if ($user->transactions->where('type', 'fee')->where('comments', 'bank')->count() > 0) {
-
+                $user_transactions = $user->transactions->where('type', 'fee')->where('comments', 'bank');
+                if ($user_transactions->count() > 0) {
+                    $transaction = $user_transactions->first();
+                    $transaction->proof = !is_array($application->proof_of_payment) ? $application->proof_of_payment : 'No proof';  //Get proof of payment from ERS
+                    $transaction->update();
                     continue;
                 }
             }
@@ -262,7 +453,7 @@ class OCController extends Controller
             $transaction->amount = $application->price;
             $transaction->comments = "bank";
             $transaction->approved = 0;
-            $transaction->proof = $application->proof_of_payment;  //Get proof of payment from ERS
+            $transaction->proof = !is_array($application->proof_of_payment) ? $application->proof_of_payment : 'No proof';  //Get proof of payment from ERS
             $transaction->save();
         }
 
@@ -356,7 +547,9 @@ class OCController extends Controller
 
     public function user(User $user)
     {
-        return view('oc.user', compact('user'));
+        $debt = $user->transactions->where('type', 'debt')->sum('amount');
+
+        return view('oc.user', compact('user', 'debt'));
     }
 
     public function editUserComments(Request $request)
@@ -365,7 +558,7 @@ class OCController extends Controller
         $user->comments = $request['comments'];
         $user->update();
 
-        return redirect(route('oc.user.show',$user));
+        return redirect(route('oc.user.show', $user));
     }
 
     public function crudHotels()

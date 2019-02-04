@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -31,13 +32,19 @@ class ParticipantController extends Controller
         $user = Auth::user();
         $error = null;
 
-        $debt = $user->transactions->where('type', 'debt')->where('approved',0)->first();
+        $debt = $user->transactions->where('type', 'debt')->where('approved', 0)->first();
 
-        return view('participants.home', compact('user', 'error', 'debt'));
+        $deposit_check = $user->transactions->where("type", "deposit")->count();
+
+        return view('participants.home', compact('user', 'error', 'debt', 'deposit_check'));
     }
 
     public function payment()
     {
+        if (!env('EVENT_PAYMENTS', 0)) {
+            return redirect(route('participant.home'));
+        }
+
         $user = Auth::user();
         $error = null;
 
@@ -47,13 +54,19 @@ class ParticipantController extends Controller
         if ($transactions->count() > 0) {
             $invoice = $transactions->first()->invoice;
         }
-        return view('participants.payment', compact('user', 'error', 'invoice'));
+
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
+
+        return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
     }
 
     //TODO log ALL errors
     //TODO reassure the plembs that they have not been charged, if an error occurs
     public function validateCard()
     {
+        if (!env('EVENT_PAYMENTS', 0)) {
+            return redirect(route('participant.home'));
+        }
         //Set up the private key
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
@@ -137,6 +150,7 @@ class ParticipantController extends Controller
 
     public function deposit()
     {
+
         $user = Auth::user();
         $error = null;
 
@@ -145,11 +159,8 @@ class ParticipantController extends Controller
          * Not paid = 0
          * Something weird = Whatever
         */
-        //DO NOT DISTURB, the beast will eat you alive
-        $deposit_check = $user->withCount(
-            ['transactions' => function ($query) {
-                $query->where('type', 'deposit');
-            }])->get()[0]->transactions_count;
+
+        $deposit_check = $user->transactions->where("type", "deposit")->count();
 
         return view('participants.deposit', compact('user', 'error', 'deposit_check'));
     }
@@ -186,7 +197,7 @@ class ParticipantController extends Controller
         if (isset($token)) {
 
             //Format desc
-            $description = 'Deposit--'.$user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
+            $description = 'Deposit--' . $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
             $payment = Payment::create(array(
                 "amount" => 5000, //Amount in cents
@@ -206,7 +217,7 @@ class ParticipantController extends Controller
                 //Save deposit to db
                 $deposit = new Transaction();
                 $deposit->type = 'deposit';
-                $deposit->amount = $payment->amount/100;
+                $deposit->amount = $payment->amount / 100;
                 $deposit->approved = 0;
                 $deposit->proof = $payment->token;
                 $deposit->user()->associate($user);
@@ -228,6 +239,17 @@ class ParticipantController extends Controller
         }
     }
 
+    public function delegation(){
+        $user = Auth::user();
+        if (substr($user->comments,0,2) !== "NR"){
+            return redirect(route('participant.home'));
+        }
+
+        $participants = User::where('esn_country',$user->esn_country)->whereIn('spot_status',['paid','approved'])->get();
+
+        return view('participants.delegation', compact('participants'));
+    }
+
     public function generateProof()
     {
         return Auth::user()->generateProof();
@@ -236,8 +258,17 @@ class ParticipantController extends Controller
 
     public function test()
     {
+        //Generate PDF
+        $user = Auth::user();
 
+        $pdf = App::make('dompdf.wrapper');
+        $invID = Invoice::all()->count() + 1;
+        $pdf->loadHTML(view('test', compact('user', 'invID')));
+        return $pdf->stream();
     }
+
+
+
     public function logout()
     {
         Auth::logout();

@@ -32,7 +32,7 @@ class CreateUsersTable extends Migration
             $table->string('facebook')->default("")->nullable();
             $table->string('allergies')->default("")->nullable();
             $table->string('meal')->default("")->nullable();
-            $table->string('comments')->default("")->nullable();
+            $table->string('comments',10000)->default("")->nullable();
             $table->string('fee')->default("0")->nullable();   //Event fee payed
             $table->dateTime('fee_date')->nullable();
             $table->boolean('rooming')->default(false);

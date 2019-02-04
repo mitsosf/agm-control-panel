@@ -3,6 +3,9 @@
 @section('content')
     <h4>Fee payment</h4>
     <div class="container" style="text-align: center;font-family: 'Lato'">
+        <div class="row">
+            <img src="{{asset('images/why_card.jpg')}}" alt="Why pay with card" style="max-width:100%">
+        </div>
         <div class="row" style="padding-top: 3%">
             <div class="col-md-4"></div>
             <div class="col-md-4">
@@ -39,7 +42,7 @@
                                         @break
 
                                         @default
-                                        <b style="color: red">Spot approval pending</b>
+                                        <b style="color: red">Spot approval pending.<br>Please contact your NR.</b>
                                     @endswitch
                                 </td>
                             </tr>
@@ -111,7 +114,7 @@
                     <p>IBAN: GR9601722290005229093337111</p>
                     <p>BIC: PIRBGRAA</p>
                     <p>Beneficiary: FEDERATION OF ERASMUS STUDENT NETWORK - GREECE</p>
-                    <p>Reference: <b style="color: red">Please check your ERS invoice for the reference.</b></p>
+                    <p>Reference: <b style="color: red">{{$bank_reference}}</b></p>
 
                     <p style="color: red">Make sure to cover all banking fees.</p>
                 </div>

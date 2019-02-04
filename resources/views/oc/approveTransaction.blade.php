@@ -8,11 +8,15 @@
         <h4>Country: {{$user->esn_country}}</h4>
         <h4>Section: {{$user->section}}</h4>
         <h4>Price: {{$transaction->amount}}</h4>
-        <a class="btn btn-info" style="margin-bottom: 2%" href="{{$transaction->proof}}" target="_blank" >Show proof</a>
+        @if($transaction->proof === "No proof")
+            <h3 style="color: red">NO PROOF FOUND</h3>
+        @else
+            <a class="btn btn-info" style="margin-bottom: 2%" href="{{$transaction->proof}}" target="_blank">Show proof</a>
+        @endif
         <form action="{{route('oc.transaction.approve')}}" method="POST">
             @method('PUT')
             <label for="debt">Debt:</label>
-        @if ($errors->has('debt'))
+            @if ($errors->has('debt'))
                 <span class="help-block"><strong style="color: red;">{{ $errors->first('debt') }}</strong></span>
             @endif
             <input id="debt" name="debt" type="text" placeholder="eg. 4"><br>

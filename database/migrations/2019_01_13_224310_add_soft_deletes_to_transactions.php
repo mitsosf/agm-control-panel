@@ -13,7 +13,7 @@ class AddSoftDeletesToTransactions extends Migration
      */
     public function up()
     {
-        Schema::table('transactions', function($table) {
+        Schema::table('transactions', function(Blueprint $table) {
             $table->softDeletes()->after('proof');
         });
     }

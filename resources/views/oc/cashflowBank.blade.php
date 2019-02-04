@@ -3,7 +3,6 @@
 @section('content')
     <div class="row">
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <h4>Bank Total:</h4>
             <div class="info-box">
                 <span class="info-box-icon bg-light-blue"><i class="fa fa-money"></i></span>
                 <div class="info-box-content" style="text-align: center">
@@ -14,7 +13,6 @@
             <!-- /.info-box -->
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <h4>Approved:</h4>
             <div class="info-box">
                 <span class="info-box-icon bg-green"><i class="fa fa-check"></i></span>
 
@@ -27,7 +25,6 @@
             <!-- /.info-box -->
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <h4>Pending:</h4>
             <div class="info-box">
                 <span class="info-box-icon bg-yellow"><i class="fa fa-warning"></i></span>
 
@@ -40,7 +37,6 @@
             <!-- /.info-box -->
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
-            <h4>Debt:</h4>
             <a href="{{route('oc.cashflow.debts')}}">
                 <div class="info-box">
                     <span class="info-box-icon bg-red"><i class="fa fa-gavel"></i></span>
@@ -75,7 +71,11 @@
                     @foreach($pending_transactions as $transaction)
                         <tr style="text-align: center">
                             <td><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
-                            <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
+                            @if($transaction->proof === "No proof")
+                                <td><div style="color: red;">No proof found</div></td>
+                            @else
+                                <td><a class="btn btn-info" href="{{$transaction->proof}}" target="_blank">Proof</a></td>
+                            @endif
                             @if($transaction->amount > 0)
                                 <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @else

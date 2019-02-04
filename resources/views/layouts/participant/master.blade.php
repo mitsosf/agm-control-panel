@@ -85,6 +85,9 @@ desired effect
                 <li class="header">MENU</li>
                 <li><a href="{{route('participant.home')}}"><i class="fa fa-user"></i> <span>Home</span></a></li>
                 <li><a href="{{route('participant.payment')}}"><i class="fa fa-credit-card"></i> <span>Fee Payment</span></a></li>
+                @if(substr(Auth::user()->comments,0,2) === "NR")
+                    <li><a href="{{route('participant.delegation')}}"><i class="fa fa-users"></i> <span>My delegation</span></a></li>
+                @endif
                 <li><a href="{{route('participant.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->

@@ -10,7 +10,7 @@
                     <div class="inner">
                         <h3>{{$approvedUsers}}</h3>
 
-                        <p>Assigned spots ({{($approvedUsers/$totalUsers)*100}}%)</p>
+                        <p>Assigned spots ({{round(($approvedUsers/$totalUsers)*100,2)}}%)</p>
                     </div>
                     <div class="icon">
                         <i class="fa fa-users"></i>
@@ -26,7 +26,7 @@
                     <div class="inner">
                         <h3>{{$funds}} €</h3>
 
-                        <p>({{$approvedUsers?($paidUsersCount/$approvedUsers)*100:'0'}}%)</p>
+                        <p>({{$approvedUsers?round(($paidUsersCount/$approvedUsers)*100,2):'0'}}%)</p>
                     </div>
                     <div class="icon">
                         <i class="fa fa-eur"></i>

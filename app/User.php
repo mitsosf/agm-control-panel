@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\App;
 use Ixudra\Curl\Facades\Curl;
@@ -25,6 +24,12 @@ use Ixudra\Curl\Facades\Curl;
  * @property mixed fee
  * @property mixed transactions
  * @property mixed rooming_comments
+ * @property string document
+ * @property string phone
+ * @property mixed allergies
+ * @property mixed invoice_address
+ * @property  mixed invoice_number
+ * @property mixed application_id
  */
 class User extends Authenticatable
 {
@@ -37,7 +42,7 @@ class User extends Authenticatable
      */
 
     protected $fillable = [
-        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo', 'tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming', 'spot_status'
+        'name', 'surname', 'email', 'role_id', 'section', 'esncard', 'document', 'birthday', 'gender', 'phone', 'esn_country', 'photo', 'tshirt', 'facebook', 'allergies', 'comments', 'workshops', 'fee', 'meal', 'rooming', 'spot_status', 'invoice_address', 'invoice_number'
     ];
 
     /**
@@ -49,6 +54,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function role()
+    {
+        return $this->belongsTo('App\Role');
+    }
+
     public function transactions()
     {
         return $this->hasMany('App\Transaction');
@@ -57,11 +67,6 @@ class User extends Authenticatable
     public function room()
     {
         return $this->belongsTo('App\Room');
-    }
-
-    public function role()
-    {
-        return $this->belongsTo('App\Role');
     }
 
     public function esnCardStatus($card)
@@ -86,42 +91,72 @@ class User extends Authenticatable
     public function refreshErsStatus()
     {
 
-        if ($this->spot_status === 'paid') {
-            $status = 'paid';
+        if ($this->spot_status !== 'pending' && $this->spot_status !== null) {
+            //If it's not pending or null
+            return $this->spot_status;
         } else {
-
-
-            $status = 'approved'; //Default status TODO change to pending after we have working ERS API
-
-
-            //TODO uncomment block when ERS API is ready
-            /*$json = Curl::to(env('ERS_PAYMENTS_API_URL'))
-                ->withData(array('event' => env('ERS_PAYMENTS_API_EVENT_ID')))
+            $status = 'pending';
+            $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+                ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+                ->withData(array('cas_name' => $this->username))
+                ->returnResponseObject()
                 ->get();
 
-            if (empty($json)){
-                $this->spot_status = $status;
-                $this->update();
-
-                return $status;
+            if ($response->status !== 200) {
+                return 'Error while contacting ERS';
             }
 
-            $ers_users = json_decode($json, TRUE);
+            $applications_json = json_decode($response->content);
 
-            foreach ($ers_users as $ers_user) {
-                if ($ers_user['esn_accounts_username'] == $this->username) {
-                    $status = 'approved';
+            foreach ($applications_json as $application) {
+                if ($application->cas_name == $this->username) {
+                    if (isset($application->spot_status)) {
+                        if ($application->spot_status === 'Not Paid ') {
+                            $status = 'approved';
+                            break; //We want the foreach loop to stop, if we find one entry that's marked as 'Not paid '
+                        }
+                    }
                 }
-            }*/
-
-            $this->spot_status = $status;
-            $this->update();
+            }
         }
-        return $status;
 
+        $this->spot_status = $status;
+        $this->update();
+        return $status;
     }
 
-    public function generateProof(){
+    public function getLatestInvoiceNumberAndAddress()
+    {
+        $user = $this;
+
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->withData(array('cas_name' => $this->username))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+
+        foreach ($applications_json as $application) {
+            if (isset($application->spot_status)) {
+                if ($application->spot_status === "Not Paid " || $application->spot_status === "Paid " || $application->spot_status === "Granted ") { //Careful of the extra space after the word "Paid"!
+                    $user->invoice_address = str_replace("\r\n", "<br>", $application->invoice_address);
+                    $user->invoice_number = $application->invoice_number;
+                    $user->update();
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function generateProof()
+    {
 
         $user = $this;
 
@@ -130,14 +165,14 @@ class User extends Authenticatable
         $invoice = null;
         if ($transactions->count() > 0) {
             $invoice = $transactions->first()->invoice;
-        }else{
+        } else {
             return "Invoice is being processed, please check again later";
         }
 
         $invID = $invoice->id;
 
         $pdf = App::make('dompdf.wrapper');
-        $pdf->loadHTML(view('mails.paymentConfirmation',compact('user', 'invID')));
+        $pdf->loadHTML(view('mails.paymentConfirmation', compact('user', 'invID')));
 
         return $pdf->stream();
     }

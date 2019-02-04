@@ -38,7 +38,7 @@
                                         @break
 
                                         @default
-                                        <b style="color: red">Something went wrong, contact the OC{{$deposit_check}}</b>
+                                        <b style="color: red">Something went wrong, contact the OC (Error: {{$deposit_check}})</b>
                                     @endswitch
                                 </td>
                             </tr>

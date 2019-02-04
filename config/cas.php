@@ -6,7 +6,7 @@ return [
     |--------------------------------------------------------------------------
     | Example: 'cas.myuniv.edu'.
     */
-    'cas_hostname'        => env('CAS_HOSTNAME', 'cas.myuniv.edu'),
+    'cas_hostname'        => env('CAS_HOSTNAME', 'accounts.esn.org'),
 
     /*
     |--------------------------------------------------------------------------
@@ -16,7 +16,7 @@ return [
     | recommended for protecting against DOS attacks.  If using load
     | balanced hosts, then separate each with a comma.
     */
-    'cas_real_hosts'      => env('CAS_REAL_HOSTS', 'cas.myuniv.edu'),
+    'cas_real_hosts'      => env('CAS_REAL_HOSTS', 'accounts.esn.org'),
 
 
     /*
@@ -24,7 +24,7 @@ return [
     | Customize CAS Session Cookie Name
     |--------------------------------------------------------------------------
     */
-    'cas_session_name'    => env('CAS_SESSION_NAME', 'CASAuth'),
+    'cas_session_name'    => env('CAS_SESSION_NAME', 'cas'),
 
     /*
     |--------------------------------------------------------------------------
@@ -130,7 +130,7 @@ return [
     | this feature, you may be able to retrieve user meta data.
     |--------------------------------------------------------------------------
     */
-    'cas_enable_saml'     => env('CAS_ENABLE_SAML', true),
+    'cas_enable_saml'     => env('CAS_ENABLE_SAML', false),
 
     /*
     |--------------------------------------------------------------------------

@@ -74,7 +74,19 @@ desired effect
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MENU</li>
                 <li><a href="{{route('oc.home')}}"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-                <li><a href="{{route('oc.approved')}}"><i class="fa fa-bar-chart"></i> <span>Registrations</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-bar-chart"></i> <span>Registrations</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('oc.final')}}"><i class="fa fa-check-square"></i> <span>Final</span></a></li>
+                        <li><a href="{{route('oc.approved')}}"><i class="fa fa-check-square-o"></i> <span>Approved</span></a></li>
+                        <li><a href="{{route('oc.namechanges')}}"><i class="fa fa-recycle"></i> <span>Namechanges</span></a></li>
+                        <li><a href="#"><i class="fa fa-times"></i> <span>Cancelled</span></a></li>
+                    </ul>
+                </li>
                 <li class="treeview">
                     <a href="#"><i class="fa fa-money"></i> <span>Cashflow</span>
                         <span class="pull-right-container">
@@ -91,7 +103,7 @@ desired effect
                 </li>
 
                 {{--Hotels--}}
-                @php
+                {{--@php
                     $hotels = App\Hotel::all();
                 @endphp
                 <li class="treeview">
@@ -120,7 +132,7 @@ desired effect
                         <li><a href="{{route('oc.crud.hotels')}}"><i class="fa fa-gear"></i> <span>Hotels</span></a></li>
                         <li><a href="{{route('oc.crud.rooms')}}"><i class="fa fa-gear"></i> <span>Rooms</span></a></li>
                     </ul>
-                </li>
+                </li>--}}
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->
