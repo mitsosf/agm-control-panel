@@ -64,6 +64,13 @@ class GeneratePDFAndSendEmail implements ShouldQueue
             $transaction->save();
         } else { //If we have an existing transaction
             $transaction = $user->transactions->where('comments', 'bank')->first();
+            //If this is a card transaction
+            if (!is_null($token)){
+                $transaction->proof = $token;
+                $transaction->approved = true;
+                $transaction->comments = null;
+                $transaction->update();
+            }
         }
 
         //Create invoice and attach to transaction
