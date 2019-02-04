@@ -443,9 +443,13 @@ class OCController extends Controller
 
             //Check if transaction already exists for this user
             if ($user->transactions->isNotEmpty()) {
-                $user_transactions = $user->transactions->where('type', 'fee')->where('comments', 'bank');
+                $user_transactions = $user->transactions->where('type', 'fee');
                 if ($user_transactions->count() > 0) {
                     $transaction = $user_transactions->first();
+                    if (substr($transaction->proof,0,3) == "pmt"){
+                        $transaction->update();
+                        continue;
+                    }
                     $transaction->proof = !is_array($application->proof_of_payment) ? $application->proof_of_payment : 'No proof';  //Get proof of payment from ERS
                     $transaction->update();
                     continue;
