@@ -258,13 +258,6 @@ class ParticipantController extends Controller
 
     public function test()
     {
-        //Generate PDF
-        $user = Auth::user();
-
-        $pdf = App::make('dompdf.wrapper');
-        $invID = Invoice::all()->count() + 1;
-        $pdf->loadHTML(view('test', compact('user', 'invID')));
-        return $pdf->stream();
     }
 
 
