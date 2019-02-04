@@ -74,7 +74,6 @@ class UnauthenticatedController extends Controller
         $user->refreshErsStatus();
         $user->getLatestInvoiceNumberAndAddress();
 
-        //return cas()->getAttribute('roles');
         //Check if NR
         if (in_array('National.nationalRepresentative', cas()->getAttribute('roles'))) {
             $user->comments = "NR";
