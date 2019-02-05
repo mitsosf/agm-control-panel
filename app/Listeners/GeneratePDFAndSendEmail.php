@@ -52,7 +52,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Save the whole transaction to the database
         $token = $event->token;
 
-        $transaction_fee_count = $user->transactions->where('type','fee')->get()->count();
+        $transaction_fee_count = $user->transactions->where('type','fee')->count();
         if ($transaction_fee_count == '0') { //If user doesn't have a pending transaction
             //Create transaction
             $transaction = new Transaction();
