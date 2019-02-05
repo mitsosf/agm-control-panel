@@ -52,8 +52,8 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         //Save the whole transaction to the database
         $token = $event->token;
 
-
-        if (!is_null($token)) { //If token is not null, we have a new card transaction
+        $transaction_fee_count = $user->transactions->where('type','fee')->get()->count();
+        if ($transaction_fee_count == '0') { //If user doesn't have a pending transaction
             //Create transaction
             $transaction = new Transaction();
             $transaction->user()->associate($user);
@@ -63,7 +63,7 @@ class GeneratePDFAndSendEmail implements ShouldQueue
             $transaction->proof = $token;
             $transaction->save();
         } else { //If we have an existing transaction
-            $transaction = $user->transactions->where('comments', 'bank')->first();
+            $transaction = $user->transactions->where('type','fee')->where('comments', 'bank')->first();
             //If this is a card transaction
             if (!is_null($token)){
                 $transaction->proof = $token;
