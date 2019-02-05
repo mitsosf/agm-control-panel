@@ -98,9 +98,9 @@ class GeneratePDFAndSendEmail implements ShouldQueue
         $user = $event->user;
         $token = $event->token;
 
-        $message = "'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname 
+        $message = 'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname
             . '\"\n\"Token: ' . $token
-            . '\"\n\"Exception: '. $exception";
+            . '\"\n\"Exception: '. $exception;
 
         Log::channel('slack')->alert($message);
     }
