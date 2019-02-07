@@ -111,15 +111,12 @@
                 <div class="modal-body">
                     <p>Please transfer exactly <b>222€</b> to this account:</p>
 
-                    <p>PIRAEUS BANK</p>
-                    <p>BIC: PIRBGRAA</p>
-                    <p>Bank Address: 4 AMERIKIS STREET, ATHENS, 10564</p>
                     <p>IBAN: GR9601722290005229093337111</p>
+                    <p>BIC: PIRBGRAA</p>
                     <p>Beneficiary: FEDERATION OF ERASMUS STUDENT NETWORK - GREECE</p>
-                    <p>ESN Greece Address: Patision 42, Athens, 10682</p>
                     <p>Reference: <b style="color: red">{{$bank_reference}}</b></p>
 
-                    <p style="color: red">Please make sure to cover all banking fees.</p>
+                    <p style="color: red">Make sure to cover all banking fees.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
