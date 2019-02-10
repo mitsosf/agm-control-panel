@@ -446,7 +446,7 @@ class OCController extends Controller
                 $user_transactions = $user->transactions->where('type', 'fee');
                 if ($user_transactions->count() > 0) {
                     $transaction = $user_transactions->first();
-                    if (substr($transaction->proof,0,3) == "pmt"){
+                    if (substr($transaction->proof, 0, 3) == "pmt") {
                         $transaction->update();
                         continue;
                     }
@@ -571,52 +571,56 @@ class OCController extends Controller
         return redirect(route('oc.user.show', $user));
     }
 
-    public function crudHotels()
+    public function showInvitations()
     {
-        $hotels = Hotel::all();
-        return view('oc.crud.hotels', compact('hotels'));
+        $invitations = User::where('spot_status', '!=', 'pending')->where('rooming_comments', 'like','invitation_pending%')->get();
+        $sent_invitations = User::where('rooming_comments', 'like', 'sent%')->get();
+
+        return view('oc.invitations', compact('invitations', 'sent_invitations'));
     }
 
-    public function showEditHotel(Hotel $hotel)
+    public function invitationsSync()
     {
-        //TODO Show form prefilled with hotel data
-        return view('oc.crud.editHotel', compact('hotel'));
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+        $invited_users = array();
+
+
+        foreach ($applications_json as $application) {
+            if (isset($application->spot_status)) {
+                if ($application->need_invitation == 1) {
+                    $user = User::where('username', $application->cas_name)->first();
+                    if (substr($user->rooming_comments,0,4)!== 'sent'){
+                        array_push($invited_users, $application);
+                    }
+                }
+            }
+        }
+
+        foreach ($invited_users as $application) {
+            $user = User::where('username', $application->cas_name)->first();
+
+            $user->rooming_comments = "invitation_pending" . '--' . $application->place_of_birth . '--' . $application->passport_expiry_date . '--' . $application->passport_issue_date . '--' . $application->invitation_letter_address;
+            $user->update();
+        }
+
+        return redirect(route('oc.invitations.show'));
     }
 
-    public function editHotel(Hotel $hotel)
-    {
-        //TODO Edit the hotel, update DB
-        return redirect(route('oc.crud.hotels'));
-    }
 
-    public function deleteHotel(Hotel $hotel)
+    public function invitationSend(User $user)
     {
-        $hotel->delete();
-        return redirect(route('oc.crud.hotels'));
-    }
-
-    public function crudRooms()
-    {
-        $rooms = Room::all();
-        return view('oc.crud.rooms', compact('rooms'));
-    }
-
-    public function showEditRoom(Room $room)
-    {
-        //TODO Show form prefilled with room data
-        return view('oc.crud.editRoom', compact('room'));
-    }
-
-    public function editRoom(Request $request)
-    {
-        //TODO Edit the room, update DB
-        return redirect(route('oc.crud.rooms'));
-    }
-
-    public function deleteRoom($id)
-    {
-        Room::find($id)->delete();
-        return redirect(route('oc.crud.rooms'));
+        $user->rooming_comments = 'sent--'.substr($user->rooming_comments,20);
+        $user->update();
+        return redirect(route('oc.invitations.show'));
     }
 
     public function logout()

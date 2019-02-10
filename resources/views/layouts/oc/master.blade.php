@@ -133,6 +133,7 @@ desired effect
                         <li><a href="{{route('oc.crud.rooms')}}"><i class="fa fa-gear"></i> <span>Rooms</span></a></li>
                     </ul>
                 </li>--}}
+                <li><a href="{{route('oc.invitations.show')}}"><i class="fa fa-envelope"></i> <span>Invitation Letters</span></a></li>
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->
