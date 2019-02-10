@@ -85,6 +85,9 @@ Route::get('/oc/crud/rooms', 'OCController@crudRooms')->name('oc.crud.rooms');
 Route::get('/oc/crud/rooms/edit/{room}', 'OCController@showEditRoom')->name('oc.crud.rooms.edit.show');
 Route::post('/oc/crud/rooms/doEdit', 'OCController@editRoom')->name('oc.crud.rooms.edit');
 Route::get('/oc/crud/rooms/delete/{room}', 'OCController@deleteRoom')->name('oc.crud.rooms.delete');
+Route::get('/oc/invitations', 'OCController@showInvitations')->name('oc.invitations.show');
+Route::get('/oc/invitations/sync', 'OCController@invitationsSync')->name('oc.invitations.sync');
+Route::get('/oc/invitation/{user}/send', 'OCController@invitationSend')->name('oc.invitation.send');
 Route::get('/oc/logout', 'OCController@logout')->name('oc.logout');
 
 //Misc

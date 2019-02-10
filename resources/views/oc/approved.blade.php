@@ -27,7 +27,7 @@
                             @if($transaction->approved == 0)
                                 <td style="text-align: center"><span class="label label-danger">No</span></td>
                             @else
-                                <td style="text-align: center"><span class="label label-success">{{$transaction->amount}} €</span></td>
+
                             @endif
                         @else
                             <td style="text-align: center"><span class="label label-danger">No</span></td>
