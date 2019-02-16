@@ -34,7 +34,7 @@ class OCController extends Controller
 
         //User stats
         $totalUsers = User::all()->count(); //All that have ever logged in
-        $approvedUsers = User::where('spot_status', 'approved')->count();
+        $approvedUsers = User::where('spot_status', '!=', 'pending')->count();
 
         //Funds stats
         $paidUsers = User::where('fee', '!=', '0')->get();
