@@ -28,7 +28,7 @@
                             @if($transaction->approved == 0)
                                 <td style="text-align: center"><span class="label label-danger">No</span></td>
                             @else
-
+                                <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @endif
                         @else
                             <td style="text-align: center"><span class="label label-danger">No</span></td>
@@ -44,8 +44,7 @@
                             <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span>
                             </td>
                         @else
-                            <td style="text-align: center" class="hidden-xs"><span
-                                        class="label label-success">Yes</span></td>
+                            <td style="text-align: center" class="hidden-xs"><span class="label label-success">Yes</span></td>
                         @endif
                         <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($user->created_at)->diffForHumans()}}</td>
                     </tr>
