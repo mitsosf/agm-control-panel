@@ -40,7 +40,7 @@
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
                             <td><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
-                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y - H:mm')}}</td>
+                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y - H:i')}}</td>
                         </tr>
                     @endforeach
                     </tbody>
