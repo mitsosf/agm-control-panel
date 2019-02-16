@@ -52,8 +52,6 @@ class OCController extends Controller
         //Check-in stats
         $checkedInUsers = User::where('checkin', '!=', '0')->count();
 
-        return $approvedUsers. ' '. $paidUsersCount;
-
         return view('oc.home', compact('totalUsers', 'approvedUsers', 'roomedUsers', 'funds', 'paidUsersCount', 'checkedInUsers'));
     }
 
