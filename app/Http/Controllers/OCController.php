@@ -251,7 +251,7 @@ class OCController extends Controller
 
     public function cashflow()
     {
-        $transactions = Transaction::where('type', 'fee')->where('approved', '1')->orderBy('created_at', 'desc')->get();
+        $transactions = Transaction::where('type', 'fee')->where('approved', '1')->orderBy('updated_at', 'desc')->get();
 
         $transactions_count = $transactions->count();
         //Get income
@@ -306,7 +306,7 @@ class OCController extends Controller
         $pending_cash_income = $pending_transactions->where('proof', '!=', 'No proof')->sum('amount');
 
         //Get confirmed bank transaction data
-        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 1)->orderBy('created_at', 'desc')->get();
+        $confirmed_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 1)->orderBy('updated_at', 'desc')->get();
 
         $confirmed_cash_count = $confirmed_transactions->count();
 

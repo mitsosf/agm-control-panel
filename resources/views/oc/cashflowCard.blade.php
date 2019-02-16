@@ -25,7 +25,6 @@
                     <thead>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
                         <th class="hidden-xs">Date</th>
@@ -35,21 +34,19 @@
                     @foreach($transactions as $transaction)
                         <tr>
                             <td style="text-align: center"><a target="_blank" href="{{route('oc.transaction.show',$transaction->id)}}">{{$loop->index + 1}}</a></td>
-                            <td>{{$transaction->type}}</td>
                             @if($transaction->amount > 0)
                                 <td style="text-align: center"><span class="label label-success">{{$transaction->amount}}</span></td>
                             @else
                                 <td style="text-align: center"><span class="label label-danger">{{$transaction->amount}}</span></td>
                             @endif
                             <td><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
-                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y')}}</td>
+                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y - hh:mm')}}</td>
                         </tr>
                     @endforeach
                     </tbody>
                     <tfoot>
                     <tr>
                         <th>#</th>
-                        <th>Type</th>
                         <th>Amount</th>
                         <th>User</th>
                         <th class="hidden-xs">Date</th>
