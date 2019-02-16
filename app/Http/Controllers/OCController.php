@@ -299,7 +299,7 @@ class OCController extends Controller
     {
         //Get pending bank transaction data
 
-        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 0)->orderBy('updated_at', 'desc')->get();
+        $pending_transactions = Transaction::where('type', 'fee')->where('comments', 'bank')->where('approved', 0)->orderBy('updated_at', 'desc')->orderBy('proof', 'asc')->get();
 
         $pending_cash_count = $pending_transactions->where('proof', '!=', 'No proof')->count();
 
