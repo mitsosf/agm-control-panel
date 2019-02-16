@@ -83,7 +83,7 @@
                             @endif
                             <td class="hidden-xs"><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
                             <td class="hidden-xs">{{$transaction->user->esn_country}}</td>
-                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
+                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y - H:i')}}</td>
                             <td>
                                 <div class="row" style="text-align: center">
                                     <div class="col-md-4"><a class="btn btn-warning" href="{{route('oc.transaction.show',$transaction->id)}}"><i class="fa fa-eye"></i></a></div>
@@ -143,7 +143,7 @@
                             @endif
                             <td><a target="_blank" href="{{route('oc.user.show',$transaction->user)}}">{{$transaction->user->name.' '.$transaction->user->surname}}</a></td>
                             <td>{{$transaction->user->esn_country}}</td>
-                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->created_at)->format('d/m/Y')}}</td>
+                            <td class="hidden-xs">{{\Carbon\Carbon::createFromTimeString($transaction->updated_at)->format('d/m/Y - H:i')}}</td>
                         </tr>
                     @endforeach
                     </tbody>
