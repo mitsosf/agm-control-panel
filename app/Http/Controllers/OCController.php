@@ -285,7 +285,7 @@ class OCController extends Controller
 
     public function cashflowCard()
     {
-        $transactions = Transaction::where('type', 'fee')->whereNull('comments')->orderBy('created_at', 'desc')->get();
+        $transactions = Transaction::where('type', 'fee')->whereNull('comments')->orderBy('updated_at', 'desc')->get();
 
         $card_count = $transactions->count();
 
