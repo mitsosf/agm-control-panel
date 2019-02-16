@@ -56,7 +56,7 @@
                     <td>{{$transaction->created_at}}</td>
                 </tr>
                 <tr>
-                    <td>Updated at:</td>
+                    <td>Paid at:</td>
                     <td>{{$transaction->updated_at}}</td>
                 </tr>
                 </tbody>
