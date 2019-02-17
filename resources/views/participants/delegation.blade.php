@@ -10,6 +10,8 @@
                     <th>Name</th>
                     <th>Section</th>
                     <th>Fee</th>
+                    <th class="hidden-xs">Phone</th>
+                    <th>Letter</th>
                     <th class="hidden-xs">Bank fees</th>
                     <th class="hidden-xs">Room</th>
                     <th class="hidden-xs">Check-in</th>
@@ -33,24 +35,39 @@
                         @else
                             <td style="text-align: center"><span class="label label-danger">No</span></td>
                         @endif
+                        <td class="hidden-xs"><a href="tel:{{$user->phone}}">{{$user->phone}}</a></td>
+                        @if(substr($user->rooming_comments,0,18) == "invitation_pending")
+                            <td style="text-align: center"><span class="label label-warning">Pending</span></td>
+                        @elseif(substr($user->rooming_comments,0,4) == "sent")
+                            <td style="text-align: center"><span class="label label-success">Sent</span></td>
+                        @else
+                            <td style="text-align: center">-</td>
+                        @endif
                         @if(isset($debt))
                             @if($debt->approved == 0)
-                                <td class="hidden-xs" style="text-align: center"><span class="label label-danger">{{$debt->amount}} €</span></td>
+                                <td class="hidden-xs" style="text-align: center"><span class="label label-danger">{{$debt->amount}} €</span>
+                                </td>
                             @else
-                                <td class="hidden-xs" style="text-align: center"><span class="label label-success">No</span></td>
+                                <td class="hidden-xs" style="text-align: center"><span
+                                            class="label label-success">No</span></td>
                             @endif
                         @else
-                            <td class="hidden-xs" style="text-align: center"><span class="label label-success">No</span></td>
+                            <td class="hidden-xs" style="text-align: center"><span class="label label-success">No</span>
+                            </td>
                         @endif
                         @if($user->rooming == 0)
-                            <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span></td>
+                            <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span>
+                            </td>
                         @else
-                            <td style="text-align: center" class="hidden-xs"><span class="label label-success">{{$user->rooming}}</span></td>
+                            <td style="text-align: center" class="hidden-xs"><span
+                                        class="label label-success">{{$user->rooming}}</span></td>
                         @endif
                         @if($user->checkin == 0)
-                            <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span></td>
+                            <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span>
+                            </td>
                         @else
-                            <td style="text-align: center" class="hidden-xs"><span class="label label-success">Yes</span></td>
+                            <td style="text-align: center" class="hidden-xs"><span
+                                        class="label label-success">Yes</span></td>
                         @endif
                     </tr>
                 @endforeach
@@ -60,6 +77,8 @@
                     <th>Name</th>
                     <th>Section</th>
                     <th>Fee</th>
+                    <th class="hidden-xs">Phone</th>
+                    <th>Letter</th>
                     <th class="hidden-xs">Bank fees</th>
                     <th class="hidden-xs">Room</th>
                     <th class="hidden-xs">Check-in</th>
