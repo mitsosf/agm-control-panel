@@ -73,6 +73,9 @@ class ParticipantController extends Controller
         //Get token from submission
         $token = $_POST['everypayToken'];
         $user = Auth::user();
+        $invoice = null;
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
+
         if (isset($token)) {
             //Check if card is not Visa, MasterCard or Maestro
             $token_details = Token::retrieve($token);
@@ -80,7 +83,7 @@ class ParticipantController extends Controller
                 $type = $token_details->card->type;
                 if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
                     $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
-                    return view('participants.payment', compact('error', 'user'));
+                    return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
                 }
                 Session::put('token', $token);
                 //If all goes according to plan
@@ -88,12 +91,12 @@ class ParticipantController extends Controller
             } else {
                 //If we don't receive the token_details
                 $error = "An error has occurred, please try again (Error 100)";
-                return view('participants.payment', compact('error', 'user'));
+                return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
             }
         }
         //If we don't receive a token
         $error = "An error has occurred, please try again (Error 101)";
-        return view('participants.payment', compact('error', 'user'));
+        return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
     }
 
 
@@ -103,6 +106,8 @@ class ParticipantController extends Controller
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
         $user = Auth::user();
         $error = '';
+        $invoice = null;
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
 
         //Charge card
         $token = Session::get('token');
@@ -137,12 +142,12 @@ class ParticipantController extends Controller
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
-                return view('participants.payment', compact('user', 'error'));
+                return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
             }
         } else {
             //If validation succeeds but charging fails
             $error = "An error has occurred, please try again (Error 102)";
-            return view('participants.payment', compact('user', 'error'));
+            return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
         }
     }
 
