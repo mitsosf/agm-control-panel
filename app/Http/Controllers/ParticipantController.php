@@ -141,7 +141,7 @@ class ParticipantController extends Controller
                 Session::flash('paid_fee', 1);
                 return redirect(route('participant.home'));
             } else {
-                $error = "An error has occurred, please try again (Error 103)";
+                $error = "Your card issuer didn't approve the payment. If this problem persists, please try using a different card (Error 103)";
                 return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
             }
         } else {
