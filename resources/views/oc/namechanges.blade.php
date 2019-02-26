@@ -52,7 +52,7 @@
                 <tbody>
                 @foreach($completed_namechanges as $user)
                     @php
-                    $taker = \App\User::find(substr($user->comments,-1));
+                    $taker = \App\User::find(explode('- ',$user->comments)[2]);
                     @endphp
                     <tr>
                         <td><a href="{{route('oc.user.show',$user)}}">{{$user->name." ".$user->surname}}</a></td>
