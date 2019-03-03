@@ -60,6 +60,8 @@ Route::get('/oc/namechanges', 'OCController@namechanges')->name('oc.namechanges'
 Route::get('/oc/namechanges/sync', 'OCController@namechangesSync')->name('oc.namechanges.sync');
 Route::get('/oc/namechanges/match/{user}', 'OCController@namechangesMatchShow')->name('oc.namechanges.match.show');
 Route::post('/oc/namechanges/match', 'OCController@namechangesMatch')->name('oc.namechanges.match');
+Route::get('/oc/cancelled', 'OCController@cancelled')->name('oc.cancelled');
+Route::get('/oc/cancelled/sync', 'OCController@cancelledSync')->name('oc.cancelled.sync');
 Route::get('/oc/cashflow/all', 'OCController@cashflow')->name('oc.cashflow');
 Route::get('/oc/cashflow/card', 'OCController@cashflowCard')->name('oc.cashflow.card');
 Route::get('/oc/cashflow/bank', 'OCController@cashflowBank')->name('oc.cashflow.bank');
