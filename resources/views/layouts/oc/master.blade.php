@@ -84,7 +84,7 @@ desired effect
                         <li><a href="{{route('oc.final')}}"><i class="fa fa-check-square"></i> <span>Final</span></a></li>
                         <li><a href="{{route('oc.approved')}}"><i class="fa fa-check-square-o"></i> <span>Approved</span></a></li>
                         <li><a href="{{route('oc.namechanges')}}"><i class="fa fa-recycle"></i> <span>Namechanges</span></a></li>
-                        <li><a href="#"><i class="fa fa-times"></i> <span>Cancelled</span></a></li>
+                        <li><a href="{{route('oc.cancelled')}}"><i class="fa fa-times"></i> <span>Cancelled</span></a></li>
                     </ul>
                 </li>
                 <li class="treeview">

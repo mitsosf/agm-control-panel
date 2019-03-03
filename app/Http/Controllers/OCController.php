@@ -9,6 +9,7 @@ use App\Room;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
+use function GuzzleHttp\Psr7\str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -249,7 +250,125 @@ class OCController extends Controller
         return redirect(route('oc.namechanges'));
     }
 
-    public function cashflow()
+    public function cancelled()
+    {
+        $users = User::where('spot_status', 'cancelled')->get();
+        return view('oc.cancelled', compact('users'));
+    }
+
+    public function cancelledSync()
+    {
+
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications_json = json_decode($response->content);
+        $potential_cancelled_usernames = array();
+
+        foreach ($applications_json as $application) {
+
+            if (isset($application->spot_status)) {
+                if ($application->spot_status == 'Not Paid Canceled ' || explode(' ', $application->spot_status)[0] == 'Refunded') { //Cancelled spelled with one L in ERS*/
+                    if (!in_array($application->cas_name, $potential_cancelled_usernames)) {
+                        array_push($potential_cancelled_usernames, $application->cas_name);
+                    }
+                }
+            }
+        }
+
+        $potential_cancelled_user_occurrences = array();
+        foreach ($potential_cancelled_usernames as $username) {
+            foreach ($applications_json as $application) {
+                if (isset($application->spot_status)) {
+                    if ($application->cas_name == $username) {
+                        if (isset($potential_cancelled_user_occurrences[$username])) {
+                            $potential_cancelled_user_occurrences[$username]++;
+                        } else {
+                            $potential_cancelled_user_occurrences[$username] = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        $cancelled_users = array();
+        foreach ($potential_cancelled_user_occurrences as $username => $times) {
+            if ($times == 1) {
+                array_push($cancelled_users, $username);
+            } else {
+                foreach ($applications_json as $application) {
+                    if (isset($application->spot_status)) {
+                        if ($application->cas_name == $username) {
+                            if ($application->spot_status != 'Not Paid Canceled ' && !strpos($application->spot_status, 'Refunded')) {
+                                continue 2;
+                            } else {
+                                array_push($cancelled_users, $username);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
+        //TODO rerun the foreach loop to get details of those that are cancelled
+        $cancelled_applications = array();
+        foreach ($cancelled_users as $username) {
+            foreach ($applications_json as $application) {
+                if (isset($application->spot_status)) {
+                    if ($application->cas_name == $username) {
+                        array_push($cancelled_applications, $application);
+                        continue 2;
+                    }
+                }
+            }
+        }
+
+        foreach ($cancelled_applications as $application) {
+            //Check if user already has an account
+            $user = User::where('username', $application->cas_name)->first();
+            if (is_null($user)) {
+                //Create user if new
+                $new_user = new User();
+                $new_user->email = $application->email;
+                $new_user->username = $application->cas_name;
+                $new_user->role_id = 1;
+                $new_user->name = $application->first_name;
+                $new_user->surname = $application->last_name;
+                $new_user->esn_country = $application->country;
+                $new_user->document = $application->idnumber;
+                $new_user->phone = isset($application->phone) ? $application->phone : '';
+                $new_user->section = $application->section_name;
+                $new_user->gender = $application->gender;
+                $new_user->birthday = Carbon::createFromTimestamp($application->date_of_birth)->format("d/m/Y");
+                $new_user->spot_status = "cancelled";
+                $new_user->allergies = $application->allergies;
+                $new_user->setCreatedAt(Carbon::now());
+                $new_user->setUpdatedAt(Carbon::now());
+                $new_user->save();
+            } else {
+                //Make sure hasn't already been namechanged
+                if ($user->spot_status == "namechange") {
+                    continue;
+                }
+                $user->spot_status = "cancelled";
+                $user->update();
+            }
+        }
+
+        return redirect(route('oc.cancelled'));
+    }
+
+    public
+    function cashflow()
     {
         $transactions = Transaction::where('type', 'fee')->where('approved', '1')->orderBy('updated_at', 'desc')->get();
 
@@ -283,7 +402,8 @@ class OCController extends Controller
     }
 
 
-    public function cashflowCard()
+    public
+    function cashflowCard()
     {
         $transactions = Transaction::where('type', 'fee')->whereNull('comments')->orderBy('updated_at', 'desc')->get();
 
@@ -295,7 +415,8 @@ class OCController extends Controller
     }
 
 
-    public function cashflowBank()
+    public
+    function cashflowBank()
     {
         //Get pending bank transaction data
 
@@ -322,7 +443,8 @@ class OCController extends Controller
         return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count', 'confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
     }
 
-    public function cashflowDebts()
+    public
+    function cashflowDebts()
     {
         $debts = Transaction::where('type', 'debt')->orderBy('updated_at', 'desc')->get();
 
@@ -332,7 +454,8 @@ class OCController extends Controller
         return view('oc.cashflowDebts', compact('debts', 'debt_amount', 'debt_count'));
     }
 
-    public function cashflowDeposits()
+    public
+    function cashflowDeposits()
     {
         $deposits = Transaction::where('type', 'deposit')->where('comments', 'card')->get();
 
@@ -345,7 +468,8 @@ class OCController extends Controller
         return view('oc.cashflowDeposits', compact('deposits', 'deposit_amount', 'deposit_count', 'cash_deposits', 'card_deposits'));
     }
 
-    public function acquireDeposit(Transaction $transaction)
+    public
+    function acquireDeposit(Transaction $transaction)
     {
 
         //If transaction isn't a deposit
@@ -369,7 +493,8 @@ class OCController extends Controller
         return dd($payment);
     }
 
-    public function refundDeposit(Transaction $transaction)
+    public
+    function refundDeposit(Transaction $transaction)
     {
 
         //If transaction isn't a deposit
@@ -391,7 +516,8 @@ class OCController extends Controller
         return dd($payment);
     }
 
-    public function cashflowBankSync()
+    public
+    function cashflowBankSync()
     {
 
         $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
@@ -469,18 +595,21 @@ class OCController extends Controller
         return redirect(route('oc.cashflow.bank'));
     }
 
-    public function transaction(Transaction $transaction)
+    public
+    function transaction(Transaction $transaction)
     {
         return view('oc.transaction', compact('transaction'));
     }
 
-    public function approveTransactionShow(Transaction $transaction)
+    public
+    function approveTransactionShow(Transaction $transaction)
     {
         $user = $transaction->user;
         return view('oc.approveTransaction', compact('transaction', 'user'));
     }
 
-    public function approveTransaction(Request $request)
+    public
+    function approveTransaction(Request $request)
     {
 
         //Validate request
@@ -518,20 +647,23 @@ class OCController extends Controller
         return redirect(route('oc.cashflow.bank'));
     }
 
-    public function deleteTransaction(Transaction $transaction)
+    public
+    function deleteTransaction(Transaction $transaction)
     {
         $transaction->delete();
         //TODO Reject on ERS
         return redirect(route('oc.cashflow.bank'));
     }
 
-    public function editDebtShow(Transaction $transaction)
+    public
+    function editDebtShow(Transaction $transaction)
     {
         $user = $transaction->user;
         return view('oc.editDebt', compact('transaction', 'user'));
     }
 
-    public function editDebt(Request $request)
+    public
+    function editDebt(Request $request)
     {
         //Validate request
         $this->validate($request, [
@@ -547,21 +679,24 @@ class OCController extends Controller
         return redirect(route('oc.cashflow.debts'));
     }
 
-    public function deleteDebt(Transaction $transaction)
+    public
+    function deleteDebt(Transaction $transaction)
     {
         $transaction->delete();
 
         return redirect(route('oc.cashflow.debts'));
     }
 
-    public function user(User $user)
+    public
+    function user(User $user)
     {
         $debt = $user->transactions->where('type', 'debt')->sum('amount');
 
         return view('oc.user', compact('user', 'debt'));
     }
 
-    public function editUserComments(Request $request)
+    public
+    function editUserComments(Request $request)
     {
         $user = User::find($request['user']);
         $user->comments = $request['comments'];
@@ -570,15 +705,17 @@ class OCController extends Controller
         return redirect(route('oc.user.show', $user));
     }
 
-    public function showInvitations()
+    public
+    function showInvitations()
     {
-        $invitations = User::where('spot_status', '!=', 'pending')->where('rooming_comments', 'like','invitation_pending%')->get();
+        $invitations = User::where('spot_status', '!=', 'pending')->where('rooming_comments', 'like', 'invitation_pending%')->get();
         $sent_invitations = User::where('rooming_comments', 'like', 'sent%')->get();
 
         return view('oc.invitations', compact('invitations', 'sent_invitations'));
     }
 
-    public function invitationsSync()
+    public
+    function invitationsSync()
     {
         $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
             ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
@@ -597,7 +734,7 @@ class OCController extends Controller
             if (isset($application->spot_status)) {
                 if ($application->need_invitation == 1) {
                     $user = User::where('username', $application->cas_name)->first();
-                    if (substr($user->rooming_comments,0,4)!== 'sent'){
+                    if (substr($user->rooming_comments, 0, 4) !== 'sent') {
                         array_push($invited_users, $application);
                     }
                 }
@@ -615,14 +752,16 @@ class OCController extends Controller
     }
 
 
-    public function invitationSend(User $user)
+    public
+    function invitationSend(User $user)
     {
-        $user->rooming_comments = 'sent--'.substr($user->rooming_comments,20);
+        $user->rooming_comments = 'sent--' . substr($user->rooming_comments, 20);
         $user->update();
         return redirect(route('oc.invitations.show'));
     }
 
-    public function logout()
+    public
+    function logout()
     {
         Auth::logout();
         return redirect(route('home'));
