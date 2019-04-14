@@ -249,7 +249,7 @@ class ParticipantController extends Controller
                 Session::flash('paid_deposit', 1);
                 return redirect(route('participant.home'));
             } else {
-                $error = "An error has occurred, please try again (Error 103)";
+                $error = "Your card issuer didn't approve the payment. If this problem persists, please try using a different card (Error 103)";
                 $deposit_check = $user->transactions->where("type", "deposit")->count();
                 return view('participants.deposit', compact('user', 'error', 'deposit_check'));
             }
