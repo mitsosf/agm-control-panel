@@ -13,7 +13,7 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                You will soon receive an email with the proof of payment attached!
+                Get ready for the greatest event of the year!
             </div>
             <!-- /.box-body -->
         </div>

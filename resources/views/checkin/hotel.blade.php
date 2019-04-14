@@ -11,10 +11,10 @@
                 <tr>
                     <th>Check-in</th>
                     <th>Name</th>
-                    <th>ESNcard</th>
-                    <th>ID</th>
-                    <th>Country</th>
-                    <th>Section</th>
+                    <th class="hidden-xs">ESNcard</th>
+                    <th class="hidden-xs">ID</th>
+                    <th class="hidden-xs">Country</th>
+                    <th class="hidden-xs">Section</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -28,10 +28,10 @@
                                    class="btn btn-danger">Uncheck-in</a></td>
                         @endif
                         <td>{{$resident->name." ".$resident->surname}}</td>
-                        <td>{{$resident->esncard}}</td>
-                        <td>{{$resident->document}}</td>
-                        <td>{{$resident->esn_country}}</td>
-                        <td>{{$resident->section}}</td>
+                        <td class="hidden-xs">{{$resident->esncard}}</td>
+                        <td class="hidden-xs">{{$resident->document}}</td>
+                        <td class="hidden-xs">{{$resident->esn_country}}</td>
+                        <td class="hidden-xs">{{$resident->section}}</td>
                     </tr>
                 @endforeach
                 </tbody>
@@ -39,10 +39,10 @@
                 <tr>
                     <th>Check-in</th>
                     <th>Name</th>
-                    <th>ESNcard</th>
-                    <th>ID</th>
-                    <th>Country</th>
-                    <th>Section</th>
+                    <th class="hidden-xs">ESNcard</th>
+                    <th class="hidden-xs">ID</th>
+                    <th class="hidden-xs">Country</th>
+                    <th class="hidden-xs">Section</th>
                 </tr>
                 </tfoot>
             </table>
