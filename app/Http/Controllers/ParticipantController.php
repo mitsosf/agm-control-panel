@@ -151,8 +151,6 @@ class ParticipantController extends Controller
         }
     }
 
-    //TODO test deposits by card
-
     public function deposit()
     {
 
@@ -239,6 +237,7 @@ class ParticipantController extends Controller
                 $deposit->type = 'deposit';
                 $deposit->amount = $payment->amount / 100;
                 $deposit->approved = 0;
+                $deposit->comments = 'card';
                 $deposit->proof = $payment->token;
                 $deposit->user()->associate($user);
                 $deposit->save();
