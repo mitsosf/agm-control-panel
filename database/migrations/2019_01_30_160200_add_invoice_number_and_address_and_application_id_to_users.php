@@ -28,7 +28,9 @@ class AddInvoiceNumberAndAddressAndApplicationIdToUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('invoice_number');
             $table->dropColumn('invoice_address');
+            $table->dropColumn('application_id');
         });
     }
 }
