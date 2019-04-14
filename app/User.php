@@ -30,6 +30,8 @@ use Ixudra\Curl\Facades\Curl;
  * @property mixed invoice_address
  * @property  mixed invoice_number
  * @property mixed application_id
+ * @property mixed delegate
+ * @property mixed checkin
  */
 class User extends Authenticatable
 {
@@ -175,5 +177,34 @@ class User extends Authenticatable
         $pdf->loadHTML(view('mails.paymentConfirmation', compact('user', 'invID')));
 
         return $pdf->stream();
+    }
+
+
+    /**
+     * @return array with debt transaction and amount if there is a debt transaction or just the amount
+     */
+    public function calculateDebt(){
+        $amount = 0;
+
+        if (is_null(Transaction::where('user_id',$this->id)->where('type', 'deposit')->where('approved','1')->first())){
+            //If user has not deposited
+            $amount+=50;
+        }
+
+        $debt = Transaction::where('user_id',$this->id)->where('type','debt')->where('approved','0')->first();
+        if (!is_null($debt)){
+            //If user owes us money
+            $amount+=$debt->amount;
+
+            return array(
+                "transaction" => $debt,
+                "amount" => $amount
+            );
+        }
+
+        return array(
+            "transaction" => null,
+            "amount" => $amount
+        );
     }
 }

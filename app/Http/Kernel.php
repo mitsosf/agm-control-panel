@@ -62,6 +62,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'participant' => \App\Http\Middleware\ParticipantMiddleware::class,
         'oc' => \App\Http\Middleware\OCMiddleware::class,
+        'checkin' => \App\Http\Middleware\CheckinMiddleware::class,
+        'voting' => \App\Http\Middleware\VotingDistributionMiddleware::class
     ];
 
     /**

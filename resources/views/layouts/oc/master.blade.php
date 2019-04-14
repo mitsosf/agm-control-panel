@@ -134,6 +134,25 @@ desired effect
                     </ul>
                 </li>--}}
                 <li><a href="{{route('oc.invitations.show')}}"><i class="fa fa-envelope"></i> <span>Invitation Letters</span></a></li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-gear"></i> <span>Imports</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('oc.import.rooming.show')}}"><i class="fa fa-hotel"></i> <span>Import rooming</span></a></li>
+                        <li><a href="{{route('oc.import.esncard.show')}}"><i class="fa fa-credit-card"></i> <span>Import esncards</span></a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-list"></i> <span>Check-in</span>
+                        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('oc.checkin.depositRequests')}}"><i class="fa fa-eur"></i> <span>Deposit requests</span></a></li>
+                    </ul>
+                </li>
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->

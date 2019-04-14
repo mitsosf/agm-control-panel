@@ -261,12 +261,6 @@ class ParticipantController extends Controller
     }
 
 
-    public function test()
-    {
-    }
-
-
-
     public function logout()
     {
         Auth::logout();

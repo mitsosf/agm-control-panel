@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use App\Events\UserPaid;
 use App\Events\UserPaidDeposit;
 use App\Hotel;
+use App\Imports\EntriesImport;
 use App\Room;
 use App\Transaction;
 use App\User;
 use Carbon\Carbon;
-use function GuzzleHttp\Psr7\str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
 use Ixudra\Curl\Facades\Curl;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OCController extends Controller
 {
@@ -35,10 +36,10 @@ class OCController extends Controller
 
         //User stats
         $totalUsers = User::all()->count(); //All that have ever logged in
-        $approvedUsers = User::where('spot_status', '!=', 'pending')->count();
+        $approvedUsers = User::where('spot_status', 'approved')->count();
 
         //Funds stats
-        $paidUsers = User::where('fee', '!=', '0')->get();
+        $paidUsers = User::where('spot_status', 'paid')->get();
         $funds = 0;
         foreach ($paidUsers as $user) {
             $funds += $user->fee;
@@ -315,8 +316,6 @@ class OCController extends Controller
                 }
             }
         }
-
-
 
 
         //TODO rerun the foreach loop to get details of those that are cancelled
@@ -760,10 +759,139 @@ class OCController extends Controller
         return redirect(route('oc.invitations.show'));
     }
 
+    public function importRoomingShow()
+    {
+        return view('oc.imports.rooming');
+    }
+
+    public function importRooming(Request $request)
+    {
+        $tabs = Excel::toArray(new EntriesImport(), $request['data']);
+
+        foreach ($tabs as $index => $tab) {
+            $hotel = $index + 1;
+
+            if (array_key_exists('room_code', $tab[0])) {
+                $last_code = $tab[0]['room_code'];
+                //Create first room
+                $room = new Room();
+                $room->hotel_id = $hotel;
+                $room->beds = intval($tab[0]['size']);
+                $room->code = $tab[0]['room_code'];
+                $room->final = 1;
+                $room->save();
+            } else {
+                break;
+            }
+
+            foreach ($tab as $key => $entry) {
+                //Skip first entry
+                if ($key == 0) {
+                    continue;
+                }
+
+                if ($entry['room_code'] !== $last_code) {
+                    //Create new room
+                    $room = new Room();
+                    $room->hotel_id = $hotel;
+                    $room->beds = intval($entry['size']);
+                    $room->code = $entry['room_code'];
+                    $room->final = 1;
+                    $room->save();
+
+                    //Reset vars
+                    $last_code = $entry['room_code'];
+                }
+            }
+
+        }
+
+        //Get users into rooms
+        foreach ($tabs as $hotel) {
+            foreach ($hotel as $entry) {
+                if (array_key_exists('room_code', $entry)) {
+
+                    $user = User::where('username', $entry['cas_username'])->first();
+                    $room = Room::where('code', $entry['room_code'])->first();
+                    if (!is_null($user) && !is_null($room)) {
+                        $user->room_id = $room->id;
+                        $user->rooming = 1;
+                        $user->update();
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        return redirect(route('oc.import.rooming.show'));
+    }
+
+
     public
     function logout()
     {
         Auth::logout();
         return redirect(route('home'));
+    }
+
+    public function importEsncardShow()
+    {
+        return view('oc.imports.esncard');
+    }
+
+    public function importESNcard(Request $request)
+    {
+        $entries = Excel::toArray(new EntriesImport(), $request['data'])[0];
+
+        foreach ($entries as $entry) {
+
+            $user = User::where('email', $entry['email'])->first();
+            if (!is_null($user)) {
+
+                if (!is_null($entry['esncard'])) {
+                    $user->esncard = $entry['esncard'];
+                }
+
+                $user->spot_type = $entry['spot_type'];
+                $user->tshirt = $entry['tshirt'];
+                if (strpos($user->spot_type, 'Section Delegate') || strpos($user->spot_type, 'National Representative')) {
+                    $user->delegate = 1;
+                }
+                $user->update();
+
+            }
+        }
+        return redirect(route('oc.import.esncard.show'));
+    }
+
+    public function checkinDepositRequests()
+    {
+
+        $oc_transactions = Transaction::where('type', 'oc')->get();
+
+        return view('oc.depositRequests', compact('oc_transactions'));
+    }
+
+    public function checkinDepositRequestApprove(Transaction $transaction)
+    {
+        $transaction->approved = 1;
+        $transaction->proof = Auth::user()->id;
+        $transaction->update();
+
+        return redirect(route('oc.checkin.depositRequests'));
+    }
+
+    public function checkinDepositRequestDelete(Transaction $transaction)
+    {
+        $transaction->delete();
+
+        return redirect(route('oc.checkin.depositRequests'));
+    }
+
+    public function test()
+    {
+        $pdf = App::make('dompdf.wrapper');
+        return $pdf->loadHTML(view('various.badge'))->setPaper('a6', 'portrait')->stream();
     }
 }

@@ -27,6 +27,12 @@ Route::get('/', function () {
             case "2":
                 return redirect(route('oc.home'));
 
+            case "3":
+            return redirect(route('checkin.home'));
+
+            case "4":
+                return redirect(route('voting.home'));
+
             default:
                 return redirect(route('home'));
         }
@@ -91,11 +97,36 @@ Route::get('/oc/invitations', 'OCController@showInvitations')->name('oc.invitati
 Route::get('/oc/invitations/sync', 'OCController@invitationsSync')->name('oc.invitations.sync');
 Route::get('/oc/invitation/{user}/send', 'OCController@invitationSend')->name('oc.invitation.send');
 Route::get('/oc/logout', 'OCController@logout')->name('oc.logout');
+Route::get('/oc/checkin/deposits/requests', 'OCController@checkinDepositRequests')->name('oc.checkin.depositRequests');
+Route::get('/oc/checkin/deposit{transaction}/approve', 'OCController@checkinDepositRequestApprove')->name('oc.checkin.depositRequest.approve');
+Route::get('/oc/checkin/deposit{transaction}/delete', 'OCController@checkinDepositRequestDelete')->name('oc.checkin.depositRequest.delete');
+
+
+//Rooming import
+Route::get('/oc/import/rooming/show', 'OCController@importRoomingShow')->name('oc.import.rooming.show');
+Route::post('/oc/import/rooming', 'OCController@importRooming')->name('oc.import.rooming');
+Route::get('/oc/import/esncard/show', 'OCController@importEsncardShow')->name('oc.import.esncard.show');
+Route::post('/oc/import/esncard', 'OCController@importEsncard')->name('oc.import.esncard');
+
+//Checkin
+Route::get('/checkin', 'CheckinController@index')->name('checkin.home');
+Route::get('/checkin/hotel/{hotel}', 'CheckinController@hotel')->name('checkin.hotel');
+Route::get('/checkin/hotel/{hotel}/checkin/validate/{user}', 'CheckinController@validation')->name('checkin.validate');
+Route::get('/checkin/hotel/{hotel}/checkin/{user}', 'CheckinController@checkin')->name('checkin.checkin');
+Route::get('/checkin/funds', 'CheckinController@funds')->name('checkin.funds');
+Route::get('/checkin/funds/request/show', 'CheckinController@createDepositPickupRequestShow')->name('checkin.funds.createRequest.show');
+Route::post('/checkin/funds/request', 'CheckinController@createDepositPickupRequest')->name('checkin.funds.createRequest');
+Route::get('/checkin/logout', 'CheckinController@logout')->name('checkin.logout');
+
+//Voting devices
+Route::get('/voting', 'VotingDistributionController@index')->name('voting.home');
+Route::get('/voting/device/user/validate/{user}', 'VotingDistributionController@validation')->name('voting.validate');
+Route::get('/voting/device/user/{user}', 'VotingDistributionController@device')->name('voting.device');
+Route::get('/voting/logout', 'VotingDistributionController@logout')->name('voting.logout');
 
 //Misc
 Route::get('/terms', 'MiscController@terms')->name('terms');
 
-
 //Test
-Route::get('/test', 'ParticipantController@test')->name('participant.test');
+Route::get('/oc/test', 'OCController@importESNcards')->name('oc.test');
 
