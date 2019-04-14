@@ -25,7 +25,7 @@ class CheckinController extends Controller
     public function hotel(Hotel $hotel)
     {
         $residents = User::whereHas('room', function ($query) use ($hotel) {
-            $query->where('room_id', $hotel->id);
+            $query->where('hotel_id', $hotel->id)->where('final',1);
         })->get();
 
         $checkedIn = $residents->where('checkin', '!=', 0);

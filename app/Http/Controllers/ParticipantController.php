@@ -55,7 +55,7 @@ class ParticipantController extends Controller
             $invoice = $transactions->first()->invoice;
         }
 
-        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019' : "DO NOT PAY";
 
         return view('participants.payment', compact('user', 'error', 'invoice', 'bank_reference'));
     }
@@ -74,7 +74,7 @@ class ParticipantController extends Controller
         $token = $_POST['everypayToken'];
         $user = Auth::user();
         $invoice = null;
-        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019' : "DO NOT PAY";
 
         if (isset($token)) {
             //Check if card is not Visa, MasterCard or Maestro
@@ -107,7 +107,7 @@ class ParticipantController extends Controller
         $user = Auth::user();
         $error = '';
         $invoice = null;
-        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019': "DO NOT PAY";
+        $bank_reference = $user->invoice_number !== "" ? $user->name . ' ' . $user->surname . ' - ' . $user->invoice_number . ' - AGM Thessaloniki 2019' : "DO NOT PAY";
 
         //Charge card
         $token = Session::get('token');
@@ -177,17 +177,32 @@ class ParticipantController extends Controller
 
         //Get token from submission
         $token = $_POST['everypayToken'];
-
-        //Check if card is not Visa, MasterCard or Maestro
-        $token_details = Token::retrieve($token);
-        $type = $token_details->card->type;
-        if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
-            $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
-            $user = Auth::user();
-            return view('participants.home', compact('error', 'user'));
+        $user = Auth::user();
+        if (isset($token)) {
+            //Check if card is not Visa, MasterCard or Maestro
+            $token_details = Token::retrieve($token);
+            if (isset($token_details->card)) {
+                $type = $token_details->card->type;
+                if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
+                    $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
+                    $deposit_check = $user->transactions->where("type", "deposit")->count();
+                    return view('participants.home', compact('error', 'user', 'deposit_check'));
+                }
+                //If all works
+                Session::put('token', $token);
+                return redirect(route('participant.deposit.charge'));
+            } else {
+                //If we don't receive the token_details
+                $error = "An error has occurred, please try again (Error 100)";
+                $deposit_check = $user->transactions->where("type", "deposit")->count();
+                return view('participants.deposit', compact('user', 'error', 'deposit_check'));
+            }
         }
-        Session::put('token', $token);
-        return redirect(route('participant.deposit.charge'));
+
+        //If we don't receive a token
+        $error = "An error has occurred, please try again (Error 101)";
+        $deposit_check = $user->transactions->where("type", "deposit")->count();
+        return view('participants.payment', compact('user', 'error', 'deposit_check'));
     }
 
     public function chargeDeposit()
@@ -235,22 +250,25 @@ class ParticipantController extends Controller
                 return redirect(route('participant.home'));
             } else {
                 $error = "An error has occurred, please try again (Error 103)";
-                return view('participants.deposit', compact('user', 'error'));
+                $deposit_check = $user->transactions->where("type", "deposit")->count();
+                return view('participants.deposit', compact('user', 'error', 'deposit_check'));
             }
         } else {
             //If validation succeeds but pre-charging fails
             $error = "An error has occurred, please try again (Error 102)";
-            return view('participants.deposit', compact('user', 'error'));
+            $deposit_check = $user->transactions->where("type", "deposit")->count();
+            return view('participants.deposit', compact('user', 'error', 'deposit_check'));
         }
     }
 
-    public function delegation(){
+    public function delegation()
+    {
         $user = Auth::user();
-        if (substr($user->comments,0,2) !== "NR"){
+        if (substr($user->comments, 0, 2) !== "NR") {
             return redirect(route('participant.home'));
         }
 
-        $participants = User::where('esn_country',$user->esn_country)->whereIn('spot_status',['paid','approved'])->get();
+        $participants = User::where('esn_country', $user->esn_country)->whereIn('spot_status', ['paid', 'approved'])->get();
 
         return view('participants.delegation', compact('participants'));
     }
