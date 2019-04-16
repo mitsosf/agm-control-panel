@@ -891,7 +891,38 @@ class OCController extends Controller
 
     public function test()
     {
-        $pdf = App::make('dompdf.wrapper');
-        return $pdf->loadHTML(view('various.badge'))->setPaper('a6', 'portrait')->stream();
+
+        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
+            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
+            ->returnResponseObject()
+            ->get();
+
+        if ($response->status !== 200) {
+            return 'Error while contacting ERS';
+        }
+
+        $applications = json_decode($response->content);
+
+        try {
+
+
+            foreach ($applications as $application) {
+                if (isset($application->spot_status)) {
+                    if ($application->spot_status == "Paid ") {
+                        $user = User::where('username', $application->cas_name)->first();
+                        if (!is_null($user)) {
+                            $user->spot_type = $application->spot_type;
+                            $user->update();
+                        }
+                    }
+                }
+            }
+        }catch(\Exception $exception){
+            dd($exception);
+        }
+
+        return "Done importing";
     }
+
+
 }

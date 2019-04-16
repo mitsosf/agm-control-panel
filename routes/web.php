@@ -128,5 +128,5 @@ Route::get('/voting/logout', 'VotingDistributionController@logout')->name('votin
 Route::get('/terms', 'MiscController@terms')->name('terms');
 
 //Test
-Route::get('/oc/test', 'OCController@importESNcards')->name('oc.test');
+Route::get('/oc/test', 'OCController@test')->name('oc.test');
 
