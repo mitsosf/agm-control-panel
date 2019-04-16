@@ -853,7 +853,6 @@ class OCController extends Controller
                     $user->esncard = $entry['esncard'];
                 }
 
-                $user->spot_type = $entry['spot_type'];
                 $user->tshirt = $entry['tshirt'];
                 if (strpos($user->spot_type, 'Section Delegate') || strpos($user->spot_type, 'National Representative')) {
                     $user->delegate = 1;
@@ -912,6 +911,7 @@ class OCController extends Controller
                         $user = User::where('username', $application->cas_name)->first();
                         if (!is_null($user)) {
                             $user->spot_type = $application->spot_type;
+                            $user->email = $application->email;
                             $user->update();
                         }
                     }

@@ -13,6 +13,7 @@ use Everypay\Payment;
 use Everypay\Token;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class ParticipantController extends Controller
@@ -170,93 +171,116 @@ class ParticipantController extends Controller
 
     public function parseToken()
     {
-        //Set up the private key
-        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+        try {
+            //Set up the private key
+            Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
-        //Get token from submission
-        $token = $_POST['everypayToken'];
-        $user = Auth::user();
-        if (isset($token)) {
-            //Check if card is not Visa, MasterCard or Maestro
-            $token_details = Token::retrieve($token);
-            if (isset($token_details->card)) {
-                $type = $token_details->card->type;
-                if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
-                    $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
+            //Get token from submission
+            $token = $_POST['everypayToken'];
+            $user = Auth::user();
+            if (isset($token)) {
+                //Check if card is not Visa, MasterCard or Maestro
+                $token_details = Token::retrieve($token);
+                if (isset($token_details->card)) {
+                    $type = $token_details->card->type;
+                    if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
+                        $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
+                        $deposit_check = $user->transactions->where("type", "deposit")->count();
+                        return view('participants.home', compact('error', 'user', 'deposit_check'));
+                    }
+                    //If all works
+                    Session::put('token', $token);
+                    return redirect(route('participant.deposit.charge'));
+                } else {
+                    //If we don't receive the token_details
+                    $error = "An error has occurred, please try again (Error 100)";
                     $deposit_check = $user->transactions->where("type", "deposit")->count();
-                    return view('participants.home', compact('error', 'user', 'deposit_check'));
+                    return view('participants.deposit', compact('user', 'error', 'deposit_check'));
                 }
-                //If all works
-                Session::put('token', $token);
-                return redirect(route('participant.deposit.charge'));
-            } else {
-                //If we don't receive the token_details
-                $error = "An error has occurred, please try again (Error 100)";
-                $deposit_check = $user->transactions->where("type", "deposit")->count();
-                return view('participants.deposit', compact('user', 'error', 'deposit_check'));
             }
-        }
 
-        //If we don't receive a token
-        $error = "An error has occurred, please try again (Error 101)";
-        $deposit_check = $user->transactions->where("type", "deposit")->count();
-        return view('participants.payment', compact('user', 'error', 'deposit_check'));
+            //If we don't receive a token
+            $error = "An error has occurred, please try again (Error 101)";
+            $deposit_check = $user->transactions->where("type", "deposit")->count();
+            return view('participants.payment', compact('user', 'error', 'deposit_check'));
+        } catch (\Exception $exception) {
+            $user = Auth::user();
+
+            $message = 'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname
+                . '\"\n\"Token: ' . $token
+                . '\"\n\"Exception: ' . $exception;
+
+            Log::channel('slack')->alert($message);
+            redirect(route('participant.deposit'));
+        }
     }
 
     public function chargeDeposit()
     {
-        //Set up the private key
-        Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
-        $user = Auth::user();
-        $error = '';
+        try {
+            //Set up the private key
+            Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
+            $user = Auth::user();
+            $error = '';
 
-        //Pre-charge card
-        $token = Session::get('token');
-        if (isset($token)) {
+            //Pre-charge card
+            $token = Session::get('token');
+            if (isset($token)) {
 
-            //Format desc
-            $description = 'Deposit--' . $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
+                //Format desc
+                $description = 'Deposit--' . $user->id . "." . $user->name . " " . $user->surname . "--" . $user->esn_country . "/" . $user->section;
 
-            $payment = Payment::create(array(
-                "amount" => 5000, //Amount in cents
-                "currency" => "eur", //Currency
-                "token" => $token,
-                "description" => $description,
-                "capture" => 0  //Authorize card only
-            ));
-            Session::forget('token');
+                $payment = Payment::create(array(
+                    "amount" => 5000, //Amount in cents
+                    "currency" => "eur", //Currency
+                    "token" => $token,
+                    "description" => $description,
+                    "capture" => 0  //Authorize card only
+                ));
+                Session::forget('token');
 
-            if (isset($payment->token)) {
-                //TODO Check if transaction is correct
+                if (isset($payment->token)) {
+                    //TODO Check if transaction is correct
 
-                //Send mail to the user
+                    //Send mail to the user
 
-                //If all goes well and user is charged
-                //Save deposit to db
-                $deposit = new Transaction();
-                $deposit->type = 'deposit';
-                $deposit->amount = $payment->amount / 100;
-                $deposit->approved = 0;
-                $deposit->comments = 'card';
-                $deposit->proof = $payment->token;
-                $deposit->user()->associate($user);
-                $deposit->save();
+                    //If all goes well and user is charged
+                    //Save deposit to db
+                    $deposit = new Transaction();
+                    $deposit->type = 'deposit';
+                    $deposit->amount = $payment->amount / 100;
+                    $deposit->approved = 0;
+                    $deposit->comments = 'card';
+                    $deposit->proof = $payment->token;
+                    $deposit->user()->associate($user);
+                    $deposit->save();
 
-                event(new UserPaidDeposit($user));
+                    event(new UserPaidDeposit($user));
 
-                //Display success message on homepage
-                Session::flash('paid_deposit', 1);
-                return redirect(route('participant.home'));
+                    //Display success message on homepage
+                    Session::flash('paid_deposit', 1);
+                    return redirect(route('participant.home'));
+                } else {
+                    $error = "Your card issuer didn't approve the payment. If this problem persists, please try using a different card (Error 103)";
+                    $deposit_check = $user->transactions->where("type", "deposit")->count();
+                    return view('participants.deposit', compact('user', 'error', 'deposit_check'));
+                }
             } else {
-                $error = "Your card issuer didn't approve the payment. If this problem persists, please try using a different card (Error 103)";
+                //If validation succeeds but pre-charging fails
+                $error = "An error has occurred, please try again (Error 102)";
                 $deposit_check = $user->transactions->where("type", "deposit")->count();
                 return view('participants.deposit', compact('user', 'error', 'deposit_check'));
             }
-        } else {
-            //If validation succeeds but pre-charging fails
-            $error = "An error has occurred, please try again (Error 102)";
-            $deposit_check = $user->transactions->where("type", "deposit")->count();
-            return view('participants.deposit', compact('user', 'error', 'deposit_check'));
+        } catch (\Exception $exception) {
+            $user = Auth::user();
+            $token = $token;
+
+            $message = 'User: ' . $user->id . '. ' . $user->name . ' ' . $user->surname
+                . '\"\n\"Token: ' . $token
+                . '\"\n\"Exception: ' . $exception;
+
+            Log::channel('slack')->alert($message);
+            redirect(route('participant.deposit'));
         }
     }
 
