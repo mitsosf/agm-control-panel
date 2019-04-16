@@ -78,6 +78,12 @@ class CheckinController extends Controller
             return redirect(route('checkin.hotel', $hotel));
 
         } elseif ($user->checkin == 1) {
+
+
+            if (Auth::user()->role_id!=2){
+                return redirect(route('checkin.hotel', $hotel));
+            }
+
             //Check user in
             $user->checkin = 0;
             $user->update();
