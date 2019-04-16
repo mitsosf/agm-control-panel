@@ -186,7 +186,7 @@ class ParticipantController extends Controller
                     if ($type !== 'Visa' && $type !== 'MasterCard' && $type !== 'Maestro') { //Only accept Visa, MasterCard & Maestro
                         $error = 'Your card issuer is unsupported, please use either a Visa, MasterCard or Maestro';
                         $deposit_check = $user->transactions->where("type", "deposit")->count();
-                        return view('participants.home', compact('error', 'user', 'deposit_check'));
+                        return view('participants.deposit', compact('error', 'user', 'deposit_check'));
                     }
                     //If all works
                     Session::put('token', $token);
