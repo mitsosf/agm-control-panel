@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UserPaid;
 use App\Events\UserPaidDeposit;
+use App\Exports\UsersRoomsExport;
 use App\Hotel;
 use App\Imports\EntriesImport;
 use App\Room;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Everypay\Everypay;
 use Everypay\Payment;
 use Everypay\Token;
+use Illuminate\Support\Facades\DB;
 use Ixudra\Curl\Facades\Curl;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -447,8 +449,14 @@ class OCController extends Controller
     {
         $debts = Transaction::where('type', 'debt')->orderBy('updated_at', 'desc')->get();
 
-        $debt_amount = $debts->sum('amount');
-        $debt_count = $debts->count();
+        $debt_amount = 0;
+        $debt_count = 0;
+        foreach ($debts as $debt) {
+            if ($debt->approved == 0) {
+                $debt_amount += $debt->amount;
+                $debt_count++;
+            }
+        }
 
         return view('oc.cashflowDebts', compact('debts', 'debt_amount', 'debt_count'));
     }
@@ -890,38 +898,9 @@ class OCController extends Controller
 
     public function test()
     {
-
-        $response = Curl::to(env('ERS_APPLICATIONS_API_URL'))
-            ->withHeader('Event-API-key: ' . env('ERS_API_KEY'))
-            ->returnResponseObject()
-            ->get();
-
-        if ($response->status !== 200) {
-            return 'Error while contacting ERS';
-        }
-
-        $applications = json_decode($response->content);
-
-        try {
+        return Excel::download(new UsersRoomsExport(), 'rooming.xlsx');
 
 
-            foreach ($applications as $application) {
-                if (isset($application->spot_status)) {
-                    if ($application->spot_status == "Paid ") {
-                        $user = User::where('username', $application->cas_name)->first();
-                        if (!is_null($user)) {
-                            $user->spot_type = $application->spot_type;
-                            $user->email = $application->email;
-                            $user->update();
-                        }
-                    }
-                }
-            }
-        }catch(\Exception $exception){
-            dd($exception);
-        }
-
-        return "Done importing";
     }
 
 

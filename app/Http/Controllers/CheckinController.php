@@ -25,7 +25,7 @@ class CheckinController extends Controller
     public function hotel(Hotel $hotel)
     {
         $residents = User::whereHas('room', function ($query) use ($hotel) {
-            $query->where('hotel_id', $hotel->id)->where('final',1);
+            $query->where('hotel_id', $hotel->id)->where('final', 1);
         })->get();
 
         $checkedIn = $residents->where('checkin', '!=', 0);
@@ -45,20 +45,36 @@ class CheckinController extends Controller
             //Charge balance to checkiner
             $debt = $user->calculateDebt();
 
-            //Save checkin as transaction
-            $checkin = new Transaction();
-            $checkin->user_id = $user->id;
-            $checkin->type = "checkin";
-            $checkin->comments = Auth::user()->id; //ID of checkiner
-            $checkin->amount = $debt['amount'];
-            $checkin->approved = $debt['amount'] == '0' ? 1 : 0; //Automatically approve checkin transaction if no debt
-            $checkin->save();
+            $checkin = Transaction::where('user_id', $user->id)->where('type', 'checkin')->first();
+
+            if (!is_null($checkin)) {
+                if ($checkin->approved == 0) {
+                    $checkin->approved = 1;
+                    $checkin->comments = Auth::user()->id; //ID of checkiner
+                    $checkin->update();
+                }
+            } else {
+                //Save checkin as transaction
+                $checkin = new Transaction();
+                $checkin->user_id = $user->id;
+                $checkin->type = "checkin";
+                $checkin->comments = Auth::user()->id; //ID of checkiner
+                $checkin->amount = $debt['amount'];
+                $checkin->approved = 1;
+                $checkin->save();
+            }
 
             $deposit = Transaction::where('user_id', $user->id)->where('type', 'deposit')->first();
-            if (is_null($deposit)) {
+            if (!is_null($deposit)) {
+                if ($deposit->approved == 0) {
+                    $deposit->approved = 1;
+                    $deposit->update();
+                }
+            } else {
                 $deposit = new Transaction();
                 $deposit->user_id = $user->id;
                 $deposit->type = "deposit";
+                $deposit->comments = "cash";
                 $deposit->proof = Auth::user()->id; //ID of checkiner
                 $deposit->amount = 50;
                 $deposit->approved = 1;
@@ -80,13 +96,32 @@ class CheckinController extends Controller
         } elseif ($user->checkin == 1) {
 
 
-            if (Auth::user()->role_id!=2){
+            if (Auth::user()->role_id != 2) {
                 return redirect(route('checkin.hotel', $hotel));
             }
 
-            //Check user in
+            //Check user out
             $user->checkin = 0;
             $user->update();
+
+            //Nullify debt
+            $debt = Transaction::where('user_id', $user->id)->where('type', 'debt')->first();
+            if (!is_null($debt)) {
+                $debt->approved = 0;
+                $debt->update();
+            }
+
+            //Disapprove deposit
+            $deposit = Transaction::where('user_id', $user->id)->where('type', 'deposit')->where('approved', 1)->first();
+            $deposit->approved = 0;
+            $deposit->update();
+
+            //Cancel check-in transaction
+            $checkin = Transaction::where('user_id', $user->id)->where('type', 'checkin')->where('approved', 1)->first();
+            $checkin->approved = 0;
+            $checkin->comments = Auth::user()->id; //Register who performed the uncheckin action
+            $checkin->update();
+
             return redirect(route('checkin.hotel', $hotel));
 
         } else {
@@ -113,7 +148,7 @@ class CheckinController extends Controller
             $funds['deposited'] += $transaction->amount;
         }
 
-        $funds['cash']= $funds['all'] - $funds['deposited'];
+        $funds['cash'] = $funds['all'] - $funds['deposited'];
 
         $oc_transactions = Transaction::where('user_id', Auth::user()->id)->where('type', 'oc')->get();
 
@@ -139,7 +174,7 @@ class CheckinController extends Controller
             $funds['deposited'] += $transaction->amount;
         }
 
-        $funds['cash']= $funds['all'] - $funds['deposited'];
+        $funds['cash'] = $funds['all'] - $funds['deposited'];
         $cash = $funds['cash'];
 
 
