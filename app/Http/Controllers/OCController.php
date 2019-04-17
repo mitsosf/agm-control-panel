@@ -775,7 +775,7 @@ class OCController extends Controller
     public function importRooming(Request $request)
     {
         $tabs = Excel::toArray(new EntriesImport(), $request['data']);
-
+        dd($tabs[0]);
         foreach ($tabs as $index => $tab) {
             $hotel = $index + 1;
 
@@ -786,6 +786,7 @@ class OCController extends Controller
                 $room->hotel_id = $hotel;
                 $room->beds = intval($tab[0]['size']);
                 $room->code = $tab[0]['room_code'];
+                $room->actual = $tab[0]['real_number'];
                 $room->final = 1;
                 $room->save();
             } else {
@@ -804,6 +805,7 @@ class OCController extends Controller
                     $room->hotel_id = $hotel;
                     $room->beds = intval($entry['size']);
                     $room->code = $entry['room_code'];
+                    $room->actual = $entry['real_number'];
                     $room->final = 1;
                     $room->save();
 

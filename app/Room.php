@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed beds
  * @property mixed code
  * @property mixed final
+ * @property mixed actual
  */
 class Room extends Model
 {
