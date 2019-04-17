@@ -794,6 +794,10 @@ class OCController extends Controller
 
             foreach ($tab as $key => $entry) {
                 //Skip first entry
+                if (is_null($entry->code)){
+                    dd($entry);
+                }
+
                 if ($key == 0) {
                     continue;
                 }
