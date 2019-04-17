@@ -6,6 +6,7 @@
         <a href="{{$user->photo}}" target="_blank"><img src="{{$user->photo}}" alt="User photo" width="10%"></a>
         <h1>Name: <u>{{$user->name.' '.$user->surname}}</u></h1>
         <h2>Section: <b>{{$user->section}}</b></h2>
+        <h2>Tshirt: <b>{{$user->tshirt}}</b></h2>
         <h3>ESNcountry: <b>{{$user->esn_country}}</b></h3>
         <h4>ID/Passport: <u>{{$user->document}}</u></h4>
         <div class="row" style="margin-bottom: 2%">
@@ -23,7 +24,7 @@
             @endif
         </div>
         <a id="confirm" href="{{route('checkin.checkin', ['hotel'=>$hotel,'user'=>$user])}}" class="btn btn-success">Confirm</a>
-        <a href="{{route('checkin.home')}}" class="btn btn-danger">Back</a>
+        <a href="{{route('checkin.hotel', $hotel)}}" class="btn btn-danger">Back</a>
     </div>
 @endsection
 

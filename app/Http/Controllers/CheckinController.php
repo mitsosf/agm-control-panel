@@ -35,6 +35,10 @@ class CheckinController extends Controller
 
     public function validation(Hotel $hotel, User $user)
     {
+        if (Auth::user()->role_id != 2 && $user->checkin==1) {
+            return redirect(route('checkin.hotel', $hotel));
+        }
+
         $debt = $user->calculateDebt();
         return view('checkin.validation', compact('user', 'debt', 'hotel'));
     }
@@ -138,9 +142,9 @@ class CheckinController extends Controller
         ];
 
         //Calculate all funds received by checkiner
-        $deposits = Transaction::where('type', 'deposit')->where('proof', Auth::user()->id)->get();
-        foreach ($deposits as $deposit) {
-            $funds['all'] += $deposit->amount;
+        $checkins = Transaction::where('type', 'checkin')->where('comments', Auth::user()->id)->get();
+        foreach ($checkins as $transaction) {
+            $funds['all'] += $transaction->amount;
         }
 
         $transactions = Transaction::where('user_id', Auth::user()->id)->where('type', 'oc')->where('approved', 1)->get();
