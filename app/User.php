@@ -186,7 +186,7 @@ class User extends Authenticatable
     public function calculateDebt(){
         $amount = 0;
 
-        if (is_null(Transaction::where('user_id',$this->id)->where('type', 'deposit')->where('approved','1')->first())){
+        if (is_null(Transaction::where('user_id',$this->id)->where('type', 'deposit')->first())){
             //If user has not deposited
             $amount+=50;
         }

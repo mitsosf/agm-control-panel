@@ -84,7 +84,7 @@
                                 <tr>
                                     <td>{{$key+1}}</td>
                                     <td>{{$transaction->amount}}</td>
-                                    <td>{{App\User::find($transaction->comments)->name." ".App\User::find($transaction->comments)->surname}}</td>
+                                    <td>{{App\User::find($transaction->proof)->name." ".App\User::find($transaction->proof)->surname}}</td>
                                     <td>{{$transaction->created_at->diffForHumans()}}</td>
                                 </tr>
                             @endif

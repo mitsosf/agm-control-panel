@@ -112,7 +112,7 @@ Route::post('/oc/import/esncard', 'OCController@importEsncard')->name('oc.import
 Route::get('/checkin', 'CheckinController@index')->name('checkin.home');
 Route::get('/checkin/hotel/{hotel}', 'CheckinController@hotel')->name('checkin.hotel');
 Route::get('/checkin/hotel/{hotel}/checkin/validate/{user}', 'CheckinController@validation')->name('checkin.validate');
-Route::get('/checkin/hotel/{hotel}/checkin/{user}', 'CheckinController@checkin')->name('checkin.checkin');
+Route::post('/checkin/hotel/checkin', 'CheckinController@checkin')->name('checkin.checkin');
 Route::get('/checkin/funds', 'CheckinController@funds')->name('checkin.funds');
 Route::get('/checkin/funds/request/show', 'CheckinController@createDepositPickupRequestShow')->name('checkin.funds.createRequest.show');
 Route::post('/checkin/funds/request', 'CheckinController@createDepositPickupRequest')->name('checkin.funds.createRequest');

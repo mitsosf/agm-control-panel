@@ -61,7 +61,7 @@ class OCController extends Controller
 
     public function final()
     {
-        $users = User::where('spot_status', 'paid')->get();
+        $users = User::where('spot_status', 'paid')->with('room')->get();
 
         return view('oc.final', compact('users'));
     }

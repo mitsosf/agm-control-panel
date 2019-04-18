@@ -150,6 +150,12 @@ desired effect
               </span>
                     </a>
                     <ul class="treeview-menu">
+                        @php
+                            $hotels = \App\Hotel::all();
+                        @endphp
+                        @foreach($hotels as $hotel)
+                            <li><a href="{{route('checkin.hotel',$hotel)}}"><i class="fa fa-bed"></i> <span>{{$hotel->name}}</span></a></li>
+                        @endforeach
                         <li><a href="{{route('oc.checkin.depositRequests')}}"><i class="fa fa-eur"></i> <span>Deposit requests</span></a></li>
                     </ul>
                 </li>

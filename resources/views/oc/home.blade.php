@@ -53,7 +53,7 @@
         </div>
         <div class="col-md-3 col-sm-6 col-xs-12">
             <!-- small box -->
-            <a href="#">
+            <a href="{{route('checkin.home')}}">
                 <div class="small-box bg-fuchsia">
                     <div class="inner">
                         <h3>{{$checkedInUsers}}</h3>
