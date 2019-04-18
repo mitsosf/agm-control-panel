@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserPaidDeposit;
 use App\Hotel;
 use App\Room;
 use App\Transaction;
@@ -19,7 +20,20 @@ class CheckinController extends Controller
 
     public function index()
     {
-        return view('checkin.home');
+
+        $hotels = Hotel::all();
+
+        foreach ($hotels as $hotel) {
+            $residents = User::whereHas('room', function ($query) use ($hotel) {
+                $query->where('hotel_id', $hotel->id)->where('final', 1);
+            })->get();
+
+            $checkedInCount[$hotel->id] = $residents->where('checkin', '!=', 0)->count();
+            $residentsCount[$hotel->id] = $residents->count();
+        }
+
+
+        return view('checkin.home', compact('hotels', 'checkedInCount', 'residentsCount'));
     }
 
     public function hotel(Hotel $hotel)
@@ -35,7 +49,7 @@ class CheckinController extends Controller
 
     public function validation(Hotel $hotel, User $user)
     {
-        if (Auth::user()->role_id != 2 && $user->checkin==1) {
+        if (Auth::user()->role_id != 2 && $user->checkin == 1) {
             return redirect(route('checkin.hotel', $hotel));
         }
 
@@ -43,8 +57,11 @@ class CheckinController extends Controller
         return view('checkin.validation', compact('user', 'debt', 'hotel'));
     }
 
-    public function checkin(Hotel $hotel, User $user)
+    public function checkin(Request $request)
     {
+        $user = User::find($request['user']);
+        $hotel = Hotel::find($request['hotel']);
+
         if ($user->checkin == 0) {
             //Charge balance to checkiner
             $debt = $user->calculateDebt();
@@ -64,17 +81,13 @@ class CheckinController extends Controller
                 $checkin->type = "checkin";
                 $checkin->comments = Auth::user()->id; //ID of checkiner
                 $checkin->amount = $debt['amount'];
+                $checkin->proof = $request['proof'];
                 $checkin->approved = 1;
                 $checkin->save();
             }
 
             $deposit = Transaction::where('user_id', $user->id)->where('type', 'deposit')->first();
-            if (!is_null($deposit)) {
-                if ($deposit->approved == 0) {
-                    $deposit->approved = 1;
-                    $deposit->update();
-                }
-            } else {
+            if (is_null($deposit)) {
                 $deposit = new Transaction();
                 $deposit->user_id = $user->id;
                 $deposit->type = "deposit";
@@ -83,6 +96,9 @@ class CheckinController extends Controller
                 $deposit->amount = 50;
                 $deposit->approved = 1;
                 $deposit->save();
+
+                //TODO uncomment
+                //event(new UserPaidDeposit($user));
             }
 
             //Nullify debt
@@ -116,9 +132,12 @@ class CheckinController extends Controller
             }
 
             //Disapprove deposit
-            $deposit = Transaction::where('user_id', $user->id)->where('type', 'deposit')->where('approved', 1)->first();
-            $deposit->approved = 0;
-            $deposit->update();
+            $deposit = Transaction::where('user_id', $user->id)->where('type', 'deposit')->first();
+            if (!is_null($deposit)) {
+                if ($deposit->comments != 'card') {
+                    $deposit->delete();
+                }
+            }
 
             //Cancel check-in transaction
             $checkin = Transaction::where('user_id', $user->id)->where('type', 'checkin')->where('approved', 1)->first();
@@ -142,7 +161,7 @@ class CheckinController extends Controller
         ];
 
         //Calculate all funds received by checkiner
-        $checkins = Transaction::where('type', 'checkin')->where('comments', Auth::user()->id)->get();
+        $checkins = Transaction::where('type', 'checkin')->where('comments', Auth::user()->id)->where('approved',1)->get();
         foreach ($checkins as $transaction) {
             $funds['all'] += $transaction->amount;
         }
@@ -168,9 +187,9 @@ class CheckinController extends Controller
         ];
 
         //Calculate all funds received by checkiner
-        $deposits = Transaction::where('type', 'deposit')->where('proof', Auth::user()->id)->get();
-        foreach ($deposits as $deposit) {
-            $funds['all'] += $deposit->amount;
+        $checkins = Transaction::where('type', 'checkin')->where('comments', Auth::user()->id)->where('approved',1)->get();
+        foreach ($checkins as $transaction) {
+            $funds['all'] += $transaction->amount;
         }
 
         $transactions = Transaction::where('user_id', Auth::user()->id)->where('type', 'oc')->where('approved', 1)->get();

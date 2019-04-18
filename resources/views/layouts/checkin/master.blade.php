@@ -89,6 +89,9 @@ desired effect
                 </li>
                 <li><a href="{{route('checkin.funds')}}"><i class="fa fa-money"></i> <span>My funds</span></a></li>
                 <li><a href="{{route('checkin.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
+                @if(Auth::user()->role_id==2)
+                    <li><a href="{{route('oc.home')}}"><i class="fa fa-backward"></i> <span>Back to OC Panel</span></a></li>
+                @endif
             </ul>
             <!-- /.sidebar-menu -->
         </section>

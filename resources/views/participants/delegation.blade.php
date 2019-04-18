@@ -11,7 +11,7 @@
                     <th class="hidden-xs">Section</th>
                     <th>Phone</th>
                     <th class="hidden-xs">Bank fees</th>
-                    <th>Room</th>
+                    {{--<th>Room</th>--}}
                     <th class="hidden-xs">Check-in</th>
                 </tr>
                 </thead>
@@ -37,13 +37,13 @@
                             <td class="hidden-xs" style="text-align: center"><span class="label label-success">No</span>
                             </td>
                         @endif
-                        @if($user->rooming == 0)
+                        {{--@if($user->rooming == 0)
                             <td style="text-align: center"><span class="label label-danger">No</span>
                             </td>
                         @else
                             <td style="text-align: center"><span
                                         class="label label-success">{{$user->room->actual}}</span></td>
-                        @endif
+                        @endif--}}
                         @if($user->checkin == 0)
                             <td style="text-align: center" class="hidden-xs"><span class="label label-danger">No</span>
                             </td>
@@ -60,7 +60,7 @@
                     <th>Section</th>
                     <th>Phone</th>
                     <th class="hidden-xs">Bank fees</th>
-                    <th>Room</th>
+                    {{--<th>Room</th>--}}
                     <th class="hidden-xs">Check-in</th>
                 </tr>
                 </tfoot>
