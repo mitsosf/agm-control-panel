@@ -794,7 +794,7 @@ class OCController extends Controller
 
             foreach ($tab as $key => $entry) {
                 //Skip first entry
-                if (is_null($entry['room_code'])){
+                if (is_null($entry['room_code'])) {
                     dd($entry);
                 }
 
@@ -899,6 +899,42 @@ class OCController extends Controller
         $transaction->delete();
 
         return redirect(route('oc.checkin.depositRequests'));
+    }
+
+    public function checkiners()
+    {
+        $checkiners = User::where('role_id', 3)->orWhere('role_id', '2')->get();
+
+        $funds = [
+            'cash' => array(),
+            'deposited' => array(),
+            'all' => array(),
+        ];
+
+        //Initialize array
+        foreach ($checkiners as $checkiner){
+            $funds['cash'][$checkiner->id] = 0;
+            $funds['deposited'][$checkiner->id] = 0;
+            $funds['all'][$checkiner->id] = 0;
+        }
+
+        foreach ($checkiners as $checkiner) {
+            //Calculate all funds received by checkiner
+            $checkins = Transaction::where('type', 'checkin')->where('comments', $checkiner->id)->where('approved', 1)->get();
+            foreach ($checkins as $transaction) {
+                $funds['all'][$checkiner->id] += $transaction->amount;
+            }
+
+            $transactions = Transaction::where('user_id', $checkiner->id)->where('type', 'oc')->where('approved', 1)->get();
+            foreach ($transactions as $transaction) {
+                $funds['deposited'][$checkiner->id] += $transaction->amount;
+            }
+            $funds['cash'][$checkiner->id] = $funds['all'][$checkiner->id] - $funds['deposited'][$checkiner->id];
+
+        }
+
+
+        return view('oc.checkiners', compact('checkiners', 'funds'));
     }
 
     public function test()

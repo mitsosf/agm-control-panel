@@ -100,6 +100,7 @@ Route::get('/oc/logout', 'OCController@logout')->name('oc.logout');
 Route::get('/oc/checkin/deposits/requests', 'OCController@checkinDepositRequests')->name('oc.checkin.depositRequests');
 Route::get('/oc/checkin/deposit{transaction}/approve', 'OCController@checkinDepositRequestApprove')->name('oc.checkin.depositRequest.approve');
 Route::get('/oc/checkin/deposit{transaction}/delete', 'OCController@checkinDepositRequestDelete')->name('oc.checkin.depositRequest.delete');
+Route::get('/oc/checkin/checkiners', 'OCController@checkiners')->name('oc.checkin.checkiners');
 
 
 //Rooming import

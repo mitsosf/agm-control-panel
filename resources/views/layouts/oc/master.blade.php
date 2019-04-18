@@ -157,6 +157,7 @@ desired effect
                             <li><a href="{{route('checkin.hotel',$hotel)}}"><i class="fa fa-bed"></i> <span>{{$hotel->name}}</span></a></li>
                         @endforeach
                         <li><a href="{{route('oc.checkin.depositRequests')}}"><i class="fa fa-eur"></i> <span>Deposit requests</span></a></li>
+                        <li><a href="{{route('oc.checkin.checkiners')}}"><i class="fa fa-money"></i> <span>Checkiners' funds</span></a></li>
                     </ul>
                 </li>
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
