@@ -97,8 +97,7 @@ class CheckinController extends Controller
                 $deposit->approved = 1;
                 $deposit->save();
 
-                //TODO uncomment
-                //event(new UserPaidDeposit($user));
+                event(new UserPaidDeposit($user));
             }
 
             //Nullify debt
