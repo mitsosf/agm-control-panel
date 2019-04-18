@@ -3,7 +3,7 @@
 @section('content')
     <h2>{{$hotel->name}}</h2>
     <div style="text-align: center"><h2 style="color: green">Checked
-            in: {{$checkedIn->count().'/'.$residents->count()}} ({{floor($checkedIn->count()/$residents->count()/100)}}%)</h2></div>
+            in: {{$checkedIn->count().'/'.$residents->count()}} ({{floor($checkedIn->count()/$residents->count())*100}}%)</h2></div>
     <div class="container">
         <div class="box-body">
             <table id="example2" class="table table-bordered table-hover">
