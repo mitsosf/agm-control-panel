@@ -33,7 +33,7 @@ class VotingDistributionController extends Controller
         $givenCount = $given->count();
         $ratio = floor(($givenCount/$devicesCount)*100);
 
-        return view('voting.round', compact('delegations', 'round', 'ratio', 'given', 'devices'));
+        return view('voting.round', compact('delegations', 'round', 'ratio', 'givenCount', 'devicesCount'));
     }
 
     public function validation($delegation_id)
