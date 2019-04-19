@@ -108,6 +108,8 @@ Route::get('/oc/import/rooming/show', 'OCController@importRoomingShow')->name('o
 Route::post('/oc/import/rooming', 'OCController@importRooming')->name('oc.import.rooming');
 Route::get('/oc/import/esncard/show', 'OCController@importEsncardShow')->name('oc.import.esncard.show');
 Route::post('/oc/import/esncard', 'OCController@importEsncard')->name('oc.import.esncard');
+Route::get('/oc/import/delegations/show', 'OCController@importVotingDelegationsShow')->name('oc.import.delegations.show');
+Route::post('/oc/import/delegations', 'OCController@importVotingDelegations')->name('oc.import.delegations');
 
 //Checkin
 Route::get('/checkin', 'CheckinController@index')->name('checkin.home');
@@ -121,8 +123,9 @@ Route::get('/checkin/logout', 'CheckinController@logout')->name('checkin.logout'
 
 //Voting devices
 Route::get('/voting', 'VotingDistributionController@index')->name('voting.home');
-Route::get('/voting/device/user/validate/{user}', 'VotingDistributionController@validation')->name('voting.validate');
-Route::get('/voting/device/user/{user}', 'VotingDistributionController@device')->name('voting.device');
+Route::get('/voting/device/user/validate/{delegation_id}', 'VotingDistributionController@validation')->name('voting.validate');
+Route::get('/voting/device/user/{delegation_id}', 'VotingDistributionController@device')->name('voting.device');
+Route::get('/voting/device/delegation/{delegation_id}', 'VotingDistributionController@round')->name('voting.round');
 Route::get('/voting/logout', 'VotingDistributionController@logout')->name('voting.logout');
 
 //Misc

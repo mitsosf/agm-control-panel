@@ -141,6 +141,7 @@ desired effect
                     <ul class="treeview-menu">
                         <li><a href="{{route('oc.import.rooming.show')}}"><i class="fa fa-hotel"></i> <span>Import rooming</span></a></li>
                         <li><a href="{{route('oc.import.esncard.show')}}"><i class="fa fa-credit-card"></i> <span>Import esncards</span></a></li>
+                        <li><a href="{{route('oc.import.delegations.show')}}"><i class="fa fa-group"></i> <span>Import VDs</span></a></li>
                     </ul>
                 </li>
                 <li class="treeview">
