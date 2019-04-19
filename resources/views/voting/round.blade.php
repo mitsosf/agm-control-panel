@@ -2,6 +2,7 @@
 
 @section('content')
     <div class="container">
+        <h5 style="text-align: center; color: green;">{{$ratio}}%</h5>
         <h4>{{$round->name}}' Devices:</h4>
         <div class="box-body" style="background: white">
             <table id="example2" class="table table-bordered table-hover">
