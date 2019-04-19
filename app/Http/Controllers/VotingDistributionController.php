@@ -35,7 +35,7 @@ class VotingDistributionController extends Controller
         $user = User::find($delegation->user_id);
         $round_id = $delegation->vote_round_id;
 
-        $delegations = VoteDelegation::where('type', $delegation->type)->get();
+        $delegations = VoteDelegation::where('user_id',$user->id)->where('type', $delegation->type)->get();
         return view('voting.validation', compact('user', 'round_id', 'delegations', 'delegation', 'delegation_id'));
     }
 
