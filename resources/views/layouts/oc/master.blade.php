@@ -161,7 +161,7 @@ desired effect
                         <li><a href="{{route('oc.checkin.checkiners')}}"><i class="fa fa-money"></i> <span>Checkiners' funds</span></a></li>
                     </ul>
                 </li>
-                <li><a href="{{route('voting.home')}}"><i class="fa fa-power-off"></i> <span>To VD Panel</span></a></li>
+                <li><a href="{{route('voting.home')}}"><i class="fa fa-group"></i> <span>To VD Panel</span></a></li>
                 <li><a href="{{route('oc.logout')}}"><i class="fa fa-power-off"></i> <span>Logout</span></a></li>
             </ul>
             <!-- /.sidebar-menu -->
