@@ -17,9 +17,9 @@ class VotingDistributionController extends Controller
 
     public function index()
     {
-        $delegations = VoteDelegation::all();
+        $rounds = VoteRound::all();
 
-        return view('voting.home', compact('delegations'));
+        return view('voting.home', compact('rounds'));
     }
 
     public function round($round_id)

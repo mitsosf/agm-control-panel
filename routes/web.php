@@ -125,7 +125,7 @@ Route::get('/checkin/logout', 'CheckinController@logout')->name('checkin.logout'
 Route::get('/voting', 'VotingDistributionController@index')->name('voting.home');
 Route::get('/voting/device/user/validate/{delegation_id}', 'VotingDistributionController@validation')->name('voting.validate');
 Route::get('/voting/device/user/{delegation_id}', 'VotingDistributionController@device')->name('voting.device');
-Route::get('/voting/device/delegation/{delegation_id}', 'VotingDistributionController@round')->name('voting.round');
+Route::get('/voting/device/delegation/{round_id}', 'VotingDistributionController@round')->name('voting.round');
 Route::get('/voting/logout', 'VotingDistributionController@logout')->name('voting.logout');
 
 //Misc
