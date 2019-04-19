@@ -12,7 +12,7 @@
         <h2>Section: <b>{{$user->section}}</b></h2>
         <h3>ESNcountry: <b>{{$user->esn_country}}</b></h3>
         <a id="confirm" href="{{route('voting.device',$delegation_id)}}" class="btn btn-success">Confirm</a>
-        <a href="{{route('voting.home')}}" class="btn btn-danger">Back</a>
+        <a href="{{route('voting.round',$delegation->vote_round_id)}}" class="btn btn-danger">Back</a>
     </div>
 @endsection
 
