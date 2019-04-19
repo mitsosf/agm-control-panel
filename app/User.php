@@ -71,6 +71,10 @@ class User extends Authenticatable
         return $this->belongsTo('App\Room');
     }
 
+    public function voteDelegations(){
+        return $this->hasMany('App\VoteDelegation');
+    }
+
     public function esnCardStatus($card)
     {
 

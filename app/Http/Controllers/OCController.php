@@ -10,6 +10,7 @@ use App\Imports\EntriesImport;
 use App\Room;
 use App\Transaction;
 use App\User;
+use App\VoteDelegation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -912,7 +913,7 @@ class OCController extends Controller
         ];
 
         //Initialize array
-        foreach ($checkiners as $checkiner){
+        foreach ($checkiners as $checkiner) {
             $funds['cash'][$checkiner->id] = 0;
             $funds['deposited'][$checkiner->id] = 0;
             $funds['all'][$checkiner->id] = 0;
@@ -935,6 +936,59 @@ class OCController extends Controller
 
 
         return view('oc.checkiners', compact('checkiners', 'funds'));
+    }
+
+    public function importVotingDelegationsShow()
+    {
+        return view('oc.imports.delegations');
+    }
+
+    public function importVotingDelegations(Request $request)
+    {
+        $users = Excel::toArray(new EntriesImport(), $request['data'])[0];
+        //dd($users);
+
+        foreach ($users as $user) {
+            if ($user['delegate'] >= 1) {
+                for ($i = 0; $i < $user['delegate']; $i++) {
+                    //Create new VD for user
+                    $delegation = new VoteDelegation();
+                    $delegation->user_id = $user['id'];
+                    $delegation->vote_round_id = 1; //1 is delegate, 2 is NR
+                    $delegation->type = 'delegate';
+                    $delegation->given = 0;
+                    $delegation->save();
+                }
+                $participant = User::find($user['id']);
+                $participant->delegate = 1;
+                $participant->update();
+            }
+        }
+
+        //Import NRs
+        $nrs = collect();
+        $users = User::all();
+        foreach ($users as $user) {
+            if (strpos($user->spot_type, 'National Representative')) {
+                $nrs->push($user);
+            }
+
+        }
+
+        foreach ($nrs as $nr) {
+            $delegation = new VoteDelegation();
+            $delegation->user_id = $nr->id;
+            $delegation->vote_round_id = 2; //1 is delegate, 2 is NR
+            $delegation->type = 'nr';
+            $delegation->given = 0;
+            $delegation->save();
+
+
+            $nr->delegate = 1;
+            $nr->update();
+        }
+
+        return redirect(route('oc.import.delegations.show'));
     }
 
     public function test()
