@@ -448,7 +448,7 @@ class OCController extends Controller
     public
     function cashflowDebts()
     {
-        $debts = Transaction::where('type', 'debt')->orderBy('updated_at', 'desc')->get();
+        $debts = Transaction::where('type', 'debt')->where('approved',0)->orderBy('updated_at', 'desc')->get();
 
         $debt_amount = 0;
         $debt_count = 0;
