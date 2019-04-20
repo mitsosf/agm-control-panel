@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCommentsToVoteDelegationsTable extends Migration
+class AddCommentsToVoteDelegations extends Migration
 {
     /**
      * Run the migrations.
