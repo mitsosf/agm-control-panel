@@ -121,6 +121,13 @@ Route::get('/checkin/funds/request/show', 'CheckinController@createDepositPickup
 Route::post('/checkin/funds/request', 'CheckinController@createDepositPickupRequest')->name('checkin.funds.createRequest');
 Route::get('/checkin/logout', 'CheckinController@logout')->name('checkin.logout');
 
+//Checkout
+Route::get('/checkout', 'CheckoutController@index')->name('checkout.home');
+Route::get('/checkout/hotel/{hotel}', 'CheckoutController@hotel')->name('checkout.hotel');
+Route::get('/checkout/hotel/{hotel}/checkout/validate/{user}', 'CheckoutController@validation')->name('checkout.validate');
+Route::post('/checkout/hotel/checkout', 'CheckoutController@checkout')->name('checkout.checkout');
+Route::get('/checkout/logout', 'CheckoutController@logout')->name('checkout.logout');
+
 //Voting devices
 Route::get('/voting', 'VotingDistributionController@index')->name('voting.home');
 Route::get('/voting/device/user/validate/{delegation_id}', 'VotingDistributionController@validation')->name('voting.validate');
