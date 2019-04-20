@@ -6,8 +6,18 @@
         <a href="{{$user->photo}}" target="_blank"><img src="{{$user->photo}}" alt="User photo" width="10%"></a>
         <h1>Name: <u>{{$user->name.' '.$user->surname}}</u></h1>
         @if(!is_null($delegations))
-            <h2>Provide user with <div style="color: red">{{$delegations->count().' '.$delegation->type}} devices</div></h2>
+            <h2>Provide user with
+                <div style="color: red">{{$delegations->count().' '.$delegation->type}} devices</div>
+            </h2>
         @endif
+        @foreach($delegations as $delegation)
+            @if($delegation->comments === "malakas")
+                <h4>Provide user with
+                    <div style="color: red">{{$delegations->count().' '.$delegation->type}} handbooks and voting cards</div>
+                </h4>
+                @break
+            @endif
+        @endforeach
         <h2>ID/Passport: <u>{{$user->document}}</u></h2>
         <h2>Section: <b>{{$user->section}}</b></h2>
         <h3>ESNcountry: <b>{{$user->esn_country}}</b></h3>
