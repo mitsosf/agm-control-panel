@@ -27,8 +27,8 @@ class VotingDistributionController extends Controller
         $delegations = VoteDelegation::where('vote_round_id', $round_id)->get();
         $round = VoteRound::find($round_id);
 
-        $devices = VoteDelegation::all();
-        $given= VoteDelegation::where('given',1)->get();
+        $devices = VoteDelegation::where('vote_round_id',$round_id)->get();
+        $given= VoteDelegation::where('given',1)->where('vote_round_id',$round_id)->get();
         $devicesCount = $devices->count();
         $givenCount = $given->count();
         $ratio = floor(($givenCount/$devicesCount)*100);

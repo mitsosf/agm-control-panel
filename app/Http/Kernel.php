@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'participant' => \App\Http\Middleware\ParticipantMiddleware::class,
         'oc' => \App\Http\Middleware\OCMiddleware::class,
         'checkin' => \App\Http\Middleware\CheckinMiddleware::class,
+        'checkout' => \App\Http\Middleware\CheckoutMiddleware::class,
         'voting' => \App\Http\Middleware\VotingDistributionMiddleware::class
     ];
 

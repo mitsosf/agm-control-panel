@@ -211,4 +211,8 @@ class User extends Authenticatable
             "amount" => $amount
         );
     }
+
+    public function getCashDeposit(){
+        return $deposit = Transaction::where('user_id',$this->id)->where('type','deposit')->where('comments','cash')->where('approved',1)->first();
+    }
 }
