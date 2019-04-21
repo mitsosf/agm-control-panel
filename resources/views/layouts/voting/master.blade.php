@@ -74,13 +74,13 @@ desired effect
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MENU</li>
                 <li class="treeview">
-                    <a href="#"><i class="fa fa-edit"></i> <span>Categories</span>
+                    <a href="#"><i class="fa fa-edit"></i> <span>Returns</span>
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                     </a>
                     <ul class="treeview-menu">
                         @php $rounds = \App\VoteRound::all(); @endphp
                         @foreach($rounds as $round)
-                            <li><a href="{{route('voting.round', $round)}}"><i class="fa fa-edit"></i> <span>{{$round->name}}</span></a></li>
+                            <li><a href="{{route('voting.return.round', $round)}}"><i class="fa fa-edit"></i> <span>{{$round->name}}</span></a></li>
                         @endforeach
                     </ul>
                 </li>

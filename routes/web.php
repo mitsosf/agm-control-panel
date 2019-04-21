@@ -135,6 +135,11 @@ Route::get('/voting/device/user/{delegation_id}', 'VotingDistributionController@
 Route::get('/voting/device/delegation/{round_id}', 'VotingDistributionController@round')->name('voting.round');
 Route::get('/voting/logout', 'VotingDistributionController@logout')->name('voting.logout');
 
+
+Route::get('/voting/device/user/validate/return/{delegation_id}', 'VotingDistributionController@returnValidation')->name('voting.return.validate');
+Route::get('/voting/device/user/return/{delegation_id}', 'VotingDistributionController@returnDevice')->name('voting.return.device');
+Route::get('/voting/device/delegation/return/{round_id}', 'VotingDistributionController@returnRound')->name('voting.return.round');
+
 //Misc
 Route::get('/terms', 'MiscController@terms')->name('terms');
 
