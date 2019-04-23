@@ -502,26 +502,32 @@ class OCController extends Controller
     }
 
     public
-    function refundDeposit(Transaction $transaction)
+    function refundDeposit(Transaction $transactiona)
     {
 
         //If transaction isn't a deposit
-        if ($transaction->type !== 'deposit') {
+        if ($transactiona->type !== 'deposit') {
             return redirect(route('oc.cashflow.deposits'));
         }
 
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
-        $payment = Payment::refund($transaction->proof);
+        $transactions = Transaction::where('type','deposit')->where('comments', 'card')->get();
 
-        if (isset($payment->token)) { //If payment is successful
+        foreach ($transactions as $transaction) {
 
-            $transaction->delete();
 
-            return redirect(route('oc.cashflow.deposits'));
+            $payment = Payment::refund($transaction->proof);
+
+            if (isset($payment->token)) { //If payment is successful
+
+                $transaction->delete();
+
+                //return redirect(route('oc.cashflow.deposits'));
+            }
         }
 
-        return dd($payment);
+        return "All deposits returned";
     }
 
     public
