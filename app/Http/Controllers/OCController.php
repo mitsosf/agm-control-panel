@@ -448,7 +448,7 @@ class OCController extends Controller
     public
     function cashflowDebts()
     {
-        $debts = Transaction::where('type', 'debt')->where('approved',0)->orderBy('updated_at', 'desc')->get();
+        $debts = Transaction::where('type', 'debt')->where('approved', 0)->orderBy('updated_at', 'desc')->get();
 
         $debt_amount = 0;
         $debt_count = 0;
@@ -513,21 +513,14 @@ class OCController extends Controller
 
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
 
-        $transactions = Transaction::where('type','deposit')->where('comments', 'card')->get();
+        $payment = Payment::refund($transaction->proof);
+        if (isset($payment->token)) { //If payment is successful
 
-        foreach ($transactions as $transaction) {
+            $transaction->delete();
 
-
-            $payment = Payment::refund($transaction->proof);
-            if (isset($payment->token)) { //If payment is successful
-
-                $transaction->delete();
-
-                //return redirect(route('oc.cashflow.deposits'));
-            }
+            return redirect(route('oc.cashflow.deposits'));
         }
-
-        return "All deposits returned";
+        return dd($payment);
     }
 
     public
