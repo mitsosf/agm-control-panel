@@ -502,13 +502,13 @@ class OCController extends Controller
     }
 
     public
-    function refundDeposit(Transaction $transactiona)
+    function refundDeposit(Transaction $transaction)
     {
 
         //If transaction isn't a deposit
-        if ($transactiona->type !== 'deposit') {
-            dd($transactiona);
-            return redirect(route('oc.cashflow.bank'));
+        if ($transaction->type !== 'deposit') {
+            dd($transaction);
+            return redirect(route('oc.cashflow.deposits'));
         }
 
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
