@@ -507,7 +507,7 @@ class OCController extends Controller
 
         //If transaction isn't a deposit
         if ($transactiona->type !== 'deposit') {
-            return redirect(route('oc.cashflow.deposits'));
+            return redirect(route('oc.cashflow.bank'));
         }
 
         Everypay::setApiKey(env('EVERYPAY_SECRET_KEY'));
@@ -518,7 +518,7 @@ class OCController extends Controller
 
 
             $payment = Payment::refund($transaction->proof);
-
+            dd($payment);
             if (isset($payment->token)) { //If payment is successful
 
                 $transaction->delete();
