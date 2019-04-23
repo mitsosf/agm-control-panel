@@ -507,6 +507,7 @@ class OCController extends Controller
 
         //If transaction isn't a deposit
         if ($transactiona->type !== 'deposit') {
+            dd($transactiona);
             return redirect(route('oc.cashflow.bank'));
         }
 
