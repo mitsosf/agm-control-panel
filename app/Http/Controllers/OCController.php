@@ -519,7 +519,6 @@ class OCController extends Controller
 
 
             $payment = Payment::refund($transaction->proof);
-            dd($payment);
             if (isset($payment->token)) { //If payment is successful
 
                 $transaction->delete();
