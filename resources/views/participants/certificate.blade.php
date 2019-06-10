@@ -59,8 +59,7 @@
             Head of the Organisation Committee</p>
         <img style="margin-top: 3%" src="{{asset('images/signature.png')}}" alt="signature" height="180px">
         <p style="font-size: smaller; margin-top: 5%;">Web: <a href="https://agmthessaloniki.org/">https://agmthessaloniki.org/</a><br>
-            Email: <a href="mailto:information@agmthessaloniki.org">information@agmthessaloniki.org</a><br>
-            Mob: <a href="tel:+306932771509">+306932771509</a></p>
+            Email: <a href="mailto:information@agmthessaloniki.org">information@agmthessaloniki.org</a></p>
     </div>
 
 
