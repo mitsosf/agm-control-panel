@@ -107,5 +107,22 @@
                 </a>
             </div>
         @endif
+        @if($user->transactions->where('type','checkin')->count()>0)
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <!-- small box -->
+                <a target="_blank" href="{{route('participant.certificate')}}">
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>Certificate</h3>
+                            <p>Get your certificate of attendance</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+                        <div class="small-box-footer"><i class="fa fa-arrow-circle-right"></i></div>
+                    </div>
+                </a>
+            </div>
+        @endif
     </div>
 @endsection
