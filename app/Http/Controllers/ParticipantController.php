@@ -301,6 +301,13 @@ class ParticipantController extends Controller
         return Auth::user()->generateProof();
     }
 
+    public function certificate(){
+        $user = Auth::user();
+
+        $pdf = App::make('dompdf.wrapper');
+        $pdf->loadHTML(view('participants.certificate', compact('user')));
+        return $pdf->stream($user->name." ".$user->surname." - AGM Thessaloniki Certificate of attendance.pdf");
+    }
 
     public function logout()
     {
