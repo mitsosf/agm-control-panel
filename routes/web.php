@@ -41,8 +41,6 @@ Route::get('/', function () {
 
 //Laravel login
 Auth::routes();
-Route::get('/home', 'HomeController@index')->name('home');
-
 
 
 //CAS
