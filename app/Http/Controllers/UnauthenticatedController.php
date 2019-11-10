@@ -98,8 +98,7 @@ class UnauthenticatedController extends Controller
 
     }
 
-    public function faker(){
-        $faker = new Faker();
+    public function faker(Faker $faker){
 
         $users = User::all();
 
