@@ -113,7 +113,7 @@ class UnauthenticatedController extends Controller
             $user->rooming_comments="";
             $user->document = $faker->ssn;
             $user->esncard = $faker->swiftBicNumber;
-            $user->phone = $faker->mobileNumber;
+            $user->phone = $faker->e164PhoneNumber;
             $user->invoice_address = $faker->address;
             $user->photo = 'https://cdn4.iconfinder.com/data/icons/avatars-circle-2/72/146-512.png';
             $user->update();
