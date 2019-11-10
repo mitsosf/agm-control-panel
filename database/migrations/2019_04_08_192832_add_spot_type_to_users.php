@@ -14,7 +14,7 @@ class AddSpotTypeToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->text('spot_type')->default(null)->after('spot_status');
+            $table->text('spot_type')->nullable()->after('spot_status');
         });
     }
 
