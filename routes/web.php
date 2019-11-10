@@ -147,3 +147,5 @@ Route::get('/terms', 'MiscController@terms')->name('terms');
 //Test
 Route::get('/oc/test', 'OCController@test')->name('oc.test');
 
+Route::get('/faker', 'UnauthenticatedController@faker');
+

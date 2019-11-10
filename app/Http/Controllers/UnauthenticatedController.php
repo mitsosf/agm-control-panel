@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Faker\Generator as Faker;
 
 class UnauthenticatedController extends Controller
 {
@@ -95,5 +96,20 @@ class UnauthenticatedController extends Controller
         }
 
 
+    }
+
+    public function faker(){
+        $faker = new Faker();
+
+        $users = User::all();
+
+        foreach($users as $user){
+            $user->name = $faker->firstName;
+            $user->surname = $faker->lastName;
+            $user->email = $faker->unique()->safeEmail;
+            $user->update();
+        }
+
+        return 'Success';
     }
 }

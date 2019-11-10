@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->integer('role_id')->unsigned()->default(1); //Possible roles Participant, OC
             $table->string('email')->default("");
             $table->string('username')->unique();
+            $table->string('password')->default("")->nullable();
             $table->string('section')->default("");
             $table->string('esncard')->default("")->nullable();
             $table->string('document')->default("")->nullable(); //ID or passport number
