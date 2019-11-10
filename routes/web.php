@@ -39,6 +39,11 @@ Route::get('/', function () {
     }
 })->name('home');
 
+//Laravel login
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
+
+
 
 //CAS
 Route::get('/login/cas', 'UnauthenticatedController@login')->name('cas.login');
@@ -148,8 +153,3 @@ Route::get('/terms', 'MiscController@terms')->name('terms');
 Route::get('/oc/test', 'OCController@test')->name('oc.test');
 
 Route::get('/faker', 'UnauthenticatedController@faker');
-
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
