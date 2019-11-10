@@ -107,6 +107,7 @@ class UnauthenticatedController extends Controller
             $user->surname = $faker->lastName;
             $user->username = $faker->unique()->userName;
             $user->email = $faker->unique()->safeEmail;
+            $user->password = '$2y$12$VLO75p/uB.VDED5eE09grO86VvgiB1ByoLa03uk2PL..pPWxSPXeK' //abc123
             $user->update();
         }
 
