@@ -41,7 +41,7 @@ class LoginController extends Controller
                     return redirect(route('participant.home'));
 
                 case "OC":
-                    return redirect(route('OC.home'));
+                    return redirect(route('oc.home'));
 
                 case "Checkin":
                     return redirect(route('checkin.home'));
