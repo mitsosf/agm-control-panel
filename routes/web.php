@@ -149,3 +149,7 @@ Route::get('/oc/test', 'OCController@test')->name('oc.test');
 
 Route::get('/faker', 'UnauthenticatedController@faker');
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
