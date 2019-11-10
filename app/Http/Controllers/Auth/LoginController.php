@@ -38,19 +38,19 @@ class LoginController extends Controller
             $role = Auth::user()->role->name;
             switch ($role) {
                 case "Participant":
-                    return redirect(route('participant.home'));
+                    return route('participant.home');
 
                 case "OC":
-                    return redirect(route('oc.home'));
+                    return route('oc.home');
 
                 case "Checkin":
-                    return redirect(route('checkin.home'));
+                    return route('checkin.home');
 
                 case "Voting":
-                    return redirect(route('voting.home'));
+                    return route('voting.home');
 
                 default:
-                    return redirect(route('home'));
+                    return route('home');
             }
         }
     }
