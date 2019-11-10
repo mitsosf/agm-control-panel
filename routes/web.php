@@ -41,8 +41,8 @@ Route::get('/', function () {
 
 
 //CAS
-Route::get('/login', 'UnauthenticatedController@login')->name('cas.login');
-Route::get('/logout', 'UnauthenticatedController@logout')->name('cas.logout');
+Route::get('/login/cas', 'UnauthenticatedController@login')->name('cas.login');
+Route::get('/logout/cas', 'UnauthenticatedController@logout')->name('cas.logout');
 
 //Participants
 Route::get('/account', 'ParticipantController@index')->name('participant.home');
