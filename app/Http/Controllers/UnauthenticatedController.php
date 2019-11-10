@@ -105,6 +105,7 @@ class UnauthenticatedController extends Controller
         foreach($users as $user){
             $user->name = $faker->firstName;
             $user->surname = $faker->lastName;
+            $user->username = $faker->unique()->userName;
             $user->email = $faker->unique()->safeEmail;
             $user->update();
         }
