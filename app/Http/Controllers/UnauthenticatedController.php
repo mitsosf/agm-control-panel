@@ -106,8 +106,16 @@ class UnauthenticatedController extends Controller
             $user->name = $faker->firstName;
             $user->surname = $faker->lastName;
             $user->username = $faker->unique()->userName;
-            $user->email = $faker->unique()->safeEmail;
             $user->password = '$2y$12$VLO75p/uB.VDED5eE09grO86VvgiB1ByoLa03uk2PL..pPWxSPXeK'; //abc123
+            $user->email = $faker->unique()->safeEmail;
+            $user->facebook = "";
+            $user->comments="";
+            $user->rooming_comments="";
+            $user->document = $faker->ssn;
+            $user->esncard = $faker->dni;
+            $user->phone = $faker->mobileNumber;
+            $user->invoice_address = $faker->address;
+            $user->photo = 'https://cdn4.iconfinder.com/data/icons/avatars-circle-2/72/146-512.png';
             $user->update();
         }
 
