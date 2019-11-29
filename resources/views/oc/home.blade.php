@@ -25,6 +25,7 @@
                 <div class="small-box bg-green">
                     <div class="inner">
                         <h3>{{$funds}} €</h3>
+                        <p>Funds</p>
                     </div>
                     <div class="icon">
                         <i class="fa fa-eur"></i>
@@ -39,6 +40,7 @@
                 <div class="small-box bg-yellow">
                     <div class="inner">
                         <h3>{{$roomedUsers}}</h3>
+                        <p>Participants with rooms</p>
                     </div>
                     <div class="icon">
                         <i class="fa fa-bar-chart"></i>
