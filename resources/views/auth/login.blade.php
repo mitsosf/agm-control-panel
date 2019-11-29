@@ -67,6 +67,43 @@
                     </form>
                 </div>
             </div>
+            <div class="card">
+                <div class="card-header">Demo login data</div>
+
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Role</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Password</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Organising Committee</td>
+                            <td>oc@agm.com</td>
+                            <td>abc123</td>
+                        </tr>
+                        <tr>
+                            <td>Participant</td>
+                            <td>participant@agm.com</td>
+                            <td>abc123</td>
+                        </tr>
+                        <tr>
+                            <td>Check-in</td>
+                            <td>checkin@agm.com</td>
+                            <td>abc123</td>
+                        </tr>
+                        <tr>
+                            <td>Voting Devices</td>
+                            <td>vd@agm.com</td>
+                            <td>abc123</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
