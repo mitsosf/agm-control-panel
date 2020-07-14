@@ -63,13 +63,16 @@
                                     </a>
                                 @endif
                             </div>
+                            <div class="col-md-8 offset-md-4" style="margin-top: 1%">
+                                <a class="btn btn-info" href="{{route('cas.login')}}">CAS Login</a>
+                            </div>
                         </div>
                     </form>
                 </div>
             </div>
             <div class="card" style="margin-top: 3%">
                 <div class="card-header">Demo login data</div>
-
+                <p style="color: red;text-align: center">All data have been anonymized, but look real thanks to the <a href="https://github.com/fzaninotto/Faker" target="_blank">Faker</a> library.</p>
                 <div class="card-body">
                     <table class="table">
                         <thead>
