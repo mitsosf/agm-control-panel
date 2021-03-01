@@ -400,7 +400,7 @@ class OCController extends Controller
         $debt_amount = $debt_transactions->sum("amount");
 
 
-        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'deposit_count', 'deposit_amount', 'transactions_count', 'cash_count', 'card_count', 'debt_amount', 'debt_count'));
+        return view('oc.cashflow', compact('transactions', 'income', 'cash_income', 'card_income', 'transactions_count', 'cash_count', 'card_count', 'debt_amount', 'debt_count'));
     }
 
 
@@ -442,7 +442,7 @@ class OCController extends Controller
 
         $debt_amount = $debt_transactions->sum('amount');
 
-        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count', 'confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count', 'pending_users'));
+        return view('oc.cashflowBank', compact('pending_transactions', 'pending_cash_income', 'pending_cash_count', 'confirmed_transactions', 'confirmed_cash_income', 'confirmed_cash_count', 'debt_amount', 'debt_count'));
     }
 
     public
